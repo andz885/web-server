@@ -29,4 +29,10 @@ app.get('/about', (req, res) => {
   });
 });
 
+app.get('/picture', (req, res) => {
+  res.render('picture.hbs', {
+    pageTitle: 'Some picture:'
+  });
+});
+
 app.listen(port);
