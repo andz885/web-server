@@ -35,4 +35,8 @@ app.get('/picture', (req, res) => {
   });
 });
 
+app.get('/login.html', (req, res) => {
+  res.render('login.html');
+});
+
 app.listen(port);
