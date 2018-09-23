@@ -4,14 +4,9 @@ document.getElementById('login').onclick = function() {
     pass: document.getElementsByName('pass')[0].value
   };
 
-  url = new URL(document.URL);
-  var postURL;
-if(url.hostname === 'localhost'){
-  postURL = url.hostname + ':3000/log';
-} else {
-  postURL = url.hostname + '/log';
-}
-postURL = 'http://' + postURL;
+  var url = window.location.href;
+  var URLarr = url.split("/");
+  var postURL = URLarr[0] + '//' + URLarr[2] + '/log';
 
   var userString = JSON.stringify(user);
   var xhr = new XMLHttpRequest();
@@ -29,6 +24,10 @@ postURL = 'http://' + postURL;
   xhr.setRequestHeader("postman-token", "3192aa48-4e3d-721b-203c-09f2405e732e");
 
   xhr.send(userString);
+
+
+
+
 
   //localStorage.setItem('user', userString);
 
