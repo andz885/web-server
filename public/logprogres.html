@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>You are in</title>
+</head>
+
+<body>
+  <p id="iName"> hi</p>
+  <p id="iPass"> hi</p>
+</body>
+
+  <script>
+
+  var userObj = JSON.parse(localStorage.getItem("user"));
+  document.getElementById("iName").innerHTML  = userObj.name;
+  document.getElementById("iPass").innerHTML  = userObj.pass;
+  </script>
+
+</html>
