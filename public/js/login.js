@@ -3,26 +3,32 @@ document.getElementById('login').onclick = function() {
     name: document.getElementsByName('user')[0].value,
     pass: document.getElementsByName('pass')[0].value
   };
+
+  url = new URL(document.URL);
+  var postURL;
+if(url.hostname === 'localhost'){
+  postURL = url.hostname + ':3000/log';
+} else {
+  postURL = url.hostname + '/log';
+}
+postURL = 'http://' + postURL;
+
   var userString = JSON.stringify(user);
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
 
+  xhr.addEventListener("readystatechange", function() {
+    if (this.readyState === 4) {
+      console.log(this.responseText);
+    }
+  });
+// http://localhost:3000/log
+  xhr.open("POST", postURL);
+  xhr.setRequestHeader("content-type", "application/json");
+  xhr.setRequestHeader("cache-control", "no-cache");
+  xhr.setRequestHeader("postman-token", "3192aa48-4e3d-721b-203c-09f2405e732e");
 
-    var data = userString;
-
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-
-    xhr.addEventListener("readystatechange", function () {
-      if (this.readyState === 4) {
-        console.log(this.responseText);
-      }
-    });
-
-    xhr.open("POST", "http://localhost:3000/log");
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.setRequestHeader("cache-control", "no-cache");
-    xhr.setRequestHeader("postman-token", "3192aa48-4e3d-721b-203c-09f2405e732e");
-
-    xhr.send(data);
+  xhr.send(userString);
 
   //localStorage.setItem('user', userString);
 
