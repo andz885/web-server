@@ -46,9 +46,9 @@ app.post('/log', (req, res) => {
 app.post('/tokenverify', (req, res) => {
   if (Number(req.body.token) === token) {
 
-    res.send('You are Welcome!');
+    res.send('Img 4 U');
   } else {
-    res.send('You are not Welcome!');
+    res.send('No image for you');
   }
 
 });

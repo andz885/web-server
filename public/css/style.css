@@ -177,6 +177,29 @@ p {
   justify-content: center;
 }
 
+.classOne{
+animation: fadeOne 600ms 1;
+}
+
+@keyframes fadeOne
+{
+0%
+   {
+   opacity:0;
+   }
+}
+
+.classTwo{
+animation: fadeTwo 600ms 1;
+}
+@keyframes fadeTwo
+{
+0%
+   {
+   opacity:0.02;
+   }
+}
+
 .login-card input[type=text]:hover, input[type=password]:hover {
   border: 1px solid #b9b9b9;
   border-top: 1px solid #a0a0a0;

@@ -1,6 +1,6 @@
 document.getElementById('login').onclick = function() {
   //swal('You have no acces with this entry','log err');
-
+document.getElementById("err_message").innerHTML = '';
   var user = {
     name: document.getElementsByName('user')[0].value,
     pass: document.getElementsByName('pass')[0].value
@@ -8,7 +8,7 @@ document.getElementById('login').onclick = function() {
 
   var url = window.location.href;
   var URLarr = url.split("/");
-  var postURL = URLarr[0] + '//' + URLarr[2] ;
+  var postURL = URLarr[0] + '//' + URLarr[2];
 
   var userString = JSON.stringify(user);
 
@@ -20,7 +20,9 @@ document.getElementById('login').onclick = function() {
       var resObj = JSON.parse(xhr.response);
 
       if (resObj.status === 101) {
+        document.getElementById("err_message").classList.toggle("classTwo");
         document.getElementById("err_message").innerHTML = 'Invalid Name or Password';
+
 
       } else if (resObj.status === 100) {
         localStorage.setItem('token', resObj.token);

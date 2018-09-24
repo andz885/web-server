@@ -8,40 +8,48 @@
 
 <body>
   <p id="iName"> </p>
+  <img id="image">
+
 </body>
 
-<script>
-  var url = window.location.href;
-  var URLarr = url.split("/");
-  var postURL = URLarr[0] + '//' + URLarr[2] + '/tokenverify';
-  var data = {
-    token: localStorage.getItem("token")
-  }
-
-  console.log(data);
-  var xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
-
-  xhr.addEventListener("readystatechange", function() {
-    if (this.readyState === 4) {
-      document.getElementById("iName").innerHTML  = xhr.response;
+  <script>
+    var url = window.location.href;
+    var URLarr = url.split("/");
+    var postURL = URLarr[0] + '//' + URLarr[2] + '/tokenverify';
+    var data = {
+      token: localStorage.getItem("token")
     }
-  });
 
-  xhr.open("POST", postURL);
-  xhr.setRequestHeader("content-type", "application/json");
-  xhr.setRequestHeader("cache-control", "no-cache");
-  xhr.setRequestHeader("postman-token", "7dc5526b-e5b4-c1bb-ed34-85c9eb00511b");
+    console.log(data);
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
 
-  xhr.send(JSON.stringify(data));
+    xhr.addEventListener("readystatechange", function() {
+      if (this.readyState === 4) {
+
+        if (xhr.response === 'Img 4 U') {
+          document.getElementById("iName").innerHTML = xhr.response;
+          document.getElementById("image").setAttribute("src", "https://pbs.twimg.com/media/DMoCqSXU8AISK16.jpg");
+        } else {
+          document.getElementById("iName").innerHTML = xhr.response;
+        }
+      }
+    });
+
+    xhr.open("POST", postURL);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.setRequestHeader("postman-token", "7dc5526b-e5b4-c1bb-ed34-85c9eb00511b");
+
+    xhr.send(JSON.stringify(data));
 
 
 
 
 
 
-  // document.getElementById("iName").innerHTML  = userObj.name;
-  // document.getElementById("iPass").innerHTML  = userObj.pass;
-</script>
+    // document.getElementById("iName").innerHTML  = userObj.name;
+    // document.getElementById("iPass").innerHTML  = userObj.pass;
+  </script>
 
 </html>
