@@ -1,4 +1,6 @@
 document.getElementById('login').onclick = function() {
+  //swal('You have no acces with this entry','log err');
+
   var user = {
     name: document.getElementsByName('user')[0].value,
     pass: document.getElementsByName('pass')[0].value
@@ -6,19 +8,28 @@ document.getElementById('login').onclick = function() {
 
   var url = window.location.href;
   var URLarr = url.split("/");
-  var postURL = URLarr[0] + '//' + URLarr[2] + '/log';
+  var postURL = URLarr[0] + '//' + URLarr[2] ;
 
   var userString = JSON.stringify(user);
+
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
 
   xhr.addEventListener("readystatechange", function() {
     if (this.readyState === 4) {
-      console.log(this.responseText);
+      var resObj = JSON.parse(xhr.response);
+
+      if (resObj.status === 101) {
+        document.getElementById("err_message").innerHTML = 'Invalid Name or Password';
+
+      } else if (resObj.status === 100) {
+        localStorage.setItem('token', resObj.token);
+        window.location = postURL + '/logprogres.html';
+      }
     }
   });
-// http://localhost:3000/log
-  xhr.open("POST", postURL);
+
+  xhr.open("POST", postURL + '/log');
   xhr.setRequestHeader("content-type", "application/json");
   xhr.setRequestHeader("cache-control", "no-cache");
   xhr.setRequestHeader("postman-token", "3192aa48-4e3d-721b-203c-09f2405e732e");

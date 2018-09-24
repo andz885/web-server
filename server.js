@@ -23,15 +23,36 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
 
+var token = '';
+
 app.post('/log', (req, res) => {
-console.log(stringify(req.body));
-if(JSON.stringify(req.body) === '{"name":"xvalen22","pass":"123456"}'){
-  res.send('welcome');
-}
-else {
-  res.send('you passed wrong login values');
-}
+  console.log(stringify(req.body));
+  if (JSON.stringify(req.body) === '{"name":"xvalen22","pass":"123456"}') {
+    token = Date.now();
+    console.log(token);
+    res.send({
+      status: 100,
+      token
+    });
+  } else {
+    res.send({
+      status: 101
+    });
+  }
 });
+
+
+
+app.post('/tokenverify', (req, res) => {
+  if (Number(req.body.token) === token) {
+
+    res.send('You are Welcome!');
+  } else {
+    res.send('You are not Welcome!');
+  }
+
+});
+
 
 app.get('/', (req, res) => {
   res.render('home.hbs', {
@@ -40,11 +61,6 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/about', (req, res) => {
-  res.render('about.hbs', {
-    pageTitle: 'About Page'
-  });
-});
 
 app.get('/picture', (req, res) => {
   res.render('picture.hbs', {
