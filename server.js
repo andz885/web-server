@@ -48,7 +48,7 @@ app.post('/tokenverify', (req, res) => {
 
     res.send('Img 4 U');
   } else {
-    res.send('No image for you');
+    res.send('No acces, You will be redirected to login page');
   }
 
 });

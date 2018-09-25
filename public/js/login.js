@@ -1,5 +1,14 @@
+
+//spustenie loginu aj enterom
+document.getElementById("passwordEnter").addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+        document.getElementById("login").click();
+    }
+});
+
+//po kliknutí na login
 document.getElementById('login').onclick = function() {
-  //swal('You have no acces with this entry','log err');
 document.getElementById("err_message").innerHTML = '';
   var user = {
     name: document.getElementsByName('user')[0].value,
@@ -38,9 +47,9 @@ document.getElementById("err_message").innerHTML = '';
 
   xhr.send(userString);
 
+};
 
-
-
+  //swal('You have no acces with this entry','log err');
 
   //localStorage.setItem('user', userString);
 
@@ -69,4 +78,3 @@ document.getElementById("err_message").innerHTML = '';
 
   // console.log(body.url);
   // console.log(body.explanation);
-};

@@ -32,6 +32,9 @@
           document.getElementById("image").setAttribute("src", "https://pbs.twimg.com/media/DMoCqSXU8AISK16.jpg");
         } else {
           document.getElementById("iName").innerHTML = xhr.response;
+          setTimeout(() =>{
+            window.location = URLarr[0] + '//' + URLarr[2]  + '/login.html';
+          },1900);
         }
       }
     });
