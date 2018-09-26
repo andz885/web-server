@@ -1,4 +1,3 @@
-
 //spustenie loginu aj enterom
 document.getElementById("passwordEnter").addEventListener("keyup", function(event) {
     event.preventDefault();
@@ -9,7 +8,9 @@ document.getElementById("passwordEnter").addEventListener("keyup", function(even
 
 //po kliknutí na login
 document.getElementById('login').onclick = function() {
-document.getElementById("err_message").innerHTML = '';
+
+document.getElementById("err_message").innerHTML = ''; //vymazanie Invalid Username or Password
+
   var user = {
     name: document.getElementsByName('user')[0].value,
     pass: document.getElementsByName('pass')[0].value
@@ -43,13 +44,12 @@ document.getElementById("err_message").innerHTML = '';
   xhr.open("POST", postURL + '/log');
   xhr.setRequestHeader("content-type", "application/json");
   xhr.setRequestHeader("cache-control", "no-cache");
-  xhr.setRequestHeader("postman-token", "3192aa48-4e3d-721b-203c-09f2405e732e");
 
   xhr.send(userString);
 
 };
 
-  //swal('You have no acces with this entry','log err');
+
 
   //localStorage.setItem('user', userString);
 
