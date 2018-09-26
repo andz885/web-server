@@ -36,7 +36,8 @@ document.getElementById("err_message").innerHTML = ''; //vymazanie Invalid Usern
 
       } else if (resObj.status === 100) {
         localStorage.setItem('token', resObj.token);
-        window.location = postURL + '/logprogres.html';
+        localStorage.setItem('login_intro', 'true');
+        window.location = postURL + '/logprogres?token='+ resObj.token;
       }
     }
   });
