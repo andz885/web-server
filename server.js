@@ -51,7 +51,7 @@ app.get('/logprogres', (req, res) => {
   var token = req.param('token');
   //hladanie tokenu v db
   if(token === key.token){
-    res.render('attendance.html');
+    res.render('login_intro.html');
   } else {
     res.render('login.html');
   }

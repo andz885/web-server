@@ -1,5 +1,5 @@
 var login_intro = localStorage.getItem("login_intro");
-if (login_intro = 'true') {
+if (login_intro = 'true') { //login intro
   localStorage.removeItem('login_intro');
 
 }

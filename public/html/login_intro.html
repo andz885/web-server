@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Welcome Screen Text Animation</title>
+  <link rel="stylesheet" href="login_intro.css">
+  <!-- <script src="https://code.jquery.com/jquery-3.2.1.js"></script> -->
+</head>
+
+<body id="body">
+  <div class="wrapper">
+    <h1>Hello there!</h1>
+  </div>
+  <div id="delete" class="welcome-section content-hidden">
+    <div class="content-wrap">
+      <ur class="fly-in-text">
+        <li class="white">T</li>
+        <li class="blue">O</li>
+        <li class="white">M</li>
+        <li class="white">K</li>
+        <li class="white">O</li>
+      </ur>
+      <!-- <a href="#" class="enter-button">ENTER</a> -->
+    </div>
+  </div>
+
+  <script>
+  if (localStorage.getItem("login_intro") === 'true') {
+    localStorage.removeItem('login_intro');
+    setTimeout(() => {
+      document.getElementById("delete").classList.remove("content-hidden");
+      setTimeout(() => {
+        document.onclick = () => {
+          document.getElementById("delete").remove();
+        }
+      }, 2500)
+    }, 350);
+  } else {
+    document.getElementById("delete").remove();
+  }
+  </script>
+</body>
+
+</html>
