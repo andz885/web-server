@@ -9,8 +9,8 @@ var app = express();
 
 var key = {
   token: '',
-  timeStamp : '',
-  admin : false
+  timeStamp: '',
+  admin: false
 };
 
 app.set('view engine', 'html');
@@ -22,12 +22,28 @@ app.use(express.static(__dirname + '/public/js'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
+app.get('/', (req, res) => { //index rozstrelovacia stránka
+  res.render('index.html');
+});
 
+app.post('/tokenverify', (req, res) => {
+  var token = req.body.token;
+  console.log(key.token);
+  console.log('---');
+  console.log(token);
+  if (token === key.token) {
+    res.render('login_intro.html');
+  } else {
+    res.render('login.html');
+  }
+});
 
-app.post('/log', (req, res) => {
-    function dbRequest (){  //hladanie req.body v databáze, databáza vracia key object s parametrom admin
-    if(JSON.stringify(req.body) === '{"name":"xvalen22","pass":"123456"}'){
-      return { admin: true};
+app.post('/loginverify', (req, res) => {
+  function dbRequest() { //hladanie req.body v databáze, databáza vracia key object s parametrom admin
+    if (JSON.stringify(req.body) === '{"name":"xvalen22","pass":"123456"}') {
+      return {
+        admin: true
+      };
     }
   }
   var objFromBD = dbRequest();
@@ -45,17 +61,6 @@ app.post('/log', (req, res) => {
       status: 101
     });
   }
-});
-
-app.get('/logprogres', (req, res) => {
-  var token = req.param('token');
-  //hladanie tokenu v db
-  if(token === key.token){
-    res.render('login_intro.html');
-  } else {
-    res.render('login.html');
-  }
-
 });
 
 
