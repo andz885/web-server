@@ -1,11 +1,16 @@
 const express = require('express');
 const port = process.env.PORT || 3000;
+const MongoClient = require('mongodb').MongoClient;
 
 var randomstring = require("randomstring");
 var stringify = require('json-stringify-safe');
 var fs = require('file-system');
 var bodyParser = require('body-parser');
 var app = express();
+var mongoose = require('mongoose');
+var {
+  Schema
+} = require('mongoose');
 
 var key = {
   token: '',
@@ -20,7 +25,7 @@ app.use(express.static(__dirname + '/public/html'));
 app.use(express.static(__dirname + '/public/css'));
 app.use(express.static(__dirname + '/public/js'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => { //index rozstrelovacia stránka
   res.render('index.html');
@@ -28,9 +33,7 @@ app.get('/', (req, res) => { //index rozstrelovacia stránka
 
 app.post('/tokenverify', (req, res) => {
   var token = req.body.token;
-  console.log(key.token);
-  console.log('---');
-  console.log(token);
+  //overenie tokenu a expirácie
   if (token === key.token) {
     res.render('login_intro.html');
   } else {
@@ -39,28 +42,36 @@ app.post('/tokenverify', (req, res) => {
 });
 
 app.post('/loginverify', (req, res) => {
-  function dbRequest() { //hladanie req.body v databáze, databáza vracia key object s parametrom admin
-    if (JSON.stringify(req.body) === '{"name":"xvalen22","pass":"123456"}') {
-      return {
-        admin: true
-      };
+  var user = JSON.stringify(req.body);
+  MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/server',{useNewUrlParser: true}, (err, client) => {
+    if (err) { // NOTE:Unable to connect Database
+      res.send({
+        status: 103
+      });
+      return
     }
-  }
-  var objFromBD = dbRequest();
-  if (objFromBD) { //ak je meno a heslo v databáze
-    key.token = randomstring.generate();
-    key.timeStamp = Date.now();
-    key.admin = objFromBD.admin;
-    // uloženie objeku key do DB
-    res.send({
-      status: 100,
-      token: key.token
+    const db = client.db('server');
+    db.collection('acc').findOne({user}, (err, result) => {
+      if (err) { // NOTE:Unable to browse database
+        res.send({
+          status: 102
+        });
+        return
+      }
+      if(!result){ // NOTE:Invadlid Username or Password
+        res.send({
+          status: 101
+        });
+        return
+      }
+      key.token = randomstring.generate();
+      res.send({ // NOTE:user found, sending token
+        status: 100,
+        token: key.token
+      });
     });
-  } else { //ak nieje meno a heslo v databáze
-    res.send({
-      status: 101
-    });
-  }
+    client.close();
+  });
 });
 
 
@@ -69,6 +80,29 @@ app.listen(port);
 //req.headers.login_intro
 //app.set('view engine', 'ejs');
 // app.set('view engine', 'hbs');
+
+
+
+// MongoClient.connect('mongodb://localhost:27017/server', (err, client) => {
+//   if (err) {
+//     return console.log('Unable to connect to MongoDB server')
+//   }
+//   console.log('Connected to MongoDB server');
+//   const db = client.db('server');
+//
+//   db.collection('acc').insertOne({
+//     user: '{"name":"xvalen22","pass":"123456"}',
+//     permissions: 'admin',
+//     since: new Date
+//   }, (err, result) => {
+//     if (err) {
+//       return console.log('Unable to insert todo', err);
+//     }
+//
+//     console.log(JSON.stringify(result.ops, undefined, 2));
+//   });
+//   client.close();
+// });
 
 // hbs.registerPartials(__dirname + '/views/partials');
 // hbs.registerHelper('getCurrentYear', () => {
