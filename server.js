@@ -50,7 +50,7 @@ app.post('/loginverify', (req, res) => {
       });
       return
     }
-    const db = client.db('server');
+    const db = client.db('server_database');
     db.collection('acc').findOne({user}, (err, result) => {
       if (err) { // NOTE:Unable to browse database
         res.send({
