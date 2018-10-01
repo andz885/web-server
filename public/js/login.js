@@ -36,6 +36,7 @@ document.getElementById('login').onclick = function() {
       } else if (resObj.status === 102) {
         document.getElementById("err_message").classList.toggle("classTwo");
         document.getElementById("err_message").innerHTML = 'Unable to browse database';
+        console.log(resObj.error);
 
       } else if (resObj.status === 101) {
         document.getElementById("err_message").classList.toggle("classTwo");
