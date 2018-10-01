@@ -54,7 +54,7 @@ app.post('/loginverify', (req, res) => {
     db.collection('acc').findOne({user:user}, (err, result) => {
       if (err) { // NOTE:Unable to browse database
         res.send({
-          status: 102
+          status: 102,
           error: err
         });
         return
