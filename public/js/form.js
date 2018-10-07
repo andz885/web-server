@@ -1,6 +1,4 @@
 
-
-<script>
 var url = window.location.href;
 var URLarr = url.split("/");
 var postURL = URLarr[0] + '//' + URLarr[2];
@@ -12,28 +10,14 @@ xhr.withCredentials = true;
 
 xhr.addEventListener("readystatechange", function() {
   if (this.readyState === 4) {
+    document.removeChild(document.documentElement);
     document.write(xhr.response);
     document.close();
   }
 });
 
-xhr.open("POST", postURL + '/tokenverify');
+xhr.open("POST", postURL + '/form');
 xhr.setRequestHeader("content-type", "application/json");
 xhr.setRequestHeader("cache-control", "no-cache");
 
 xhr.send(token);
-
-</script>
-
-
-
-    <!-- if (resObj.status === 101) {
-      document.getElementById("err_message").classList.toggle("classTwo");
-      document.getElementById("err_message").innerHTML = 'Invalid Name or Password';
-
-
-    } else if (resObj.status === 100) {
-      localStorage.setItem('token', resObj.token);
-      localStorage.setItem('login_intro', 'true');
-      window.location = postURL + '/logprogres?token='+ resObj.token;
-    } -->

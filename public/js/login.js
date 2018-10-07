@@ -12,15 +12,14 @@ document.getElementById('login').onclick = function() {
   document.getElementById("err_message").innerHTML = ''; //vymazanie Invalid Username or Password
 
   var user = {
-    name: document.getElementsByName('user')[0].value,
+    email: document.getElementsByName('user')[0].value,
     pass: document.getElementsByName('pass')[0].value
   };
+  var userString = JSON.stringify(user);
 
   var url = window.location.href;
   var URLarr = url.split("/");
   var postURL = URLarr[0] + '//' + URLarr[2];
-
-  var userString = JSON.stringify(user);
 
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
@@ -29,11 +28,8 @@ document.getElementById('login').onclick = function() {
     if (this.readyState === 4) {
       var resObj = JSON.parse(xhr.response);
       console.log(xhr.response);
-      if (resObj.status === 103) {
-        document.getElementById("err_message").classList.toggle("classTwo");
-        document.getElementById("err_message").innerHTML = 'Unable to connect Database';
 
-      } else if (resObj.status === 102) {
+      if (resObj.status === 102) {
         document.getElementById("err_message").classList.toggle("classTwo");
         document.getElementById("err_message").innerHTML = 'Unable to browse database';
         console.log(resObj.error);
@@ -45,7 +41,7 @@ document.getElementById('login').onclick = function() {
       } else if (resObj.status === 100) {
         localStorage.setItem('token', resObj.token);
         localStorage.setItem('login_intro', 'true');
-        window.location = postURL + '/';
+        window.location = postURL;
       }
     }
   });

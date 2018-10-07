@@ -1,22 +1,23 @@
 const MongoClient = require('mongodb').MongoClient;
 
-MongoClient.connect('mongodb://localhost:27017/server', (err, client) => {
-  if (err) {
-    return console.log('Unable to connect to MongoDB server')
-  }
-  console.log('Connected to MongoDB server');
-  const db = client.db('server');
+MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/server',{useNewUrlParser: true}, (err, client) => {
+      if (err) {
+        return console.log('Unable to connect to MongoDB server')
+      }
+      console.log('Connected to MongoDB server');
+      const db = client.db('server_database');
 
-  db.collection('att').insertOne({
-    user: '{"name":"xvalen22","pass":"123456"}',
-    permissions: 'admin',
-    since: new Date
-  }, (err, result) => {
-    if (err) {
-      return console.log('Unable to insert todo', err);
-    }
 
-    console.log(JSON.stringify(result.ops, undefined, 2));
-  });
-  client.close();
-});
+      try {
+        db.collection('acc').insertOne({
+            loginData: 'xvalen22-123456',
+            permissions: 'admin',
+            cardUID: 'F1A367C8'
+          });
+        }
+        catch (error) {
+          print(error);
+        }
+
+        client.close();
+      });
