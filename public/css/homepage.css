@@ -68,8 +68,8 @@ html, body {
   position: absolute;
   top: 45px;
   left: 0%;
-  width:200px;
-  height:100%;
+  width: 200px;
+  height: 100%;
   background-color: #374c57;
 }
 
@@ -88,14 +88,18 @@ html, body {
   transform: translate(-50%, -50%);
 }
 
+.fa::before {
+  padding-right: 20px;
+}
+
 .sidebarProperties {
-  color: white;
+  position: relative;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
   font-size: 17px;
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 40px;
+  padding-left: 20px;
   display: block;
 }
 
@@ -103,14 +107,30 @@ html, body {
   background-color: #5F7885;
 }
 
+.sidebarProperties img {
+  width: 28px;
+  display: inline;
+  filter: invert(1);
+}
+
+.sidebarText {
+  color: white;
+  position: absolute;
+  padding-left: 10px;
+  bottom: 17px;
+  display: inline;
+  font-size: 17px;
+  margin: 0;
+}
+
 #content {
-background-color: #F5F5F5;
-position: absolute;
-top: 45px;
-left: 200px;
-height:100%;
-width: 100%;
-max-width: calc(100% - 200px);
+  background-color: #F5F5F5;
+  position: absolute;
+  top: 45px;
+  left: 200px;
+  height: 100%;
+  width: 100%;
+  max-width: calc(100% - 200px);
 }
 
 /* .wrapper{

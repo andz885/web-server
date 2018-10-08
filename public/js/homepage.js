@@ -13,6 +13,9 @@ if (localStorage.getItem("login_intro") === 'true') {
   document.getElementById("delete").remove();
 }
 
+var URLarr = window.location.href.split("/");
+var postURL = URLarr[0] + '//' + URLarr[2];
+
 //name update from token
 var token = localStorage.getItem("token");
 if (token) {
@@ -22,9 +25,29 @@ if (token) {
   document.getElementsByClassName("name")[0].innerHTML = payload.firstName + ' ' + payload.secondName;
 }
 
+function loadScript(url, callback) {
+    var script = document.createElement("script")
+    script.type = "text/javascript";
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == "loaded" ||
+          script.readyState == "complete") {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName("head")[0].appendChild(script);
+}
+
 function askForContent(tabName) {
-  var URLarr = window.location.href.split("/");
-  var postURL = URLarr[0] + '//' + URLarr[2];
 
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
@@ -33,7 +56,9 @@ function askForContent(tabName) {
     if (this.readyState === 4) {
       var status = xhr.getResponseHeader('status');
       if (status === 'ok') {
+
         document.getElementById('content').innerHTML = xhr.response;
+        loadScript('/' + tabName + '.js', () => {});
       } else {
         document.removeChild(document.documentElement);
         document.write(xhr.response);
