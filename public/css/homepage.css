@@ -13,7 +13,7 @@ html, body {
   text-align: right;
   height: 45px;
   width: 100%;
-  background-color: #5f7885;
+  background: linear-gradient(150deg,#78666c,#5F7885);
   margin: 0;
 }
 
@@ -86,10 +86,6 @@ html, body {
   left: 50%;
   top: 30%;
   transform: translate(-50%, -50%);
-}
-
-.fa::before {
-  padding-right: 20px;
 }
 
 .sidebarProperties {
