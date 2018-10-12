@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const SECRET = 'k^p^Fc-Cw$dd#S]';
 const ADMIN = {
   email: 'admin',
-  password: SHA256('smrecany1265').toString()
+  password: SHA256('adminpass').toString() //smrecany1265
 }
 
 var randomstring = require("randomstring");
@@ -15,7 +15,10 @@ var app = express();
 var mongoose = require('mongoose');
 
 var accountSchema = new mongoose.Schema({
-  loginData: String,
+  firstName: String,
+  secondName: String,
+  email: String,
+  password: String,
   role: String,
   cardUID: String
 }, {
@@ -27,7 +30,8 @@ var accounts = mongoose.model('accounts',accountSchema);
 var attendanceSchema = new mongoose.Schema({
   user_id: String,
   action: String,
-  time: String
+  time: String,
+  inserted_by: String
 }, {
   versionKey: false,
   collection: 'attendances'
@@ -46,17 +50,45 @@ app.use(express.static(__dirname + '/public/swg'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+function tokenGenerate(id, firstName, secondName, role) {
+  return jwt.sign({
+    firstName,
+    secondName,
+    role
+  }, SECRET).toString()
+}
+
+
 function verifyJWT(token) {
   var result;
   jwt.verify(token, SECRET, function(err, payload) {
     if (err) {
       result = null;
-    }else{
+    } else if ((((new Date).getTime() / 1000) - payload.iat) < 32460) {
       result = payload;
+    } else {
+      result = null;
     }
   });
   return result;
 }
+
+app.post('/refreshtoken', (req, res) => { //page asking for renew token
+  var token = verifyJWT(req.body.token);
+  if (!token) {
+    res.setHeader('status', 'bad token');
+    res.send();
+  } else {
+    res.setHeader('status', 'ok');
+    res.send({token: jwt.sign({
+        id: token.id,
+        firstName: token.firstName,
+        secondName: token.secondName,
+        role: token.role
+      }, SECRET).toString()
+    });
+  }
+});
 
 app.get('*', (req, res) => { //index rozstrelovacia stránka
   var token = verifyJWT(req.headers.token);
@@ -87,34 +119,53 @@ app.post('/loginverify', (req, res) => {
     email: req.body.email,
     password: SHA256(req.body.pass).toString()
   };
-  console.log(loginData);
-  if(loginData.toString() === ADMIN.toString()){
-    res.send({status: 100, token: jwt.sign({
-        id: 'admin',
-        firstName: 'Admin',
-        secondName: '',
-        role: 'admin'
-      }, SECRET).toString()
-    });
+  if(JSON.stringify(loginData) === JSON.stringify(ADMIN)){
+    res.setHeader('token', tokenGenerate('admin','','admin'));
+    res.setHeader('status', 'ok');
+    res.send();
     return
   }
   accounts.findOne(loginData).then((doc) => {
     if (!doc) {
-      return res.send({status: 101});
+      res.setHeader('status','Invalid Name or Password');
+      res.send();
+      return
     }
-    res.send({status: 100, token: jwt.sign({
-        id: doc._id,
-        firstName: doc.firstName,
-        secondName: doc.secondName,
-        role: doc.role
-      }, SECRET).toString()
-    });
-  }, (e) => {res.send({status: 102});
+    res.setHeader('token', tokenGenerate(doc.firstName,doc.secondName,doc.role));
+    res.setHeader('status', 'ok');
+    res.send();
+  }, (e) => {
+      res.setHeader('status', 'Unable to browse database');
+      res.send();
   });
 });
 
-app.post('/adduser', (req,res) => {
 
+
+app.post('/adduser', (req, res) => {
+  var token = verifyJWT(req.body.token);
+  if (!token) {
+    res.setHeader('status', 'bad token cannot add the new user');
+    res.send();
+  } else if (token.role === 'admin') {
+    var acc = new accounts({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      cardUID: req.body.cardUID,
+      password: 'undefined'
+    });
+    acc.save().then(() => {
+      res.setHeader('status', 'ok');
+      res.send();
+    }, (e) => {
+      res.setHeader('status', 'cannot add new user');
+      res.send();
+    });
+  } else {
+    res.setHeader('status', 'you have no permissions');
+    res.send();
+  }
 })
 
 
@@ -122,7 +173,8 @@ app.post('/cardattached', (req, res) => {
   if(req.body.cardUID.length === 8){
     accounts.findOne({cardUID : req.body.cardUID}).then((doc) => {
       if(!doc){
-        return res.send('could not find a user');
+        res.send('could not find a user');
+        return
       }
       var att = new attendance({
         user_id: doc._id,
@@ -130,7 +182,7 @@ app.post('/cardattached', (req, res) => {
         time: req.body.time
       });
       att.save().then(() => {
-        res.send('document inserted');
+        res.send('ok');
       }, (e) => {
         res.send('cannot instert document into attendance');
       });

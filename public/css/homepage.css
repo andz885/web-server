@@ -10,10 +10,11 @@ html, body {
 }
 
 .strip {
+  position: relative;
   text-align: right;
   height: 45px;
   width: 100%;
-  background: linear-gradient(150deg,#78666c,#5F7885);
+  background: linear-gradient(150deg, #78666c, #5F7885);
   margin: 0;
 }
 
@@ -34,33 +35,39 @@ html, body {
 }
 
 .stripRight {
-  display: inline-block;
-  margin: 0;
-  position: relative;
-  top: 40%;
-  right: 1%;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  height: 100%;
+  width: 110px;
 }
 
-.name {
-  text-align: center;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 20px;
-  color: white;
-  position: inherit;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.stripRight:hover {
+  background-color: #7c919c;
 }
 
-.logOut {
+.stripRight label {
+  cursor: pointer;
   margin-left: 5px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   color: #fff;
+  display: inline;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translate(0, -50%);
 }
 
-.logOut:hover {
-  color: #00ff9e;
+.stripRight img {
+  filter: invert(1);
+  display: inline;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  right: 74px;
+  transform: translate(0, -50%);
 }
 
 .page {
@@ -75,7 +82,7 @@ html, body {
 
 .user {
   position: relative;
-  height: 170px;
+  height: 155px;
   width: 100%;
   margin: 0;
 }
@@ -84,11 +91,34 @@ html, body {
   width: 50px;
   position: absolute;
   left: 50%;
-  top: 30%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+}
+
+.name {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  color: white;
+  position: inherit;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.border {
+  margin: 0;
+  width: 82%;
+  height: 2px;
+  border-bottom: 0.2px solid #8894a3;
+  position: absolute;
+  top: 92%;
+  left: 50%;
   transform: translate(-50%, -50%);
 }
 
 .sidebarProperties {
+  cursor: pointer;
   position: relative;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;

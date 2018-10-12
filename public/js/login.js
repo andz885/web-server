@@ -17,8 +17,7 @@ document.getElementById('login').onclick = function() {
   };
   var userString = JSON.stringify(user);
 
-  var url = window.location.href;
-  var URLarr = url.split("/");
+  var URLarr = window.location.href.split("/");
   var postURL = URLarr[0] + '//' + URLarr[2];
 
   var xhr = new XMLHttpRequest();
@@ -26,22 +25,14 @@ document.getElementById('login').onclick = function() {
 
   xhr.addEventListener("readystatechange", function() {
     if (this.readyState === 4) {
-      var resObj = JSON.parse(xhr.response);
-      console.log(xhr.response);
-
-      if (resObj.status === 102) {
-        document.getElementById("err_message").classList.toggle("classTwo");
-        document.getElementById("err_message").innerHTML = 'Unable to browse database';
-        console.log(resObj.error);
-
-      } else if (resObj.status === 101) {
-        document.getElementById("err_message").classList.toggle("classTwo");
-        document.getElementById("err_message").innerHTML = 'Invalid Name or Password';
-
-      } else if (resObj.status === 100) {
-        localStorage.setItem('token', resObj.token);
+      var status = xhr.getResponseHeader('status');
+      if (status === 'ok') {
+        localStorage.setItem('token', xhr.getResponseHeader('token'));
         localStorage.setItem('login_intro', 'true');
         window.location = postURL;
+      } else {
+        document.getElementById("err_message").classList.toggle("classTwo");
+        document.getElementById("err_message").innerHTML = status;
       }
     }
   });
