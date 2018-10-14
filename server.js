@@ -3,6 +3,8 @@ const port = process.env.PORT || 3000;
 const validator = require('validator');
 const SHA256 = require('crypto-js').SHA256;
 const jwt = require('jsonwebtoken');
+const EMAILNAME = 'servise.operator@vymyslenyemail.com';
+const EMAILPASS = 'jahoda123';
 const SECRET = 'k^p^Fc-Cw$dd#S]';
 const ADMIN = {
   email: 'admin',
@@ -13,10 +15,39 @@ var randomstring = require("randomstring");
 var bodyParser = require('body-parser');
 var app = express();
 var mongoose = require('mongoose');
+var favicon = require('serve-favicon');
+var nodemailer = require('nodemailer');
+
+// let transporter = nodemailer.createTransport({
+//   host: 'in-v3.mailjet.com',
+//   port: 587,
+//   secure: false,
+//   auth: {
+//     user: 'b66cfbf034498263ccab08af85a92075', // generated ethereal user
+//     pass: '43509372fea78b695a6d618578692314' // generated ethereal password
+//   },
+//   // tls: {
+//   //   rejectUnauthorized: false
+//   // }
+// });
+//
+// let mailOptions = {
+//   from: EMAILNAME, // sender address
+//   to: 'ing.adam.valent@gmail.com', // list of receivers
+//   subject: 'Hello', // Subject line
+//   text: 'Hello world?', // plain text body
+//   html: '<b>Hello world?</b>' // html body
+// };
+//
+// transporter.sendMail(mailOptions, (error, info) => {
+//   if (error) {
+//     return console.log(error);
+//   }
+// });
 
 var accountSchema = new mongoose.Schema({
   firstName: String,
-  secondName: String,
+  lastName: String,
   email: String,
   password: String,
   role: String,
@@ -25,7 +56,7 @@ var accountSchema = new mongoose.Schema({
   versionKey: false,
   collection: 'accounts'
 });
-var accounts = mongoose.model('accounts',accountSchema);
+var accounts = mongoose.model('accounts', accountSchema);
 
 var attendanceSchema = new mongoose.Schema({
   user_id: String,
@@ -36,24 +67,29 @@ var attendanceSchema = new mongoose.Schema({
   versionKey: false,
   collection: 'attendances'
 });
-var attendance = mongoose.model('attendances',attendanceSchema);
+var attendance = mongoose.model('attendances', attendanceSchema);
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/TomkoDB',{useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tomko', {
+  useNewUrlParser: true
+});
 
 app.set('view engine', 'html');
 app.set('views', __dirname + '/public/html');
 app.engine('html', require('ejs').renderFile);
 app.use(express.static(__dirname + '/public/css'));
 app.use(express.static(__dirname + '/public/js'));
-app.use(express.static(__dirname + '/public/swg'));
+app.use(express.static(__dirname + '/public/images'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
-function tokenGenerate(id, firstName, secondName, role) {
+function tokenGenerate(firstName, lastName, role) {
   return jwt.sign({
     firstName,
-    secondName,
+    lastName,
     role
   }, SECRET).toString()
 }
@@ -76,41 +112,35 @@ function verifyJWT(token) {
 app.post('/refreshtoken', (req, res) => { //page asking for renew token
   var token = verifyJWT(req.body.token);
   if (!token) {
-    res.setHeader('status', 'bad token');
+    res.setHeader('x-status', 'bad token');
     res.send();
   } else {
-    res.setHeader('status', 'ok');
-    res.send({token: jwt.sign({
-        id: token.id,
-        firstName: token.firstName,
-        secondName: token.secondName,
-        role: token.role
-      }, SECRET).toString()
-    });
+    res.setHeader('x-status', 'ok');
+    res.setHeader('token', tokenGenerate(token.firstName, token.lastName, token.role));
+    res.send();
   }
 });
 
 app.get('*', (req, res) => { //index rozstrelovacia stránka
   var token = verifyJWT(req.headers.token);
-  if(!token){
-      res.render('form.html');
-  }else {
-    var id = req.params[0].replace('/','') + '.html';
-    res.setHeader('status', 'ok');
-    res.render(id);
+  if (!token) {
+    res.render('form.html');
+  } else {
+    var tabPage = req.params[0].replace('/', '') + '.html';
+    res.setHeader('x-status', 'ok');
+    res.render(tabPage);
   }
 
 });
 
-
 app.post('/form', (req, res) => {
-var token = verifyJWT(req.body.token);
-if(!token){
+  var token = verifyJWT(req.body.token);
+  if (!token) {
     res.render('login.html');
     return
-}else {
-  res.render('homepage.html');
-}
+  } else {
+    res.render('homepage.html');
+  }
 });
 
 
@@ -119,24 +149,24 @@ app.post('/loginverify', (req, res) => {
     email: req.body.email,
     password: SHA256(req.body.pass).toString()
   };
-  if(JSON.stringify(loginData) === JSON.stringify(ADMIN)){
-    res.setHeader('token', tokenGenerate('admin','','admin'));
-    res.setHeader('status', 'ok');
+  if (JSON.stringify(loginData) === JSON.stringify(ADMIN)) {
+    res.setHeader('token', tokenGenerate('admin', '', 'admin'));
+    res.setHeader('x-status', 'ok');
     res.send();
     return
   }
   accounts.findOne(loginData).then((doc) => {
     if (!doc) {
-      res.setHeader('status','Invalid Name or Password');
+      res.setHeader('x-status', 'Invalid Name or Password');
       res.send();
       return
     }
-    res.setHeader('token', tokenGenerate(doc.firstName,doc.secondName,doc.role));
-    res.setHeader('status', 'ok');
+    res.setHeader('token', tokenGenerate(doc.firstName, doc.lastName, doc.role));
+    res.setHeader('x-status', 'ok');
     res.send();
   }, (e) => {
-      res.setHeader('status', 'Unable to browse database');
-      res.send();
+    res.setHeader('x-status', 'Unable to browse database');
+    res.send();
   });
 });
 
@@ -145,7 +175,7 @@ app.post('/loginverify', (req, res) => {
 app.post('/adduser', (req, res) => {
   var token = verifyJWT(req.body.token);
   if (!token) {
-    res.setHeader('status', 'bad token cannot add the new user');
+    res.setHeader('x-status', 'bad token, cannot add the new user');
     res.send();
   } else if (token.role === 'admin') {
     var acc = new accounts({
@@ -156,23 +186,25 @@ app.post('/adduser', (req, res) => {
       password: 'undefined'
     });
     acc.save().then(() => {
-      res.setHeader('status', 'ok');
+      res.setHeader('x-status', 'ok');
       res.send();
     }, (e) => {
-      res.setHeader('status', 'cannot add new user');
+      res.setHeader('x-status', 'cannot add new user');
       res.send();
     });
   } else {
-    res.setHeader('status', 'you have no permissions');
+    res.setHeader('x-status', 'you have no permissions');
     res.send();
   }
 })
 
 
 app.post('/cardattached', (req, res) => {
-  if(req.body.cardUID.length === 8){
-    accounts.findOne({cardUID : req.body.cardUID}).then((doc) => {
-      if(!doc){
+  if (req.body.cardUID.length === 8) {
+    accounts.findOne({
+      cardUID: req.body.cardUID
+    }).then((doc) => {
+      if (!doc) {
         res.send('could not find a user');
         return
       }
@@ -189,85 +221,10 @@ app.post('/cardattached', (req, res) => {
     }, (e) => {
       res.send('cannot browse accounts database');
     });
-} else {
-  res.send('invalid card ID');
-}
+  } else {
+    res.send('invalid card ID');
+  }
 });
 
 
 app.listen(port);
-
-//req.headers.login_intro
-//app.set('view engine', 'ejs');
-// app.set('view engine', 'hbs');
-
-
-
-// MongoClient.connect('mongodb://localhost:27017/server', (err, client) => {
-//   if (err) {
-//     return console.log('Unable to connect to MongoDB server')
-//   }
-//   console.log('Connected to MongoDB server');
-//   const db = client.db('server');
-//
-//   db.collection('acc').insertOne({
-//     user: '{"name":"xvalen22","pass":"123456"}',
-//     permissions: 'admin',
-//     since: new Date
-//   }, (err, result) => {
-//     if (err) {
-//       return console.log('Unable to insert todo', err);
-//     }
-//
-//     console.log(JSON.stringify(result.ops, undefined, 2));
-//   });
-//   client.close();
-// });
-
-// hbs.registerPartials(__dirname + '/views/partials');
-// hbs.registerHelper('getCurrentYear', () => {
-//   return new Date().getFullYear();
-// });
-//
-// hbs.registerHelper('screamIt', (text) => {
-//   return text.toUpperCase();
-// });
-//
-// app.get('/', (req, res) => {
-//   res.render('home.hbs', {
-//     pageTitle: 'Hello Express',
-//     welcomeMessage: 'Welcome on my page!'
-//   });
-// });
-//
-// app.get('/picture', (req, res) => {
-//   res.render('picture.hbs', {
-//     pageTitle: 'Some picture:'
-//   });
-// });
-//
-// app.get('/login.html', (req, res) => {
-//   res.render('login.html');
-// });
-
-
-
-
-// app.post('/tokenverify', (req, res) => {
-//   if (Number(req.body.token) === key.token) { // je prijatý token v databáze tokenov?
-//     if (key.reqSign === false) {
-//       console.log('case 100');
-//       key.reqSign = true;
-//       res.header({status: 100});
-//       res.render('attendance.html');
-//     } else {
-//       console.log('case 101');
-//       res.header({status: 101});
-//       res.render('attendance.html');
-//     }
-//   } else {
-//     console.log('case 102');
-//     res.header({status: 102});
-//     res.send('');
-//   }
-// });

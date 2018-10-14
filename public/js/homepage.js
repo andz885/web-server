@@ -26,7 +26,7 @@ function updateUserName() {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     var payload = JSON.parse(window.atob(base64));
-    document.getElementsByClassName("name")[0].innerHTML = payload.firstName + ' ' + payload.secondName;
+    document.getElementsByClassName("name")[0].innerHTML = payload.firstName + ' ' + payload.lastName;
   }
 }
 
@@ -38,10 +38,9 @@ function refreshLogOutTimer() {
 
   xhr.addEventListener("readystatechange", function() {
     if (this.readyState === 4) {
-      var status = xhr.getResponseHeader('status');
+      var status = xhr.getResponseHeader('x-status');
       if (status === 'ok') {
-        var resObj = JSON.parse(xhr.response);
-        localStorage.setItem('token', resObj.token);
+        localStorage.setItem('token',xhr.getResponseHeader('token'));
       } else {
         localStorage.removeItem('token');
         window.location = postURL;
@@ -92,7 +91,7 @@ function askForContent(tabName) {
 
   xhr.addEventListener("readystatechange", function() {
     if (this.readyState === 4) {
-      var status = xhr.getResponseHeader('status');
+      var status = xhr.getResponseHeader('x-status');
       if (status === 'ok') {
         document.getElementById('content').innerHTML = xhr.response;
         loadScript('/' + tabName + '.js', () => {});

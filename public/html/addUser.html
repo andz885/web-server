@@ -131,20 +131,37 @@ input:checked + .slider:before {
   width: 98px;
 }
 
+.successStyle {
+  font-family: Roboto;
+  font-weight: 100;
+  font-size: 30px;
+  margin: 60px auto;
+}
+
+.successStyle p{
+  font-family: Roboto;
+  font-weight: 100;
+  font-size: 18px;
+  margin: 10px auto;
+}
+
 </style>
 
 <div class="center">
   <div class="spacer"> </div>
-  <input id="firstName" type="text" placeholder="First Name" autocomplete="off">
-  <input id="lastName" type="text" placeholder="Last Name" autocomplete="off">
-  <input id="email" type="text" placeholder="Email" autocomplete="off">
-  <input id="cardUID" type="text" placeholder="Card UID" autocomplete="off">
-  <div class="toggle">
-    <li>Administrator:</li>
-    <label class="switch">
-      <input id="role" type="checkbox">
-      <span class="slider round"></span>
-    </label>
+  <div id="deleteAfterSuccess">
+    <input id="firstName" type="text" placeholder="First Name" autocomplete="off">
+    <input id="lastName" type="text" placeholder="Last Name" autocomplete="off">
+    <input id="email" type="text" placeholder="Email" autocomplete="off">
+    <input id="cardUID" type="text" placeholder="Card UID" autocomplete="off">
+    <div class="toggle">
+      <li>Administrator:</li>
+      <label class="switch">
+        <input id="role" type="checkbox">
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <div type="button" class="addButton"><span>Submit</span></div>
+    <div id="statusDiv"></div>
   </div>
-  <div type="button" class="addButton"><span>Submit</span></div>
 </div>

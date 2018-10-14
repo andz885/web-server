@@ -25,7 +25,7 @@ document.getElementById('login').onclick = function() {
 
   xhr.addEventListener("readystatechange", function() {
     if (this.readyState === 4) {
-      var status = xhr.getResponseHeader('status');
+      var status = xhr.getResponseHeader('x-status');
       if (status === 'ok') {
         localStorage.setItem('token', xhr.getResponseHeader('token'));
         localStorage.setItem('login_intro', 'true');

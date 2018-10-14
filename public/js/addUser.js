@@ -14,8 +14,16 @@ function isValidEmail(email) { //email validation
 function isValidName(string) {
   if (!string) return false;
   if ((string.length < 3) || (string.length > 20)) return false;
+  var slovakAlphabet = 'aáäbcčdďeéfghiíjklĺľmnňoóôpqrŕsštťuúvwxyýzž';
   for (var i = 0; i < string.length; i++) {
-    if (!(isNaN(string[i]))) return false;
+    var found = false;
+    for (var d = 0; d < slovakAlphabet.length; d++) {
+      if (string[i] === slovakAlphabet[d] || string[i] === slovakAlphabet[d].toUpperCase()) {
+        found = true;
+        break
+      };
+    }
+    if (found === false) return false;
   }
   return true;
 }
@@ -31,7 +39,7 @@ function isValidCardUID(string) {
 }
 
 document.getElementsByClassName('addButton')[0].onclick = function() {
-  var objectToSend = {
+  var objToSend = {
     token: localStorage.getItem("token"),
     firstName: firstLetterToUpperCase(document.getElementById('firstName').value.trim()),
     lastName: firstLetterToUpperCase(document.getElementById('lastName').value.trim()),
@@ -39,28 +47,51 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
     cardUID: document.getElementById('cardUID').value.toUpperCase(),
     role: document.getElementById('role').checked
   }
-  console.log(objectToSend);
 
   var okStatus = true;
 
-  if (!(isValidName(objectToSend.firstName))) { //= 'invalid first name';
+  if (!(isValidName(objToSend.firstName))) { //= 'invalid first name';
     document.getElementById("firstName").style.background = "#ff000036";
     okStatus = false;
   } else document.getElementById("firstName").style.background = "white";
 
-  if (!(isValidName(objectToSend.lastName))) { //= 'invalid last name';
+  if (!(isValidName(objToSend.lastName))) { //= 'invalid last name';
     document.getElementById("lastName").style.background = "#ff000036";
     okStatus = false;
   } else document.getElementById("lastName").style.background = "white";
 
-  if (!(isValidEmail(objectToSend.email))) { //= 'invalid email';
+  if (!(isValidEmail(objToSend.email))) { //= 'invalid email';
     document.getElementById("email").style.background = "#ff000036";
     okStatus = false;
   } else document.getElementById("email").style.background = "white";
 
-  if (!(isValidCardUID(objectToSend.cardUID))) { //= 'invalid card UID';
+  if (!(isValidCardUID(objToSend.cardUID))) { //= 'invalid card UID';
     document.getElementById("cardUID").style.background = "#ff000036";
     okStatus = false;
   } else document.getElementById("cardUID").style.background = "white";
+
+  if (okStatus === true) {
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function() {
+      if (this.readyState === 4) {
+        var status = xhr.getResponseHeader('x-status');
+        if (status === 'ok') {
+          document.getElementById('deleteAfterSuccess').classList = 'successStyle';
+          document.getElementById('deleteAfterSuccess').innerHTML = `${objToSend.role ? 'administrator' : 'user'}
+          ${objToSend.firstName} ${objToSend.lastName}
+          was successfully added <p> link for creating password was sent to: ${objToSend.email}<p>`;
+        } else {
+          document.getElementById('statusDiv').innerHTML = status;
+        }
+      }
+    });
+
+    xhr.open("POST", postURL + '/adduser');
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.send(JSON.stringify(objToSend));
+  }
 
 }
