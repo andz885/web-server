@@ -76,6 +76,7 @@ app.use(function(req, res, next) { //allow only ssl comunication
       yourHost: req.headers.host
     });
   }
+  
   // allow the request to continue
   next();
 });
