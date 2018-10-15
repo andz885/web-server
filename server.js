@@ -71,6 +71,8 @@ app.use(function(req, res, next) { //allow only ssl comunication
   if (req.protocol !== 'https' && req.headers.host !== 'localhost:3000') {
     return res.status(403).send({
       message: 'SSL required'
+      yourProtocol: req.protocol,
+      yourHost: req.headers.host
     });
   }
   // allow the request to continue
