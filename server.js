@@ -72,6 +72,7 @@ app.use(function(req, res, next) { //allow only ssl comunication
     return res.status(403).send({
       message: 'SSL required',
       yourProtocol: req.protocol,
+      yourProtocolAggain: req.connection.encrypted,
       yourHost: req.headers.host
     });
   }
@@ -150,6 +151,7 @@ app.get('/newpassowrd', (req, res) => {
 });
 
 app.get('*', (req, res) => { //index rozstrelovacia stránka
+  console.log(req.encrypted);
   var token = verifyJWT(req.headers.token);
   if (!token) {
     res.render('form.html');
