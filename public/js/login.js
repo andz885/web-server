@@ -6,6 +6,13 @@ document.getElementById("passwordEnter").addEventListener("keyup", function(even
   }
 });
 
+document.getElementById("emailEnter").addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("login").click();
+  }
+});
+
 //po kliknutí na login
 document.getElementById('login').onclick = function() {
 

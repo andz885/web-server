@@ -38,7 +38,23 @@ function isValidCardUID(string) {
   return true;
 }
 
+//enabling adding user via enter from all <inputs>
+{
+  inputsIds = ["firstName", "lastName", "email", "cardUID"];
+  for (var i = 0; i < 4; i++) {
+    document.getElementById(inputsIds[i]).addEventListener("keyup", function(event) {
+      event.preventDefault();
+      if (event.keyCode === 13) {
+        document.getElementsByClassName("addButton")[0].click();
+      }
+    });
+  }
+}
 document.getElementsByClassName('addButton')[0].onclick = function() {
+
+  document.getElementById('statusDiv').innerHTML = '';
+  document.getElementById("statusDiv").classList.remove("fadeClass");
+
   var objToSend = {
     token: localStorage.getItem("token"),
     firstName: firstLetterToUpperCase(document.getElementById('firstName').value.trim()),
@@ -84,6 +100,7 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
           was successfully added <p> link for creating password was sent to: ${objToSend.email}<p>`;
         } else {
           document.getElementById('statusDiv').innerHTML = status;
+          document.getElementById("statusDiv").classList.add("fadeClass");
         }
       }
     });

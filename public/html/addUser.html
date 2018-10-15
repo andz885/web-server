@@ -27,6 +27,10 @@ height: 30px;
   text-transform:capitalize;
 }
 
+#cardUID {
+  text-transform: uppercase;
+}
+
 .switch {
   position: relative;
   top: 6px;
@@ -145,6 +149,21 @@ input:checked + .slider:before {
   margin: 10px auto;
 }
 
+.statusDiv {
+  font-family: Quicksand;
+  color: #aa0404;
+  font-size: 15px;
+  margin-top: 30px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.fadeClass{
+  opacity: 1;
+  visibility: visible;
+  transition: all 600ms;
+}
+
 </style>
 
 <div class="center">
@@ -162,6 +181,6 @@ input:checked + .slider:before {
       </label>
     </div>
     <div type="button" class="addButton"><span>Submit</span></div>
-    <div id="statusDiv"></div>
+    <div id="statusDiv" class="statusDiv"></div>
   </div>
 </div>

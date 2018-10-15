@@ -109,8 +109,12 @@ function askForContent(tabName) {
 
   xhr.send();
 }
+//refresh page by clicking on TOMKO
+document.getElementsByClassName('logo')[0].onclick = () => {
+  window.location = postURL;
+}
 
-//Log Out button
+//Log Out button function
 document.getElementsByClassName('stripRight')[0].onclick = () => {
   localStorage.removeItem('token');
   window.location = postURL;

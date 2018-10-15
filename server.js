@@ -3,8 +3,7 @@ const port = process.env.PORT || 3000;
 const validator = require('validator');
 const SHA256 = require('crypto-js').SHA256;
 const jwt = require('jsonwebtoken');
-const EMAILNAME = 'servise.operator@vymyslenyemail.com';
-const EMAILPASS = 'jahoda123';
+const EMAIL_HTML = '<div style="text-align:center; margin-top:30px; margin-bottom:0px;"><a style="background:#3C5D6E; font-family:sans-serif; text-decoration:none; font-size:16px; color:white; padding:10px 15px; border-radius:2px;" <placeForURI> target="_blank">Click Here</a></div><div style="margin:20px auto; font-family:system-ui; font-weight:100; font-size:20px; text-align:center;">to create your new password</div>';
 const SECRET = 'k^p^Fc-Cw$dd#S]';
 const ADMIN = {
   email: 'admin',
@@ -18,32 +17,15 @@ var mongoose = require('mongoose');
 var favicon = require('serve-favicon');
 var nodemailer = require('nodemailer');
 
-// let transporter = nodemailer.createTransport({
-//   host: 'in-v3.mailjet.com',
-//   port: 587,
-//   secure: false,
-//   auth: {
-//     user: 'b66cfbf034498263ccab08af85a92075', // generated ethereal user
-//     pass: '43509372fea78b695a6d618578692314' // generated ethereal password
-//   },
-//   // tls: {
-//   //   rejectUnauthorized: false
-//   // }
-// });
-//
-// let mailOptions = {
-//   from: EMAILNAME, // sender address
-//   to: 'ing.adam.valent@gmail.com', // list of receivers
-//   subject: 'Hello', // Subject line
-//   text: 'Hello world?', // plain text body
-//   html: '<b>Hello world?</b>' // html body
-// };
-//
-// transporter.sendMail(mailOptions, (error, info) => {
-//   if (error) {
-//     return console.log(error);
-//   }
-// });
+let transporter = nodemailer.createTransport({
+  host: 'smtp.zoho.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: 'no-reply@atsy.space',
+    pass: 'HIraOZnpRLx2@'
+  },
+});
 
 var accountSchema = new mongoose.Schema({
   firstName: String,
@@ -84,12 +66,36 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(favicon(__dirname + '/public/images/favicon.ico'));
+app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
+app.use(function(req, res, next) { //allow only ssl comunication
+  if (req.protocol !== 'https' && req.headers.host !== 'localhost:3000') {
+    return res.status(403).send({
+      message: 'SSL required'
+    });
+  }
+  // allow the request to continue
+  next();
+});
 
-function tokenGenerate(firstName, lastName, role) {
+function htmlEmailGenerate(uri) {
+  return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
+}
+
+function sendEmail(senderName, reciverEmail, subject, html) {
+  let mailOptions = {
+    from: `${senderName} <no-reply@atsy.space>`,
+    to: reciverEmail,
+    subject,
+    html
+  };
+  transporter.sendMail(mailOptions, (error, info) => {});
+}
+
+function tokenGenerate(firstName, lastName, email, role) {
   return jwt.sign({
     firstName,
     lastName,
+    email,
     role
   }, SECRET).toString()
 }
@@ -116,8 +122,28 @@ app.post('/refreshtoken', (req, res) => { //page asking for renew token
     res.send();
   } else {
     res.setHeader('x-status', 'ok');
-    res.setHeader('token', tokenGenerate(token.firstName, token.lastName, token.role));
+    res.setHeader('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
     res.send();
+  }
+});
+
+app.get('/newpassowrd', (req, res) => {
+  var token = verifyJWT(req.query.token);
+  if (!token) {
+    res.send('passedToken');
+  } else {
+    accounts.findOne({
+      email: token.email,
+      password: 'undefined'
+    }).then((doc) => {
+      if (!doc) {
+        res.send('no database record');
+        return
+      }
+      res.send('you can create new password here');
+    }, (e) => {
+      res.send('Unable to browse database');
+    });
   }
 });
 
@@ -150,7 +176,7 @@ app.post('/loginverify', (req, res) => {
     password: SHA256(req.body.pass).toString()
   };
   if (JSON.stringify(loginData) === JSON.stringify(ADMIN)) {
-    res.setHeader('token', tokenGenerate('admin', '', 'admin'));
+    res.setHeader('token', tokenGenerate('admin', '', '', 'true'));
     res.setHeader('x-status', 'ok');
     res.send();
     return
@@ -161,7 +187,7 @@ app.post('/loginverify', (req, res) => {
       res.send();
       return
     }
-    res.setHeader('token', tokenGenerate(doc.firstName, doc.lastName, doc.role));
+    res.setHeader('token', tokenGenerate(doc.firstName, doc.lastName, doc.email, doc.role));
     res.setHeader('x-status', 'ok');
     res.send();
   }, (e) => {
@@ -177,20 +203,35 @@ app.post('/adduser', (req, res) => {
   if (!token) {
     res.setHeader('x-status', 'bad token, cannot add the new user');
     res.send();
-  } else if (token.role === 'admin') {
-    var acc = new accounts({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      cardUID: req.body.cardUID,
-      password: 'undefined'
-    });
-    acc.save().then(() => {
-      res.setHeader('x-status', 'ok');
-      res.send();
+  } else if (token.role === 'true') {
+    accounts.findOne({
+      email: req.body.email
+    }).then((doc) => {
+      if (!doc) {
+        var acc = new accounts({
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          email: req.body.email,
+          cardUID: req.body.cardUID,
+          password: 'undefined',
+          role: req.body.role
+        });
+        acc.save().then(() => {
+          res.setHeader('x-status', 'ok');
+          res.send();
+          let html = htmlEmailGenerate(req.protocol + '://' + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
+          console.log(html);
+          sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
+        }, (e) => {
+          res.setHeader('x-status', 'database problem, cannot add new user');
+          res.send();
+        });
+      } else {
+        res.setHeader('x-status', 'Email is already used');
+        res.send();
+      }
     }, (e) => {
-      res.setHeader('x-status', 'cannot add new user');
-      res.send();
+
     });
   } else {
     res.setHeader('x-status', 'you have no permissions');
