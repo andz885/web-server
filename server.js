@@ -64,13 +64,12 @@ app.use(express.static(__dirname + '/public/css'));
 app.use(express.static(__dirname + '/public/js'));
 app.use(express.static(__dirname + '/public/images'));
 app.use(bodyParser.json());
-app.use(enforce.HTTPS());
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
-
+app.use(enforce.HTTPS());
+app.use(enforce.HTTPS({ trustXForwardedHostHeader: true }));
 
 function htmlEmailGenerate(uri) {
   return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
@@ -215,7 +214,7 @@ app.post('/adduser', (req, res) => {
         acc.save().then(() => {
           res.setHeader('x-status', 'ok');
           res.send();
-          let html = htmlEmailGenerate('https://' + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
+          let html = htmlEmailGenerate(req.protocol + '://' + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
           console.log(html);
           sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
         }, (e) => {
