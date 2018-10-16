@@ -16,7 +16,6 @@ var app = express();
 var mongoose = require('mongoose');
 var favicon = require('serve-favicon');
 var nodemailer = require('nodemailer');
-var enforce = require('express-sslify');
 
 let transporter = nodemailer.createTransport({
   host: 'smtp.zoho.com',
@@ -68,8 +67,19 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
-app.use(enforce.HTTPS());
-app.use(enforce.HTTPS({ trustXForwardedHostHeader: true }));
+app.use(function(req, res, next) { //allow only ssl comunication
+  if (req.protocol !== 'https' && req.headers.host !== 'localhost:3000') {
+    return res.status(403).send({
+      message: 'SSL required',
+      yourProtocol: req.protocol,
+      yourProtocolAggain: req.connection.encrypted,
+      yourHost: req.headers.host
+    });
+  }
+
+  // allow the request to continue
+  next();
+});
 
 function htmlEmailGenerate(uri) {
   return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
