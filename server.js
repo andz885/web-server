@@ -16,7 +16,7 @@ var app = express();
 var mongoose = require('mongoose');
 var favicon = require('serve-favicon');
 var nodemailer = require('nodemailer');
-var forceSSL = require('express-force-ssl');
+var enforce = require('express-sslify');
 
 let transporter = nodemailer.createTransport({
   host: 'smtp.zoho.com',
@@ -68,7 +68,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
-app.use(forceSSL);
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 function htmlEmailGenerate(uri) {
   return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
@@ -141,7 +141,6 @@ app.get('/newpassowrd', (req, res) => {
 });
 
 app.get('*', (req, res) => { //index rozstrelovacia stránka
-  console.log(req.encrypted);
   var token = verifyJWT(req.headers.token);
   if (!token) {
     res.render('form.html');
@@ -213,7 +212,7 @@ app.post('/adduser', (req, res) => {
         acc.save().then(() => {
           res.setHeader('x-status', 'ok');
           res.send();
-          let html = htmlEmailGenerate('https://' + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
+          let html = htmlEmailGenerate(req.protocol + '://' + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
           console.log(html);
           sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
         }, (e) => {
