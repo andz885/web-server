@@ -19,7 +19,6 @@ html, body {
 }
 
 .logo {
-  cursor: pointer;
   margin: 0;
   float: left;
   position: relative;
@@ -33,6 +32,10 @@ html, body {
 
 .logo o {
   color: #104b9cd9;
+}
+
+.logo label {
+  cursor: pointer;
 }
 
 .stripRight {

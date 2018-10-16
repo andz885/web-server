@@ -16,6 +16,7 @@ var app = express();
 var mongoose = require('mongoose');
 var favicon = require('serve-favicon');
 var nodemailer = require('nodemailer');
+var forceSSL = require('express-force-ssl');
 
 let transporter = nodemailer.createTransport({
   host: 'smtp.zoho.com',
@@ -67,19 +68,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
-app.use(function(req, res, next) { //allow only ssl comunication
-  if (req.protocol !== 'https' && req.headers.host !== 'localhost:3000') {
-    return res.status(403).send({
-      message: 'SSL required',
-      yourProtocol: req.protocol,
-      yourProtocolAggain: req.connection.encrypted,
-      yourHost: req.headers.host
-    });
-  }
-
-  // allow the request to continue
-  next();
-});
+app.use(forceSSL);
 
 function htmlEmailGenerate(uri) {
   return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
@@ -224,7 +213,7 @@ app.post('/adduser', (req, res) => {
         acc.save().then(() => {
           res.setHeader('x-status', 'ok');
           res.send();
-          let html = htmlEmailGenerate(req.protocol + '://' + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
+          let html = htmlEmailGenerate('https://' + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
           console.log(html);
           sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
         }, (e) => {
