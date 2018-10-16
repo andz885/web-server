@@ -57,6 +57,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tomko', {
   useNewUrlParser: true
 });
 
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 app.set('view engine', 'html');
 app.set('views', __dirname + '/public/html');
 app.engine('html', require('ejs').renderFile);
@@ -68,7 +69,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 function htmlEmailGenerate(uri) {
   return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
