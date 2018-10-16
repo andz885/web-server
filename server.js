@@ -65,6 +65,7 @@ app.use(express.static(__dirname + '/public/js'));
 app.use(express.static(__dirname + '/public/images'));
 app.use(bodyParser.json());
 app.use(enforce.HTTPS());
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
