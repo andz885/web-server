@@ -39,7 +39,7 @@ function isValidCardUID(string) {
 }
 
 //enabling adding user via enter from all <inputs>
-{
+() => {
   inputsIds = ["firstName", "lastName", "email", "cardUID"];
   for (var i = 0; i < 4; i++) {
     document.getElementById(inputsIds[i]).addEventListener("keyup", function(event) {
@@ -50,8 +50,8 @@ function isValidCardUID(string) {
     });
   }
 }
-document.getElementsByClassName('addButton')[0].onclick = function() {
 
+document.getElementsByClassName('addButton')[0].onclick = function() {
   document.getElementById('statusDiv').innerHTML = '';
   document.getElementById("statusDiv").classList.remove("fadeClass");
 
@@ -89,7 +89,6 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
   if (okStatus === true) {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-
     xhr.addEventListener("readystatechange", function() {
       if (this.readyState === 4) {
         var status = xhr.getResponseHeader('x-status');
@@ -98,17 +97,16 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
           document.getElementById('deleteAfterSuccess').innerHTML = `${objToSend.role ? 'administrator' : 'user'}
           ${objToSend.firstName} ${objToSend.lastName}
           was successfully added <p> link for creating password was sent to: ${objToSend.email}<p>`;
+          console.log(xhr.getResponseHeader('messageID'));
         } else {
           document.getElementById('statusDiv').innerHTML = status;
           document.getElementById("statusDiv").classList.add("fadeClass");
         }
       }
     });
-
     xhr.open("POST", postURL + '/adduser');
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("cache-control", "no-cache");
     xhr.send(JSON.stringify(objToSend));
   }
-
 }

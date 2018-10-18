@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<style>
+
+  @import url('https://fonts.googleapis.com/css?family=Roboto:100,200,300,400');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(150deg,#2a6163,#7b4752);
+  overflow: hidden;
+}
+
+.card {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 40px;
+  width: 274px;
+  height: 210px;
+  background: linear-gradient(150deg,#d2c4c7,#c9e6e7);
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.newCard {
+  width: 460px;
+  padding: 0 20px;
+  height: 140px;
+}
+
+.card > * {
+    display: block;
+    margin-top: 10px;
+}
+
+.card > *:first-child {
+    margin-top: 0px;
+    margin-bottom: 25px;
+}
+
+.card h1{
+  font-weight: 100;
+  text-align: center;
+  font-size: 29px;
+}
+
+.card button[type=button] {
+  width: 100%;
+  display: block;
+  position: relative;
+  text-align: center;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  height: 40px;
+  padding: 0 8px;
+}
+
+.card input[type=text], input[type=secret] {
+  text-security: disc;
+  -webkit-text-security: disc;
+  height: 44px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 0px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  /* border-radius: 2px; */
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+p {
+  width: 200px;
+  position: absolute;
+  bottom: 0px;
+  left: calc(100% / 2);
+  transform: translate(-50%, 0);
+  text-align: center;
+  color: #aa0404;
+  font-size: 14px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.fadeClass{
+  opacity: 1;
+  visibility: visible;
+  transition: all 600ms;
+}
+
+.card input[type=text]:hover, input[type=password]:hover {
+  border: 1px solid #b9b9b9;
+  border-top: 1px solid #a0a0a0;
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+
+.sumbit {
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1);
+  background-color: #336591;
+  border-radius: 2px;
+}
+
+.sumbit:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #3977ac;
+}
+
+.card button[type=button]:active {
+  width: calc(100% - 2px);
+  height: 38px;
+  margin-left:1px;
+  margin-right: 1px;
+  margin-top: 11px;
+  margin-bottom: 1px;
+  position: relative;
+  align: center;
+  text-align: center;
+}
+
+</style>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Tomko</title>
+</head>
+
+<body>
+  <div id="card" class="card">
+    <h1>Create new password</h1>
+    <input id="pass" type="secret" placeholder="Password" name="name0">
+    <input id="passConf" type="secret" placeholder="Confirm passord" name="name1">
+    <button type="button" id="sumbit" class="sumbit">Sumbit</button>
+    <p id="err_message"></p>
+  </div>
+</body>
+
+<script>
+//spustenie submitu aj enterom z pass inputu
+document.getElementById("pass").addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("sumbit").click();
+  }
+});
+//spustenie submitu aj enterom z passConf inputu
+document.getElementById("passConf").addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("sumbit").click();
+  }
+});
+  document.getElementById('sumbit').onclick = function() {
+    document.getElementById("err_message").innerHTML = '';
+    document.getElementById("err_message").classList.remove("fadeClass");
+    var pass = document.getElementById("pass").value;
+    var passConf = document.getElementById("passConf").value;
+    if (pass !== passConf) {
+      setTimeout(() => {
+        document.getElementById("err_message").classList.add("fadeClass");
+        document.getElementById("err_message").innerHTML = 'Passwords do not match';
+      }, 100);
+      return
+    }
+    if (pass.length < 8) {
+      setTimeout(() => {
+        document.getElementById("err_message").classList.add("fadeClass");
+        document.getElementById("err_message").innerHTML = 'Use at least 8 characters';
+      }, 100);
+      return
+    }
+    if (pass.length > 20) {
+      setTimeout(() => {
+        document.getElementById("err_message").classList.add("fadeClass");
+        document.getElementById("err_message").innerHTML = 'Use maximum 20 characters';
+      }, 100);
+      return
+    }
+
+    var url = new URL(document.URL);
+    var stringToSend = {
+      token: url.searchParams.get("token"),
+      pass
+    };
+
+    var URLarr = window.location.href.split("/");
+    var postURL = URLarr[0] + '//' + URLarr[2];
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function() {
+      if (this.readyState === 4) {
+        var status = xhr.getResponseHeader('x-status');
+        if (status === 'ok') {
+          document.getElementById("card").classList.toggle("newCard");
+          var htmlString = '<div style = "margin:25px auto;font-family: system-ui;font-weight: 100;font-size: 20px;text-align: center;">  new password sucessfully created, you can Log in now</div><div style="text-align:center; margin-top: 35px; margin-bottom: 0px; ">  <a  style="  background:#3C5D6E;  font-family: sans-serif;  text-decoration: none;  font-size: 16px;  color: white;  padding:10px 15px;  border-radius:2px;"  <placeForURI> >Login</a> </div>';
+          document.getElementById("card").innerHTML = htmlString.replace('<placeForURI>',`href="${postURL}"`);
+        } else {
+          document.getElementById("err_message").classList.add("fadeClass");
+          document.getElementById("err_message").innerHTML = status;
+        }
+      }
+    });
+    xhr.open("POST", postURL + '/addpassword');
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.send(JSON.stringify(stringToSend));
+  }
+</script>
+
+</html>

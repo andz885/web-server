@@ -25,8 +25,11 @@ function updateUserName() {
   if (token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var payload = JSON.parse(window.atob(base64));
-    document.getElementsByClassName("name")[0].innerHTML = payload.firstName + ' ' + payload.lastName;
+    var payload = decodeURIComponent(Array.prototype.map.call(atob(base64), function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    }).join(''));
+    var decodedPayload = JSON.parse(payload);
+    document.getElementsByClassName("name")[0].innerHTML = decodedPayload.firstName + ' ' + decodedPayload.lastName;
   }
 }
 
@@ -40,7 +43,7 @@ function refreshLogOutTimer() {
     if (this.readyState === 4) {
       var status = xhr.getResponseHeader('x-status');
       if (status === 'ok') {
-        localStorage.setItem('token',xhr.getResponseHeader('token'));
+        localStorage.setItem('token', xhr.getResponseHeader('token'));
       } else {
         localStorage.removeItem('token');
         window.location = postURL;
@@ -51,7 +54,9 @@ function refreshLogOutTimer() {
   xhr.open("POST", postURL + '/refreshtoken');
   xhr.setRequestHeader("content-type", "application/json");
   xhr.setRequestHeader("cache-control", "no-cache");
-  xhr.send(JSON.stringify({token}));
+  xhr.send(JSON.stringify({
+    token
+  }));
 
   clearTimeout(logOutTimer);
   logOutTimer = setTimeout(() => {
@@ -106,7 +111,6 @@ function askForContent(tabName) {
   xhr.setRequestHeader("content-type", "application/json");
   xhr.setRequestHeader("cache-control", "no-cache");
   xhr.setRequestHeader("token", token);
-
   xhr.send();
 }
 //refresh page by clicking on TOMKO
