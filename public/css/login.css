@@ -1,6 +1,10 @@
 @import "/fonts.css";
 
 body {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
   font-family: 'Roboto', sans-serif;
   background: linear-gradient(150deg,#2a6163,#7b4752);
   overflow: hidden;

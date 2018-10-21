@@ -3,6 +3,10 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,200,300,400');
 
 html, body {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
   position: relative;
   margin: 0px;
   height: 100%;

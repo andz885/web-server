@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+#calendar {
+font-family: Roboto;
+zoom: 0.8;
+-moz-transform: scale(0.8);
+position:relative;
+left: 50px;
+top: 50px;
+width: 348px;
+}
+
+#calHeader {
+  margin-bottom: 10px;
+  text-align: center;
+  height: 25px;
+}
+
+#calHeader * {
+  display: inline-block;
+  font-size: 25px;
+}
+
+#calHeader *:first-child {
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+}
+
+#calHeader *:nth-child(2) {
+width: 200px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+#calHeader *:last-child{
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+}
+
+#calendar li {
+font-size: 18px;
+margin-left: -4px;
+width: 50px;
+padding: 15px 0;
+border-radius: 2px;
+text-align: center;
+display: inline-block;
+}
+
+#month li {
+  font-size: 20px;
+}
+
+#month li:not(.no-hover):hover {
+cursor: pointer;
+background: #B86480;
+}
+
+#month li:empty {
+width: 50px;
+height: 0;
+padding: 0;
+}
+
+.unselectable {
+  color:#00000057;
+  cursor: context-menu;
+}
+
+
+  </style>
+</head>
+<body>
+  <div id="calendar">
+    <div id="calHeader">
+      <img id="calPrev" src="mbri-arrow-prev.svg">
+      <div id="calDate"></div>
+      <img id="calNext" src="mbri-arrow-next.svg">
+    </div>
+    <li>Mon</li> <li>Tue</li> <li>Wed</li> <li>Thu</li> <li>Fri</li> <li>Sat</li> <li>Sun</li>
+  <div id="month">
+    <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+    <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+    <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+    <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+    <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+    <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+  </div>
+  <input id="date" type="text" placeholder="Date" autocomplete="off"></input>
+</div>
+</body>
+
+</html>

@@ -149,7 +149,7 @@ app.get('/newpassowrd', (req, res) => {
         return
       }
       res.setHeader('token', req.query.token);
-      res.render('newpassowrd.html');
+      res.render('newpassword.html');
     }, (e) => {
       res.setHeader('x-status', 'Unable to browse database');
       res.render('statusprint.html')

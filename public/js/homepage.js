@@ -83,8 +83,10 @@ function loadScript(url, callback) {
       callback();
     };
   }
-
+  var elem = document.getElementById('temp');
+  if (elem) elem.parentNode.removeChild(elem);
   script.src = url;
+  script.id = 'temp';
   document.getElementsByTagName("head")[0].appendChild(script);
 }
 
@@ -125,8 +127,13 @@ document.getElementsByClassName('stripRight')[0].onclick = () => {
 }
 
 //Add User tab button
+document.getElementById('dateBack').onclick = () => {
+  askForContent('dateback');
+  refreshLogOutTimer();
+}
+
 document.getElementById('addUser').onclick = () => {
-  askForContent('addUser');
+  askForContent('adduser');
   refreshLogOutTimer();
 }
 
