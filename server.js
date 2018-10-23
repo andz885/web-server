@@ -1,16 +1,17 @@
 //nefunguje email
 
 const express = require('express');
-const port = process.env.PORT || 3000;
 const validator = require('validator');
 const SHA256 = require('crypto-js').SHA256;
 const jwt = require('jsonwebtoken');
 const EMAIL_HTML = '<div style="text-align:center; margin-top:30px; margin-bottom:0px;"><a style="background:#3C5D6E; font-family:sans-serif; text-decoration:none; font-size:16px; color:white; padding:10px 15px; border-radius:2px;" <placeForURI> target="_blank">Click Here</a></div><div style="margin:20px auto; font-family:system-ui; font-weight:100; font-size:20px; text-align:center;">to create your new password</div>';
-const SECRET = 'k^p^Fc-Cw$dd#S]';
-const MCU_KEY = 'HPG2PU3U5BIM7O1OVVNOZ2YVGX8BTICORE2EIEY02Z8ZW4K8N4Q3Y4UGOWQKFKY9';
+
+const port = process.env.PORT || 3000;
+const SECRET = process.env.SECRET || 'Mp;|wP78jka(rRf-aO}dZ~cFxFEf';
+const MCU_KEY = process.env.MCU_KEY || 'localhostMcuKey';
 const ADMIN = {
-  email: 'admin',
-  password: SHA256('adminpass').toString() //smrecany1265
+  email: process.env.ADMIN_EMAIL || 'admin',
+  password: SHA256(process.env.ADMIN_PASSWORD || 'adminpass').toString()
 }
 
 var randomstring = require("randomstring");

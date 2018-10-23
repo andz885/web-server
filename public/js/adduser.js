@@ -95,7 +95,7 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
         if (status === 'ok') {
           document.getElementById('deleteAfterSuccess').classList = 'successStyle';
           document.getElementById('deleteAfterSuccess').innerHTML = `${objToSend.role ? 'administrator' : 'user'}
-          ${objToSend.firstName} ${objToSend.lastName}
+          <h1>${objToSend.firstName} ${objToSend.lastName}</h1>
           was successfully added <p> link for creating password was sent to: ${objToSend.email}<p>`;
           console.log(xhr.getResponseHeader('messageID'));
         } else {
