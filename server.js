@@ -9,7 +9,7 @@ const EMAIL_HTML = '<div style="text-align:center; margin-top:30px; margin-botto
 const port = process.env.PORT || 3000;
 const SECRET = process.env.SECRET || 'Mp;|wP78jka(rRf-aO}dZ~cFxFEf';
 const MCU_KEY = process.env.MCU_KEY || 'localhostMcuKey';
-const ADMIN = {
+const ADMIN_LOGIN = {
   email: process.env.ADMIN_EMAIL || 'admin',
   password: SHA256(process.env.ADMIN_PASSWORD || 'adminpass').toString()
 }
@@ -22,12 +22,12 @@ var favicon = require('serve-favicon');
 var nodemailer = require('nodemailer');
 var enforce = require('express-sslify');
 var transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
-  // secure: true,
+  host: `${process.env.PORT ? "smtp.zoho.com" : "smtp.ethereal.email"}`,
+  port: `${process.env.PORT ? 465 : 587}`,
+  // secure: `${process.env.PORT ? true : undefined}`,
   auth: {
-    user: 'plplwu5tt3mt7t6t@ethereal.email',
-    pass: 'sefcJYxvnrqYkwUj1g'
+    user: process.env.EMAIL_USERNAME || 'i73epgl72yzaebox@ethereal.email',
+    pass: process.env.EMAIL_PASSWORD || 'Tb1THW7xXzaPRFGVxc'
   },
 });
 
@@ -81,20 +81,16 @@ function htmlEmailGenerate(uri) {
   return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
 }
 
-function sendEmail(senderName, reciverEmail, subject, html, callback) {
+function sendEmail(senderName, reciverEmail, subject, html) {
   let mailOptions = {
-    from: `${senderName} <no-reply@atsy.space>`,
+    from: `${senderName} <noreply@atsy.space>`,
     to: reciverEmail,
     subject,
     html
   };
   transporter.sendMail(mailOptions, (error, info) => {
-    if (info) {
-      info.response = info.response.replace('250 Accepted [STATUS=new MSGID=', '[');
-      info.response = info.response.replace('[', '');
-      info.response = info.response.replace(']', '');
-    }
-    callback('https://ethereal.email/message/' + info.response);
+    if(info) console.log(info);
+    else console.log(error);
   });
 }
 
@@ -188,7 +184,7 @@ app.post('/loginverify', (req, res) => {
     email: req.body.email,
     password: SHA256(req.body.pass).toString()
   };
-  if (JSON.stringify(loginData) === JSON.stringify(ADMIN)) {
+  if (JSON.stringify(loginData) === JSON.stringify(ADMIN_LOGIN)) {
     res.setHeader('token', tokenGenerate('admin', '', '', 'true'));
     res.setHeader('x-status', 'ok');
     res.send();
@@ -235,11 +231,9 @@ app.post('/adduser', (req, res) => {
         });
         acc.save().then(() => {
           res.setHeader('x-status', 'ok'); //send ma byt tu a sendEmail nemá navratovú hodnotu
+          res.send();
           let html = htmlEmailGenerate(`${process.env.PORT ? "https://" : "http://"}` + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
-          sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html, (info) => {
-            res.setHeader('messageID', info);
-            res.send();
-          });
+          sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
         }, (e) => {
           res.setHeader('x-status', 'database problem, cannot add new user');
           res.send();
