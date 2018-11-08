@@ -126,12 +126,16 @@ document.getElementsByClassName('stripRight')[0].onclick = () => {
   window.location = postURL;
 }
 
-//Add User tab button
+document.getElementById('employees').onclick = () => {
+  askForContent('employees');
+  refreshLogOutTimer();
+}
+
 document.getElementById('dateBack').onclick = () => {
   askForContent('dateback');
   refreshLogOutTimer();
 }
-
+//Add User tab button
 document.getElementById('addUser').onclick = () => {
   askForContent('adduser');
   refreshLogOutTimer();

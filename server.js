@@ -1,4 +1,4 @@
-//nefunguje email
+//zošiť z matematiky, 3D TOMKO krabička
 
 const express = require('express');
 const validator = require('validator');
@@ -23,8 +23,8 @@ var nodemailer = require('nodemailer');
 var enforce = require('express-sslify');
 var transporter = nodemailer.createTransport({
   host: `${process.env.PORT ? "smtp.zoho.com" : "smtp.ethereal.email"}`,
-  port: `${process.env.PORT ? 465 : 587}`,
-  // secure: `${process.env.PORT ? true : undefined}`,
+  port: process.env.PORT ? 465 : 587,
+  secure: process.env.PORT ? true : undefined,
   auth: {
     user: process.env.EMAIL_USERNAME || 'i73epgl72yzaebox@ethereal.email',
     pass: process.env.EMAIL_PASSWORD || 'Tb1THW7xXzaPRFGVxc'
@@ -56,15 +56,9 @@ var attendanceSchema = new mongoose.Schema({
 var attendance = mongoose.model('attendances', attendanceSchema);
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tomko', {
-  useNewUrlParser: true
-});
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tomko', {useNewUrlParser: true});
 
-if (process.env.PORT) {
-  app.use(enforce.HTTPS({
-    trustProtoHeader: true
-  }));
-}
+if (process.env.PORT) {app.use(enforce.HTTPS({trustProtoHeader: true}));}
 app.set('view engine', 'html');
 app.set('views', __dirname + '/public/html');
 app.engine('html', require('ejs').renderFile);

@@ -1,0 +1,180 @@
+<style>
+  .employeeSettings {
+    font-family: Quicksand;
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 400px;
+  }
+  .employeeSettings * {
+    margin: 5px 0;
+    display: inline-block;
+    position: relative;
+    top: 10px;
+    left: 75px;
+  }
+  .employeeSettings input[type=text] {
+    height: 44px;
+    font-size: 16px;
+    width: 250px;
+    -webkit-appearance: none;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-top: 1px solid #c0c0c0;
+    border-radius: 2px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+  .graph {
+    font-family: Roboto;
+    position: absolute;
+    width: 740px;
+    left: 420px;
+    margin-top: 10px;
+  }
+  .graph div {
+    display: inline-block;
+    height: 15px;
+  }
+  .graph div:nth-child(odd) {
+    font-size: 13px;
+    text-align: left;
+    width: 15px;
+    background: blue;
+  }
+  .graph div:nth-child(even) {
+    width: 720px;
+    border-radius: 1px;
+    background: green;
+  }
+  .graph div:nth-child(even):hover {
+    background: white;
+  }
+  /* .graph div:empty {
+    width: 0;
+  } */
+  .graph span {
+    display: inline-block;
+    background: red;
+    width: 20px;
+    height: 100%;
+  }
+  .navigation {
+    width: 300px;
+    height: 30px;
+    text-align: center;
+    position: absolute;
+    display: inline-block;
+    bottom: 60px;
+    left: 600px;
+  }
+  .navigation * {
+    display: inline-block;
+    position: absolute;
+  }
+  .navigation *:nth-child(1) {
+    cursor: pointer;
+    left: 0;
+  }
+  .navigation *:nth-child(2) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .navigation *:nth-child(3) {
+    cursor: pointer;
+    right: 0;
+  }
+  #saveCSV {
+    cursor: pointer;
+    position: absolute;
+    left: 1120px;
+    bottom: 60px;
+  }
+</style>
+
+<div class="employeeSettings">
+  <input type="text" placeholder="Search" spellcheck="false">
+  <a class="createdAt">
+    Created at: 25 September 2018
+  </a>
+  <a class="lastWork">
+    Last day at work: yesterday
+  </a>
+  <input type="text" placeholder="First Name" spellcheck="false">
+  <input type="text" placeholder="Last Name" spellcheck="false">
+  <input type="text" placeholder="Email" spellcheck="false">
+  <input type="text" placeholder="Card UID" spellcheck="false">
+</div>
+<div class="graph">
+  <div id="day0"></div>
+  <div id="line0"></div>
+  <div id="day1"></div>
+  <div id="line1"></div>
+  <div id="day2"></div>
+  <div id="line2"></div>
+  <div id="day3"></div>
+  <div id="line3"></div>
+  <div id="day4"></div>
+  <div id="line4"></div>
+  <div id="day5"></div>
+  <div id="line5"></div>
+  <div id="day6"></div>
+  <div id="line6"></div>
+  <div id="day7"></div>
+  <div id="line7"></div>
+  <div id="day8"></div>
+  <div id="line8"></div>
+  <div id="day9"></div>
+  <div id="line9"></div>
+  <div id="day10"></div>
+  <div id="line10"></div>
+  <div id="day11"></div>
+  <div id="line11"></div>
+  <div id="day12"></div>
+  <div id="line12"></div>
+  <div id="day13"></div>
+  <div id="line13"></div>
+  <div id="day14"></div>
+  <div id="line14"></div>
+  <div id="day15"></div>
+  <div id="line15"></div>
+  <div id="day16"></div>
+  <div id="line16"></div>
+  <div id="day17"></div>
+  <div id="line17"></div>
+  <div id="day18"></div>
+  <div id="line18"></div>
+  <div id="day19"></div>
+  <div id="line19"></div>
+  <div id="day20"></div>
+  <div id="line20"></div>
+  <div id="day21"></div>
+  <div id="line21"></div>
+  <div id="day22"></div>
+  <div id="line22"></div>
+  <div id="day23"></div>
+  <div id="line23"></div>
+  <div id="day24"></div>
+  <div id="line24"></div>
+  <div id="day25"></div>
+  <div id="line25"></div>
+  <div id="day26"></div>
+  <div id="line26"></div>
+  <div id="day27"></div>
+  <div id="line27"></div>
+  <div id="day28"></div>
+  <div id="line28"></div>
+  <div id="day29"></div>
+  <div id="line29"></div>
+  <div id="day30"></div>
+  <div id="line30"></div>
+</div>
+<br>
+<div class="navigation">
+  <img id="attPrev" src="mbri-arrow-prev.svg">
+  <div id="attDate"></div>
+  <img id="attNext" src="mbri-arrow-next.svg">
+</div>
+<img id="saveCSV" src="mbri-save.svg">
