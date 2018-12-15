@@ -193,8 +193,8 @@ app.post('/loginverify', (req, res) => {
 
 
 
-app.post('/adduser', (req, res) => {
-if (token.role === 'true') {
+app.post('/insertuser', (req, res) => {
+if (verifyJWT(req.cookies.token).role === 'true') {
     accounts.findOne({
       $or: [{
         email: req.body.email

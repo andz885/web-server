@@ -103,7 +103,7 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
         }
       }
     });
-    xhr.open("POST", postURL + '/adduser');
+    xhr.open("POST", postURL + '/insertuser');
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("cache-control", "no-cache");
     xhr.send(JSON.stringify(objToSend));
