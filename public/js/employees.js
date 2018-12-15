@@ -1,3 +1,5 @@
+var accounts;
+
 function fillTable() {
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
@@ -6,7 +8,7 @@ function fillTable() {
   xhr.addEventListener("readystatechange", function() {
     if (this.readyState === 4) {
       //if status === ok
-      var accounts = JSON.parse(xhr.response);
+      accounts = JSON.parse(xhr.response);
       for (let i = 0; i < accounts.length; i++) {
         var createdAt = new Date(1000 * parseInt(Number("0x" + accounts[i]._id.slice(0,8)), 10));
         document.getElementById('table').insertAdjacentHTML('beforeend', `

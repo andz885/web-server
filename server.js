@@ -132,15 +132,12 @@ app.get('/newpassowrd', (req, res) => {
       password: 'undefined'
     }).then((doc) => {
       if (!doc) {
-        res.setHeader('x-status', 'No database record');
-        res.render('statusprint.html');
+        res.send('No database record');
         return
       }
-      res.setHeader('token', req.query.token);
       res.render('newpassword.html');
     }, (e) => {
-      res.setHeader('x-status', 'Unable to browse database');
-      res.render('statusprint.html')
+      res.send('Unable to browse database');
     });
 });
 
@@ -182,7 +179,7 @@ app.post('/loginverify', (req, res) => {
       res.send();
       return
     }
-    res.setHeader('token', tokenGenerate(doc.firstName, doc.lastName, doc.email, doc.role));
+    res.cookie('token', tokenGenerate(doc.firstName, doc.lastName, doc.email, doc.role));
     res.setHeader('x-status', 'ok');
     res.send();
   }, (e) => {
