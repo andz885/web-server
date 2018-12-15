@@ -159,7 +159,7 @@ res.setHeader('x-status', 'ok');
 res.render('dateback.html');
 });
 
-app.get('/addUser', (req, res) => {
+app.get('/adduser', (req, res) => {
 res.setHeader('x-status', 'ok');
 res.render('addUser.html');
 });
