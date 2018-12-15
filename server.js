@@ -128,7 +128,7 @@ function tokenGenerate(firstName, lastName, email, role) {
 
 app.get('/newpassowrd', (req, res) => {
     accounts.findOne({
-      email: token.email,
+      email: verifyJWT(req.query.token).email,
       password: 'undefined'
     }).then((doc) => {
       if (!doc) {
@@ -336,7 +336,6 @@ app.post('/getaccounts', (req, res) => {
     res.setHeader('x-status', 'ok');
     res.send(doc);
   }, (e) => {
-    //chýba kód
     res.send('cannot browse accounts database');
   });
 });
