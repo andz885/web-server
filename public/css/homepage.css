@@ -7,15 +7,12 @@ html, body {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
-  position: relative;
   margin: 0px;
   height: 100%;
-  overflow: hidden;
+  width: 100%;
 }
 
 .strip {
-  position: relative;
-  text-align: right;
   height: 45px;
   width: 100%;
   background: linear-gradient(150deg, #78666c, #5F7885);
@@ -25,9 +22,7 @@ html, body {
 .logo {
   margin: 0;
   float: left;
-  position: relative;
-  top: 0%;
-  left: 1%;
+  margin-left: 10px;
   font-family: Quicksand, sans-serif;
   font-weight: 100;
   color: white;
@@ -44,10 +39,11 @@ html, body {
 
 .stripRight {
   cursor: pointer;
-  position: absolute;
-  right: 0;
+  float: right;
+  padding-right: 10px;
   height: 100%;
-  width: 110px;
+  display: flex;
+  align-items:center;
 }
 
 .stripRight:hover {
@@ -56,35 +52,20 @@ html, body {
 
 .stripRight label {
   cursor: pointer;
-  margin-left: 5px;
   font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   color: #fff;
-  display: inline;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  right: 7px;
-  transform: translate(0, -50%);
 }
 
 .stripRight img {
   filter: invert(1);
-  display: inline;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  right: 74px;
-  transform: translate(0, -50%);
+  margin-right: 7px;
 }
 
 .page {
-  margin: 0;
-  position: absolute;
-  top: 45px;
-  left: 0%;
+  float: left;
   width: 200px;
-  height: 100%;
+  height: calc(100% - 45px);
   background-color: #374c57;
 }
 
@@ -159,12 +140,10 @@ html, body {
 
 #content {
   background-color: #F5F5F5;
-  position: absolute;
-  top: 45px;
-  left: 200px;
-  height: 100%;
-  width: 100%;
-  max-width: calc(100% - 200px);
+  float: left;
+  height: calc(100% - 45px);
+  width: calc(100% - 200px);
+  position: relative;
 }
 
 /* .wrapper{

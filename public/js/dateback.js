@@ -24,7 +24,6 @@ function fillCalendar(monthShift) {
   if(from === 0) from = 7;
   from--;
   var to = lastDay.getDate() + from;
-  // debugger;
   for (from; from < to; from++) {
     monthChildrens[from].innerHTML = dayDate;
     if((dayDate > date.getDate() && monthShift === 0) || monthShift > 0){

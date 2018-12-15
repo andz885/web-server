@@ -1,8 +1,9 @@
+//first letter from string tu upper case
 function firstLetterToUpperCase(string) {
   if (string) return string[0].toUpperCase() + string.substring(1);
 }
-
-function isValidEmail(email) { //email validation
+//email validation
+function isValidEmail(email) {
   var atpos = email.indexOf("@");
   var dotpos = email.lastIndexOf(".");
   if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
@@ -10,7 +11,7 @@ function isValidEmail(email) { //email validation
   }
   return true;
 }
-
+//name validation
 function isValidName(string) {
   if (!string) return false;
   if ((string.length < 3) || (string.length > 20)) return false;
@@ -27,7 +28,7 @@ function isValidName(string) {
   }
   return true;
 }
-
+//card id validation
 function isValidCardUID(string) {
   if (string.length !== 8) return false;
   var asciiNumb;
@@ -50,13 +51,12 @@ function isValidCardUID(string) {
     });
   }
 }
-
+//funkcia ktorá sa vykoná po stlačení tlačida sumbit
 document.getElementsByClassName('addButton')[0].onclick = function() {
   document.getElementById('statusDiv').innerHTML = '';
   document.getElementById("statusDiv").classList.remove("fadeClass");
 
   var objToSend = {
-    token: localStorage.getItem("token"),
     firstName: firstLetterToUpperCase(document.getElementById('firstName').value.trim()),
     lastName: firstLetterToUpperCase(document.getElementById('lastName').value.trim()),
     email: document.getElementById('email').value,
@@ -97,7 +97,6 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
           document.getElementById('deleteAfterSuccess').innerHTML = `${objToSend.role ? 'administrator' : 'user'}
           <h1>${objToSend.firstName} ${objToSend.lastName}</h1>
           was successfully added <p> link for creating password was sent to: ${objToSend.email}<p>`;
-          console.log(xhr.getResponseHeader('messageID'));
         } else {
           document.getElementById('statusDiv').innerHTML = status;
           document.getElementById("statusDiv").classList.add("fadeClass");

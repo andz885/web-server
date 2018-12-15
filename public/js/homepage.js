@@ -1,8 +1,7 @@
-const LOGINTIME = 32400000; // 9 hours in milisecons after which will be user automaticly logged out
 var URLarr = window.location.href.split("/");
 var postURL = URLarr[0] + '//' + URLarr[2];
-var logOutTimer;
 
+//login intro
 if (localStorage.getItem("login_intro") === 'true') {
   localStorage.removeItem('login_intro');
   setTimeout(() => {
@@ -18,10 +17,26 @@ if (localStorage.getItem("login_intro") === 'true') {
   document.getElementById("delete").remove();
 }
 
+//function to get cookie value
+function getCookie(cookieName)
+{
+    var i,x,y,ARRcookies=document.cookie.split(";");
 
-//name update from inside of token
+    for (i=0;i<ARRcookies.length;i++)
+    {
+        x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+        y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+        x=x.replace(/^\s+|\s+$/g,"");
+        if (x==cookieName)
+        {
+            return unescape(y);
+        }
+     }
+}
+
+//update name from token
 function updateUserName() {
-  var token = localStorage.getItem("token");
+  var token = getCookie("token");
   if (token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -33,37 +48,7 @@ function updateUserName() {
   }
 }
 
-//asking for new token from server and updating the old one after recive
-function refreshLogOutTimer() {
-  var token = localStorage.getItem("token");
-  var xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
 
-  xhr.addEventListener("readystatechange", function() {
-    if (this.readyState === 4) {
-      var status = xhr.getResponseHeader('x-status');
-      if (status === 'ok') {
-        localStorage.setItem('token', xhr.getResponseHeader('token'));
-      } else {
-        localStorage.removeItem('token');
-        window.location = postURL;
-      }
-    }
-  });
-
-  xhr.open("POST", postURL + '/refreshtoken');
-  xhr.setRequestHeader("content-type", "application/json");
-  xhr.setRequestHeader("cache-control", "no-cache");
-  xhr.send(JSON.stringify({
-    token
-  }));
-
-  clearTimeout(logOutTimer);
-  logOutTimer = setTimeout(() => {
-    localStorage.removeItem('token');
-    window.location = postURL;
-  }, LOGINTIME);
-}
 
 //loading content script
 function loadScript(url, callback) {
@@ -92,7 +77,6 @@ function loadScript(url, callback) {
 
 //updating content after clicking on one of the tab buttons
 function askForContent(tabName) {
-  var token = localStorage.getItem("token");
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
 
@@ -103,7 +87,6 @@ function askForContent(tabName) {
         document.getElementById('content').innerHTML = xhr.response;
         loadScript('/' + tabName + '.js', () => {});
       } else {
-        localStorage.removeItem('token');
         window.location = postURL;
       }
     }
@@ -112,9 +95,9 @@ function askForContent(tabName) {
   xhr.open("GET", postURL + '/' + tabName);
   xhr.setRequestHeader("content-type", "application/json");
   xhr.setRequestHeader("cache-control", "no-cache");
-  xhr.setRequestHeader("token", token);
   xhr.send();
 }
+
 //refresh page by clicking on TOMKO
 document.getElementsByClassName('logo')[0].onclick = () => {
   window.location = postURL;
@@ -122,24 +105,20 @@ document.getElementsByClassName('logo')[0].onclick = () => {
 
 //Log Out button function
 document.getElementsByClassName('stripRight')[0].onclick = () => {
-  localStorage.removeItem('token');
+  document.cookie = "token=";
   window.location = postURL;
 }
 
 document.getElementById('employees').onclick = () => {
   askForContent('employees');
-  refreshLogOutTimer();
 }
 
 document.getElementById('dateBack').onclick = () => {
   askForContent('dateback');
-  refreshLogOutTimer();
 }
 //Add User tab button
 document.getElementById('addUser').onclick = () => {
   askForContent('adduser');
-  refreshLogOutTimer();
 }
 
 updateUserName();
-refreshLogOutTimer();

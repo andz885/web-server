@@ -1,30 +1,47 @@
-function fillGraph(monthShift) {
-  const monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-  for (var i = 0; i < 31; i++) {
-    document.getElementById("day" + i).innerHTML = '';
-  }
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth() + monthShift;
-  var firstDay = new Date(year, month, 1);
-  var lastDay = new Date(year, month + 1, 0);
-  for (var i = 0; i < lastDay.getDate(); i++) {
-    document.getElementById("day" + i).innerHTML = i+1;
-    document.getElementById("line" + i).innerHTML = '<span></span>';
-  }
-  document.getElementById('attDate').innerHTML = monthNames[((month % 12) + 12) % 12] + ' ' + firstDay.getFullYear();
+function fillTable() {
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+  xhr.addEventListener("readystatechange", function() {
+    if (this.readyState === 4) {
+      //if status === ok
+      var accounts = JSON.parse(xhr.response);
+      for (let i = 0; i < accounts.length; i++) {
+        document.getElementById('table').insertAdjacentHTML('beforeend', `
+      <tr id='${accounts[i]._id}'>
+        <td>&nbsp${accounts[i].firstName}</td>
+        <td>${accounts[i].lastName}</td>
+        <td>${accounts[i].email}</td>
+        <td>${accounts[i].cardUID}</td>
+        <td>${accounts[i].role}</td>
+      </tr>
+        `);
+        document.getElementById(`${accounts[i]._id}`).onclick = function() {
+          var xhr = new XMLHttpRequest();
+          xhr.withCredentials = true;
+          xhr.addEventListener("readystatechange", function() {
+            if (this.readyState === 4) {
+              var status = xhr.getResponseHeader('x-status');
+              if (status === 'ok') {
+                document.getElementById('content').innerHTML = xhr.response;
+                loadScript('/userinfo.js', () => {});
+              } else {
+                window.location = postURL;
+              }
+            }
+          });
+          xhr.open("GET", postURL + "/userinfo?_id=" + accounts[i]._id);
+          xhr.setRequestHeader("content-type", "application/json");
+          xhr.setRequestHeader("cache-control", "no-cache");
+          xhr.send();
+        }
+      }
+    }
+    //else for status !== ok
+  });
+
+  xhr.open("POST", postURL + '/getaccounts');
+  xhr.setRequestHeader("cache-control", "no-cache");
+  xhr.send();
 }
 
-var selectedMonth = 0;
-
-document.getElementById('attPrev').onclick = () => {
-  selectedMonth--;
-  fillGraph(selectedMonth);
-}
-
-document.getElementById('attNext').onclick = () => {
-  selectedMonth++;
-  fillGraph(selectedMonth);
-}
+fillTable();

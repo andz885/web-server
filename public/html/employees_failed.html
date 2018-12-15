@@ -1,0 +1,125 @@
+<style>
+  .employeeSettings {
+    font-family: Quicksand;
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 400px;
+  }
+  .employeeSettings * {
+    margin: 5px 0;
+    display: inline-block;
+    position: relative;
+    top: 10px;
+    left: 75px;
+  }
+  .employeeSettings input[type=text] {
+    height: 44px;
+    font-size: 16px;
+    width: 250px;
+    -webkit-appearance: none;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-top: 1px solid #c0c0c0;
+    border-radius: 2px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+  .graph {
+    display: flex;
+    flex-direction: column;
+    font-family: Roboto;
+    position: absolute;
+    left: 340px;
+    margin-top: 10px;
+  }
+  .row {
+    margin-bottom: 2px;
+    height: 15px;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .row:hover {
+    background: white;
+  }
+  .row div:nth-child(3n + 1) {
+    font-size: 15px;
+    margin-right: 5px;
+    text-align: left;
+    width: 40px;
+  }
+  .row div:nth-child(3n + 2) {
+    font-size: 15px;
+    margin-right: 5px;
+    text-align: right;
+    width: 20px;
+  }
+  .row div:nth-child(3n) {
+    position: relative;
+    display: flex;
+    width: 720px;
+    margin: 0 10px;
+  }
+  .graph span {
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    border-radius: 2px;
+  }
+  .navigation {
+    width: 300px;
+    height: 30px;
+    text-align: center;
+    position: absolute;
+    display: inline-block;
+    bottom: 60px;
+    left: 600px;
+  }
+  .navigation * {
+    display: inline-block;
+    position: absolute;
+  }
+  .navigation *:nth-child(1) {
+    cursor: pointer;
+    left: 0;
+  }
+  .navigation *:nth-child(2) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .navigation *:nth-child(3) {
+    cursor: pointer;
+    right: 0;
+  }
+  #saveCSV {
+    cursor: pointer;
+    position: absolute;
+    left: 1120px;
+    bottom: 60px;
+  }
+</style>
+
+<div class="employeeSettings">
+  <input type="text" placeholder="Search" spellcheck="false">
+  <a class="createdAt">
+    Created at: 25 September 2018
+  </a>
+  <a class="lastWork">
+    Last day at work: yesterday
+  </a>
+  <input type="text" placeholder="First Name" spellcheck="false">
+  <input type="text" placeholder="Last Name" spellcheck="false">
+  <input type="text" placeholder="Email" spellcheck="false">
+  <input type="text" placeholder="Card UID" spellcheck="false">
+</div>
+<div class="graph" id="chart">
+</div>
+<br>
+<div class="navigation">
+  <img id="attPrev" src="mbri-arrow-prev.svg">
+  <div id="attDate"></div>
+  <img id="attNext" src="mbri-arrow-next.svg">
+</div>
+<img id="saveCSV" src="mbri-save.svg">

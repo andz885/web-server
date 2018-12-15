@@ -15,11 +15,10 @@ document.getElementById("emailEnter").addEventListener("keyup", function(event) 
 //po kliknutí na login
 document.getElementById('login').onclick = function() {
   document.getElementById("err_message").innerHTML = ''; //vymazanie Invalid Username or Password
-  var user = {
+  var userString = JSON.stringify({
     email: document.getElementsByName('user')[0].value,
     pass: document.getElementsByName('pass')[0].value
-  };
-  var userString = JSON.stringify(user);
+  });
   var URLarr = window.location.href.split("/");
   var postURL = URLarr[0] + '//' + URLarr[2];
   var xhr = new XMLHttpRequest();
@@ -28,7 +27,6 @@ document.getElementById('login').onclick = function() {
     if (this.readyState === 4) {
       var status = xhr.getResponseHeader('x-status');
       if (status === 'ok') {
-        localStorage.setItem('token', xhr.getResponseHeader('token'));
         localStorage.setItem('login_intro', 'true');
         window.location = postURL;
       } else {

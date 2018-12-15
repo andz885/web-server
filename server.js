@@ -14,6 +14,7 @@ const ADMIN_LOGIN = {
   password: SHA256(process.env.ADMIN_PASSWORD || 'adminpass').toString()
 }
 
+var cookieParser = require('cookie-parser');
 var randomstring = require("randomstring");
 var bodyParser = require('body-parser');
 var app = express();
@@ -46,9 +47,8 @@ var accounts = mongoose.model('accounts', accountSchema);
 
 var attendanceSchema = new mongoose.Schema({
   user_id: String,
-  action: String,
-  time: String,
-  inserted_by: String
+  action: String, //departure-doctor-user
+  date: Date,
 }, {
   versionKey: false,
   collection: 'attendances'
@@ -57,6 +57,20 @@ var attendance = mongoose.model('attendances', attendanceSchema);
 
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tomko', {useNewUrlParser: true});
+
+function verifyJWT(token) {
+  var result;
+  jwt.verify(token, SECRET, function(err, payload) {
+    if (err) {
+      result = null;
+    } else if ((((new Date).getTime() / 1000) - payload.iat) < 32460) {
+      result = payload;
+    } else {
+      result = null;
+    }
+  });
+  return result;
+}
 
 if (process.env.PORT) {app.use(enforce.HTTPS({trustProtoHeader: true}));}
 app.set('view engine', 'html');
@@ -67,9 +81,23 @@ app.use(express.static(__dirname + '/public/js'));
 app.use(express.static(__dirname + '/public/images'));
 app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(function(req, res, next) {
+  var token = verifyJWT(req.cookies.token);
+  if (token) {
+    res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
+    next();
+  } else if (verifyJWT(req.query.token) || req.url === '/loginverify' || req.url === '/addpassword') {
+    next();
+  } else if (req.url === '/cardattached' && req.body.MCU_KEY === MCU_KEY) {
+    next();
+  } else if (req.method === 'GET') {
+    res.render('login.html');
+  } else {
+    res.status(401).send('UNAUTHORIZED');
+  }
+});
 
 function htmlEmailGenerate(uri) {
   return EMAIL_HTML.replace('<placeForURI>', `href="${uri}"`)
@@ -98,38 +126,7 @@ function tokenGenerate(firstName, lastName, email, role) {
 }
 
 
-function verifyJWT(token) {
-  var result;
-  jwt.verify(token, SECRET, function(err, payload) {
-    if (err) {
-      result = null;
-    } else if ((((new Date).getTime() / 1000) - payload.iat) < 32460) {
-      result = payload;
-    } else {
-      result = null;
-    }
-  });
-  return result;
-}
-
-app.post('/refreshtoken', (req, res) => { //page asking for renew token
-  var token = verifyJWT(req.body.token);
-  if (!token) {
-    res.setHeader('x-status', 'bad token');
-    res.send();
-  } else {
-    res.setHeader('x-status', 'ok');
-    res.setHeader('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
-    res.send();
-  }
-});
-
 app.get('/newpassowrd', (req, res) => {
-  var token = verifyJWT(req.query.token);
-  if (!token) {
-    res.setHeader('x-status', 'your link is invalid');
-    res.render('statusprint.html');
-  } else {
     accounts.findOne({
       email: token.email,
       password: 'undefined'
@@ -145,31 +142,26 @@ app.get('/newpassowrd', (req, res) => {
       res.setHeader('x-status', 'Unable to browse database');
       res.render('statusprint.html')
     });
-  }
 });
 
-app.get('*', (req, res) => {
-  var token = verifyJWT(req.headers.token);
-  if (!token) {
-    res.render('form.html');
-  } else if (token.role === "true") {
-    var tabPage = req.params[0].replace('/', '') + '.html';
-    res.setHeader('x-status', 'ok');
-    res.render(tabPage);
-  } else {
-    res.send('you are not administrator');
-  }
+
+app.get('/', (req, res) => {
+res.render('homepage.html');
 });
 
-app.post('/form', (req, res) => {
-  var token = verifyJWT(req.body.token);
-  if (!token) {
-    res.render('login.html');
-  } else if (token.role === "true") {
-    res.render('homepage.html'); //homepage for administrators
-  } else {
-    res.send("not administrator page"); //homepage for non administrators
-  }
+app.get('/employees', (req, res) => {
+res.setHeader('x-status', 'ok');
+res.render('employees.html');
+});
+
+app.get('/dateback', (req, res) => {
+res.setHeader('x-status', 'ok');
+res.render('dateback.html');
+});
+
+app.get('/addUser', (req, res) => {
+res.setHeader('x-status', 'ok');
+res.render('addUser.html');
 });
 
 
@@ -179,7 +171,7 @@ app.post('/loginverify', (req, res) => {
     password: SHA256(req.body.pass).toString()
   };
   if (JSON.stringify(loginData) === JSON.stringify(ADMIN_LOGIN)) {
-    res.setHeader('token', tokenGenerate('admin', '', '', 'true'));
+    res.cookie('token', tokenGenerate('admin', '', '', 'true'));
     res.setHeader('x-status', 'ok');
     res.send();
     return
@@ -202,11 +194,7 @@ app.post('/loginverify', (req, res) => {
 
 
 app.post('/adduser', (req, res) => {
-  var token = verifyJWT(req.body.token);
-  if (!token) {
-    res.setHeader('x-status', 'bad token, cannot add the new user');
-    res.send();
-  } else if (token.role === 'true') {
+if (token.role === 'true') {
     accounts.findOne({
       $or: [{
         email: req.body.email
@@ -224,7 +212,7 @@ app.post('/adduser', (req, res) => {
           role: req.body.role
         });
         acc.save().then(() => {
-          res.setHeader('x-status', 'ok'); //send ma byt tu a sendEmail nemá navratovú hodnotu
+          res.setHeader('x-status', 'ok');
           res.send();
           let html = htmlEmailGenerate(`${process.env.PORT ? "https://" : "http://"}` + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
           sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
@@ -255,11 +243,12 @@ app.post('/adduser', (req, res) => {
 
 
 app.post('/addpassword', (req, res) => {
-  var token = verifyJWT(req.body.token);
-  if (!token) {
-    res.setHeader('x-status', 'your link is invalid');
+  var token = verifyJWT(req.headers.token);
+  if(!token){
+    res.setHeader('x-status', 'Authentication failed');
     res.send();
-  } else {
+    return;
+  }
     accounts.findOneAndUpdate({
       email: token.email,
       password: 'undefined'
@@ -279,15 +268,10 @@ app.post('/addpassword', (req, res) => {
       res.setHeader('x-status', 'Unable to browse database');
       res.send()
     });
-  }
 });
 
 
 app.post('/cardattached', (req, res) => {
-  if (req.body.MCU_KEY !== MCU_KEY) {
-    res.send('invalid MCU key');
-    return;
-  }
   if (req.body.cardUID.length === 8) {
     accounts.findOne({
       cardUID: req.body.cardUID
@@ -299,7 +283,7 @@ app.post('/cardattached', (req, res) => {
       var att = new attendance({
         user_id: doc._id,
         action: req.body.action,
-        time: req.body.time
+        date: new Date(req.body.date*1000).toISOString()
       });
       att.save().then(() => {
         res.send('ok');
@@ -312,6 +296,49 @@ app.post('/cardattached', (req, res) => {
   } else {
     res.send('invalid card ID');
   }
+});
+
+
+app.post('/getattendance', (req, res) => {
+  var season = req.body.season.split('-');
+  let startDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
+  let endDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
+  endDate.setMonth(endDate.getMonth() + 1);
+  attendance.find({
+    $and: [
+      {
+        user_id: req.body.user_id
+      }, {
+        date: {
+          $gte: startDate,
+          $lt: endDate
+        }
+      }
+    ]
+  }, {
+    _id: false,
+    user_id: false
+  }).then((doc) => {
+    doc.sort((a, b) => {
+      return (new Date(a.date)).getTime() - (new Date(b.date)).getTime();
+    });
+    res.setHeader('x-status', 'ok');
+    res.send(doc);
+  }, (e) => {
+    res.send('cannot browse accounts database');
+  });
+});
+
+app.post('/getaccounts', (req, res) => {
+  accounts.find({},{
+    password: false
+  }).then((doc) => {
+    res.setHeader('x-status', 'ok');
+    res.send(doc);
+  }, (e) => {
+    //chýba kód
+    res.send('cannot browse accounts database');
+  });
 });
 
 
