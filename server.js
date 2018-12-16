@@ -161,6 +161,10 @@ res.setHeader('x-status', 'ok');
 res.render('adduser.html');
 });
 
+app.get('/userinfo', (req, res) => {
+res.setHeader('x-status', 'ok');
+res.render('userinfo.html');
+});
 
 app.post('/loginverify', (req, res) => {
   var loginData = {
@@ -231,6 +235,7 @@ if (verifyJWT(req.cookies.token).role === 'true') {
       }
     }, (e) => {
       res.setHeader('x-status', 'database problem, cannot verify the email');
+      res.send();
     });
   } else {
     res.setHeader('x-status', 'you have no permissions');
@@ -296,15 +301,15 @@ app.post('/cardattached', (req, res) => {
 });
 
 
-app.post('/getattendance', (req, res) => {
-  var season = req.body.season.split('-');
+app.get('/getattendance', (req, res) => {
+  var season = req.headers.season.split('-');
   let startDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
   let endDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
   endDate.setMonth(endDate.getMonth() + 1);
   attendance.find({
     $and: [
       {
-        user_id: req.body.user_id
+        user_id: req.headers.user_id
       }, {
         date: {
           $gte: startDate,
@@ -322,7 +327,8 @@ app.post('/getattendance', (req, res) => {
     res.setHeader('x-status', 'ok');
     res.send(doc);
   }, (e) => {
-    res.send('cannot browse accounts database');
+    res.setHeader('x-status', 'cannot browse accounts database');
+    res.send();
   });
 });
 
@@ -333,7 +339,8 @@ app.post('/getaccounts', (req, res) => {
     res.setHeader('x-status', 'ok');
     res.send(doc);
   }, (e) => {
-    res.send('cannot browse accounts database');
+    res.setHeader('x-status', 'cannot browse accounts database');
+    res.send();
   });
 });
 
