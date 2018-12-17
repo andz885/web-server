@@ -332,7 +332,7 @@ app.get('/getattendance', (req, res) => {
   });
 });
 
-app.post('/getaccounts', (req, res) => {
+app.get('/getaccounts', (req, res) => {
   accounts.find({},{
     password: false
   }).then((doc) => {

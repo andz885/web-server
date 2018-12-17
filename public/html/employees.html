@@ -78,34 +78,54 @@
    top: calc(50vh + 22.5px);
    left: calc(50vw + 100px);
    transform: translate(-50%,-50%);
-   z-index: -1;
  }
 
  #contentShadow {
    background-color: #0000005c;
    height: calc(100% - 45px);
    width: calc(100% - 200px);
-   z-index: -1;
    position: fixed;
    right: 0;
  }
 
+ .hidden {
+   visibility: hidden;
+ }
+
+ .show {
+   visibility: visible;
+   -webkit-animation: fadeIn 300ms;
+   animation: fadeIn 300ms;
+ }
+
+ @-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+th abc {
+  cursor: pointer;
+}
+
+
 </style>
-
-
-
 
 
 <div id="accTable">
   <table class="primarytable">
     <thead>
     <tr class="infoslide">
-      <th>&nbspFirst Name</th>
-      <th>Last Name</th>
-      <th>Email</th>
-      <th>Card UID<img id="filterIcon" src="filter.svg"></th>
-      <th>Created at</th>
-      <th>Admin</th>
+      <th><abc id="tableFirstName">&nbspFirst Name</abc></th>
+      <th><abc id="tableLastName">Last Name</abc></th>
+      <th><abc id="tableEmail">Email</th>
+      <th><abc id="tableCardUID">Card UID<img id="filterIcon" src="filter.svg"></th>
+      <th><abc id="tableCreatedAt">Created at</th>
+      <th><abc id="tableAdmin">Admin</th>
     </tr>
     </thead>
     <tbody id="table">
@@ -113,8 +133,8 @@
   </table>
 </div>
 
-<div id="contentShadow">
+<div id="contentShadow" class="hidden">
 </div>
 
-<div id="filter">
+<div id="filter" class="hidden">
 </div>
