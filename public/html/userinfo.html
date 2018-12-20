@@ -1,2 +1,141 @@
-<div id="fullAtt">
+
+<style>
+
+#backToEmployees {
+  cursor: pointer;
+  display:block;
+}
+
+#employeeSettings {
+  display: flex;
+  flex-direction: column;
+  float:left;
+  width: 450px;
+}
+
+#employeeSettings input {
+  background: #fff;
+  height: 44px;
+  width: 300px;
+  margin: 20px auto;
+  margin-bottom: 17px;
+  font-size: 16px;
+  font-family: Quicksand;
+  font-weight: 100;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  padding: 0 8px;
+}
+
+
+#userInfoCalendar {
+font-family: Roboto;
+position:relative;
+float: left;
+display: flex;
+flex-wrap: wrap;
+width: 670px;
+}
+
+#userInfoCalFooter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 667px;
+  position: fixed;
+  left: 647px;
+  bottom: 26px;
+  font-size: 17px;
+}
+
+#userInfoCalFooter *:not(:nth-child(2)) {
+cursor: pointer;
+}
+
+#userInfoCalendar li {
+  margin-left: 3px;
+  font-size: 18px;
+  width: 92px;
+  font-weight: 300;
+  padding-top: 26px;
+  padding-bottom: 23px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#userInfoCalMonth {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#userInfoCalMonth li {
+  font-size: 20px;
+  height: 72px;
+  padding: 0;
+  background: #456c8f45;
+  margin-left: 3px;
+  margin-top: 3px;
+  border-radius: 3px;
+}
+
+#userInfoCalMonth li:not(.no-hover):hover {
+cursor: pointer;
+background: #B86480;
+}
+
+#userInfoCalMonth li:empty {
+width: 92px;
+height: 0;
+padding: 0;
+}
+
+.unselectable {
+  color:#00000057;
+  cursor: context-menu;
+}
+
+#userInfoImg {
+display: flex;
+height: 100px;
+justify-content: center;
+margin-top: 20px;
+margin-bottom: 10px;
+}
+
+#userInfoCalDate {
+width: 143px;
+display: flex;
+justify-content: center;
+}
+
+</style>
+
+<div id="employeeSettings">
+  <div id="userInfoImg">
+  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg">
+  </div>
+  <input id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
+  <input id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
+  <input id="userInfoEmail" type="text" disabled autocomplete="off" spellcheck="false">
+  <input id="userInfoCardUID" type="text" disabled autocomplete="off" spellcheck="false">
+</div>
+
+<div id="userInfoCalendar">
+  <li>Mon</li> <li>Tue</li> <li>Wed</li> <li>Thu</li> <li>Fri</li> <li>Sat</li> <li>Sun</li>
+<div id="userInfoCalMonth">
+  <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+  <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+  <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+  <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+  <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+  <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+</div>
+<div id="userInfoCalFooter">
+  <img id="userInfoCalPrev" src="mbri-arrow-prev.svg">
+  <div id="userInfoCalDate"></div>
+  <img id="userInfoCalNext" src="mbri-arrow-next.svg">
+  <img id="downloadCSV" src="mbri-save.svg">
+</div>
 </div>

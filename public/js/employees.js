@@ -42,9 +42,7 @@ function fillTable(records){
           if (this.readyState === 4) {
             var status = xhr.getResponseHeader('x-status');
             if (status === 'ok') {
-              var seasonDate = new Date();
               localStorage.setItem('user_id', records[i]._id);
-              localStorage.setItem('season', (1 + seasonDate.getMonth()) + '-' +  seasonDate.getFullYear());
               document.getElementById('content').innerHTML = xhr.response;
               loadScript('/userinfo.js', () => {});
             } else {
