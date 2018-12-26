@@ -151,5 +151,22 @@ document.getElementById('userInfoCalNext').onclick = function() {
   userInfoCreateCalendar(slctMonth);
 }
 
+document.getElementById('userInfoEdit').onclick = function() {
+  var state = document.getElementById('userInfoEdit').innerHTML;
+  if(state === 'Edit'){
+    document.getElementById('userInfoFirstName').removeAttribute('disabled');
+    document.getElementById('userInfoLastName').removeAttribute('disabled');
+    document.getElementById('userInfoEmail').removeAttribute('disabled');
+    document.getElementById('userInfoCardUID').removeAttribute('disabled');
+    document.getElementById('userInfoEdit').innerHTML = 'Save';
+  } else {
+    document.getElementById('userInfoFirstName').setAttribute('disabled',"");
+    document.getElementById('userInfoLastName').setAttribute('disabled',"");
+    document.getElementById('userInfoEmail').setAttribute('disabled',"");
+    document.getElementById('userInfoCardUID').setAttribute('disabled',"");
+    document.getElementById('userInfoEdit').innerHTML = 'Edit';
+  }
+}
+
 userInfoCreateCalendar(slctMonth);
 fillUserInfo(setUserObj,season);

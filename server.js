@@ -93,7 +93,8 @@ app.use(function(req, res, next) {
   } else if (req.url === '/cardattached' && req.body.MCU_KEY === MCU_KEY) {
     next();
   } else if (req.method === 'GET') {
-    res.render('login.html');
+    next();
+    //res.render('login.html');
   } else {
     res.status(401).send('UNAUTHORIZED');
   }
@@ -343,6 +344,18 @@ app.get('/getaccounts', (req, res) => {
     res.send();
   });
 });
+
+app.get('/test', (req, res) => {
+  console.log('headers:', req.headers);
+  console.log('body', req.body);
+  res.status(200).send('ok from server, methode:GET');
+})
+
+app.post('/test', (req, res) => {
+  console.log('headers:', req.headers);
+  console.log('body', req.body);
+  res.status(200).send('ok from server, methode:POST');
+})
 
 
 app.listen(port);

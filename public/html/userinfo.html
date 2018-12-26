@@ -110,6 +110,22 @@ display: flex;
 justify-content: center;
 }
 
+.editButtons {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  margin-top: 20px;
+  width: 316px;
+  justify-content: space-around;
+}
+
+.editButtons * {
+  width: 95px;
+  height: 39px;
+  font-size: 17px;
+  font-family: Roboto;
+}
+
 </style>
 
 <div id="employeeSettings">
@@ -120,6 +136,9 @@ justify-content: center;
   <input id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
   <input id="userInfoEmail" type="text" disabled autocomplete="off" spellcheck="false">
   <input id="userInfoCardUID" type="text" disabled autocomplete="off" spellcheck="false">
+  <div class="editButtons">
+  <button id="userInfoEdit">Edit</button>
+  </div>
 </div>
 
 <div id="userInfoCalendar">
