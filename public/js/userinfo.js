@@ -129,6 +129,10 @@ function fillUserInfo(userObj, fillSeason){
   document.getElementById('userInfoLastName').value = userObj.lastName;
   document.getElementById('userInfoEmail').value = userObj.email;
   document.getElementById('userInfoCardUID').value = userObj.cardUID;
+  if(userObj.role === 'true') {
+  document.getElementById('userInfoRole').checked = 'true';
+  }
+
 }
 
 document.getElementById('downloadCSV').onclick = function() {
@@ -158,13 +162,66 @@ document.getElementById('userInfoEdit').onclick = function() {
     document.getElementById('userInfoLastName').removeAttribute('disabled');
     document.getElementById('userInfoEmail').removeAttribute('disabled');
     document.getElementById('userInfoCardUID').removeAttribute('disabled');
+    document.getElementById('userInfoRole').removeAttribute('disabled');
+    document.getElementsByClassName('slider')[0].style.cursor = 'pointer';
     document.getElementById('userInfoEdit').innerHTML = 'Save';
-  } else {
+  } else if (state === 'Save') {
     document.getElementById('userInfoFirstName').setAttribute('disabled',"");
     document.getElementById('userInfoLastName').setAttribute('disabled',"");
     document.getElementById('userInfoEmail').setAttribute('disabled',"");
     document.getElementById('userInfoCardUID').setAttribute('disabled',"");
+    document.getElementById('userInfoRole').setAttribute('disabled',"");
+    document.getElementsByClassName('slider')[0].style.cursor = 'default';
     document.getElementById('userInfoEdit').innerHTML = 'Edit';
+
+      let objToSend = {
+        firstName: firstLetterToUpperCase(document.getElementById('userInfoFirstName').value.trim()),
+        lastName: firstLetterToUpperCase(document.getElementById('userInfoLastName').value.trim()),
+        email: document.getElementById('userInfoEmail').value,
+        cardUID: document.getElementById('userInfoCardUID').value.toUpperCase(),
+        role: document.getElementById('userInfoRole').checked
+      }
+
+      let okStatus = true;
+
+      if (!(isValidName(objToSend.firstName))) { //= 'invalid first name';
+        document.getElementById("userInfoFirstName").style.background = "#ff000036";
+        okStatus = false;
+      } else document.getElementById("userInfoFirstName").style.background = "white";
+
+      if (!(isValidName(objToSend.lastName))) { //= 'invalid last name';
+        document.getElementById("userInfoLastName").style.background = "#ff000036";
+        okStatus = false;
+      } else document.getElementById("userInfoLastName").style.background = "white";
+
+      if (!(isValidEmail(objToSend.email))) { //= 'invalid email';
+        document.getElementById("userInfoEmail").style.background = "#ff000036";
+        okStatus = false;
+      } else document.getElementById("userInfoEmail").style.background = "white";
+
+      if (!(isValidCardUID(objToSend.cardUID))) { //= 'invalid card UID';
+        document.getElementById("userInfoCardUID").style.background = "#ff000036";
+        okStatus = false;
+      } else document.getElementById("userInfoCardUID").style.background = "white";
+
+      if (okStatus === true) {
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.addEventListener("readystatechange", function() {
+          if (this.readyState === 4) {
+            var status = xhr.getResponseHeader('x-status');
+            if (status === 'ok') {
+            alert('ok');
+            } else {
+              alert('failed');
+            }
+          }
+        });
+        xhr.open("POST", postURL + '/edituser');
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.send(JSON.stringify(objToSend));
+      }
   }
 }
 

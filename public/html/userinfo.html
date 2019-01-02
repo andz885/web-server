@@ -113,18 +113,116 @@ justify-content: center;
 .editButtons {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 auto;
-  margin-top: 20px;
+  margin: 20px auto;
   width: 316px;
   justify-content: space-around;
 }
 
 .editButtons * {
-  width: 95px;
-  height: 39px;
-  font-size: 17px;
-  font-family: Roboto;
+  border-radius: 2px;
+  cursor: pointer;
+  height: 35px;
+  width: 100px;
+  background-color: #3C5D6E;
+  font-size: 16px;
+  font-family: Quicksand;
+  font-weight: 100;
+  color: white;
+  border: 0;
 }
+
+.editButtons *:nth-child(1){
+  background: #ae3d3d;
+}
+
+.editButtons *:nth-child(1):hover{
+  background: #d46464;
+}
+
+.editButtons *:nth-child(2):hover{
+  background-color: #5F7885;
+}
+
+
+.editButtons *:active{
+  height: 33px;
+  width: 98px;
+  margin: 1px;
+}
+
+.switch {
+  position: relative;
+  top: 6px;
+  left:100px;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+.switch input {
+  display:none;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: rgba(177, 83, 114, 0.89);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+.toggle{
+  text-align: left;
+  display: block;
+  height: 44px;
+  width: 316px;
+  margin: 12px auto;
+  font-size: 18px;
+  font-family: Quicksand;
+  font-weight: 100;
+}
+.toggle li{
+  display: inline-block;
+  position: relative;
+  bottom: 4px;
+  padding-left: 8px;
+  margin: 0;
 
 </style>
 
@@ -136,7 +234,15 @@ justify-content: center;
   <input id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
   <input id="userInfoEmail" type="text" disabled autocomplete="off" spellcheck="false">
   <input id="userInfoCardUID" type="text" disabled autocomplete="off" spellcheck="false">
+  <div class="toggle">
+    <li>Administrator:</li>
+    <label class="switch">
+      <input id="userInfoRole" type="checkbox" disabled>
+      <span class="slider round"></span>
+    </label>
+  </div>
   <div class="editButtons">
+  <button id="userInfoDeleteUser">Remove</button>
   <button id="userInfoEdit">Edit</button>
   </div>
 </div>

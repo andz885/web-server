@@ -84,6 +84,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function(req, res, next) {
+  console.log("request comed");
   var token = verifyJWT(req.cookies.token);
   if (token) {
     res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
@@ -93,10 +94,10 @@ app.use(function(req, res, next) {
   } else if (req.url === '/cardattached' && req.body.MCU_KEY === MCU_KEY) {
     next();
   } else if (req.method === 'GET') {
-    next();
-    //res.render('login.html');
+    res.render('login.html');
   } else {
-    res.status(401).send('UNAUTHORIZED');
+    next();
+    //res.status(401).send('UNAUTHORIZED');
   }
 });
 
@@ -275,6 +276,7 @@ app.post('/addpassword', (req, res) => {
 
 
 app.post('/cardattached', (req, res) => {
+  console.log("from esp");
   if (req.body.cardUID.length === 8) {
     accounts.findOne({
       cardUID: req.body.cardUID
@@ -345,17 +347,10 @@ app.get('/getaccounts', (req, res) => {
   });
 });
 
-app.get('/test', (req, res) => {
-  console.log('headers:', req.headers);
-  console.log('body', req.body);
-  res.status(200).send('ok from server, methode:GET');
-})
 
-app.post('/test', (req, res) => {
-  console.log('headers:', req.headers);
-  console.log('body', req.body);
+app.post('/edituser', (req, res) => {
   res.status(200).send('ok from server, methode:POST');
-})
+});
 
 
 app.listen(port);

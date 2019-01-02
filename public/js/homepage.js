@@ -98,6 +98,47 @@ function askForContent(tabName) {
   xhr.send();
 }
 
+//first letter from string tu upper case
+function firstLetterToUpperCase(string) {
+  if (string) return string[0].toUpperCase() + string.substring(1);
+}
+//email validation
+function isValidEmail(email) {
+  var atpos = email.indexOf("@");
+  var dotpos = email.lastIndexOf(".");
+  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+    return false;
+  }
+  return true;
+}
+//name validation
+function isValidName(string) {
+  if (!string) return false;
+  if ((string.length < 3) || (string.length > 20)) return false;
+  var slovakAlphabet = 'aáäbcčdďeéfghiíjklĺľmnňoóôpqrŕsštťuúvwxyýzž';
+  for (var i = 0; i < string.length; i++) {
+    var found = false;
+    for (var d = 0; d < slovakAlphabet.length; d++) {
+      if (string[i] === slovakAlphabet[d] || string[i] === slovakAlphabet[d].toUpperCase()) {
+        found = true;
+        break
+      };
+    }
+    if (found === false) return false;
+  }
+  return true;
+}
+//card id validation
+function isValidCardUID(string) {
+  if (string.length !== 8) return false;
+  var asciiNumb;
+  for (var i = 0; i < 8; i++) {
+    asciiNumb = string.charCodeAt(i);
+    if (asciiNumb < 48 || asciiNumb > 70 || (asciiNumb > 57 && asciiNumb < 65)) return false;
+  }
+  return true;
+}
+
 //refresh page by clicking on TOMKO
 document.getElementsByClassName('logo')[0].onclick = () => {
   window.location = postURL;
