@@ -14,6 +14,7 @@ const ADMIN_LOGIN = {
   password: SHA256(process.env.ADMIN_PASSWORD || 'adminpass').toString()
 }
 
+var stringify = require('json-stringify-safe');
 var cookieParser = require('cookie-parser');
 var randomstring = require("randomstring");
 var bodyParser = require('body-parser');
@@ -83,8 +84,8 @@ app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
+var glbReq;
 app.use(function(req, res, next) {
-  console.log("request comed");
   var token = verifyJWT(req.cookies.token);
   if (token) {
     res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
@@ -96,8 +97,8 @@ app.use(function(req, res, next) {
   } else if (req.method === 'GET') {
     res.render('login.html');
   } else {
-    next();
-    //res.status(401).send('UNAUTHORIZED');
+    glbReq = req;
+    res.status(401).send('UNAUTHORIZED');
   }
 });
 
@@ -350,6 +351,10 @@ app.get('/getaccounts', (req, res) => {
 
 app.post('/edituser', (req, res) => {
   res.status(200).send('ok from server, methode:POST');
+});
+
+app.get('/esp32', (req, res) => {
+  res.send(stringify(glbReq, null, 2));
 });
 
 
