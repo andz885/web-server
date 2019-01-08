@@ -84,7 +84,6 @@ app.use(favicon(__dirname + '/public/images/favicon.ico')); //tomko tab icon
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
-var glbReq;
 app.use(function(req, res, next) {
   var token = verifyJWT(req.cookies.token);
   if (token) {
@@ -97,7 +96,6 @@ app.use(function(req, res, next) {
   } else if (req.method === 'GET') {
     res.render('login.html');
   } else {
-    glbReq = req;
     res.status(401).send('UNAUTHORIZED');
   }
 });
@@ -350,11 +348,23 @@ app.get('/getaccounts', (req, res) => {
 
 
 app.post('/edituser', (req, res) => {
-  res.status(200).send('ok from server, methode:POST');
-});
-
-app.get('/esp32', (req, res) => {
-  res.send(stringify(glbReq, null, 2));
+  accounts.findOneAndUpdate({
+    _id: req.body._id
+  }, {
+    $set: {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      role: req.body.role,
+      cardUID: req.body.cardUID
+    }
+  }).then((doc) => {
+    res.setHeader('x-status', 'ok');
+    res.status(200).send();
+  }, (e) => {
+    res.setHeader('x-status', 'cannot browse accounts database');
+    res.status(503).send();
+  });
 });
 
 

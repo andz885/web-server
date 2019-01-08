@@ -20,7 +20,7 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
     lastName: firstLetterToUpperCase(document.getElementById('lastName').value.trim()),
     email: document.getElementById('email').value,
     cardUID: document.getElementById('cardUID').value.toUpperCase(),
-    role: document.getElementById('role').checked
+    role: document.getElementById('role').checked.toString()
   }
 
   var okStatus = true;

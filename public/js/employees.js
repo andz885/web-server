@@ -1,16 +1,19 @@
-var attendance;
+var accounts;
 
-function askForAttendance(callback) {
+function askForAccounts(callback) {
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
   xhr.addEventListener("readystatechange", function() {
     if (this.readyState === 4) {
       if (xhr.getResponseHeader('x-status') === 'ok') {
-      callback(JSON.parse(xhr.response));
-      document.getElementById('accTable').style.visibility = 'visible';
-    } else {
-      alert(xhr.getResponseHeader('x-status'));
-    }
+        callback(JSON.parse(xhr.response));
+        let errTable = document.getElementById('accTable');
+        if (errTable !== null) {
+          document.getElementById('accTable').style.visibility = 'visible';
+        }
+      } else {
+        alert(xhr.getResponseHeader('x-status'));
+      }
     }
   });
   xhr.open("GET", postURL + '/getaccounts');
@@ -145,36 +148,36 @@ document.getElementById('contentShadow').onclick = function() {
 }
 
 document.getElementById('tableFirstName').onclick = function() {
-sortByName(attendance, 'firstName');
-fillTable(attendance);
+sortByName(accounts, 'firstName');
+fillTable(accounts);
 }
 
 document.getElementById('tableLastName').onclick = function() {
-sortByName(attendance, 'lastName');
-fillTable(attendance);
+sortByName(accounts, 'lastName');
+fillTable(accounts);
 }
 
 document.getElementById('tableEmail').onclick = function() {
-sortByName(attendance, 'email');
-fillTable(attendance);
+sortByName(accounts, 'email');
+fillTable(accounts);
 }
 
 document.getElementById('tableCardUID').onclick = function() {
-sortByNumberHex(attendance, 'cardUID');
-fillTable(attendance);
+sortByNumberHex(accounts, 'cardUID');
+fillTable(accounts);
 }
 
 document.getElementById('tableCreatedAt').onclick = function() {
-sortByDate(attendance, '_id');
-fillTable(attendance);
+sortByDate(accounts, '_id');
+fillTable(accounts);
 }
 
 document.getElementById('tableAdmin').onclick = function() {
-sortByNumber(attendance, 'role');
-fillTable(attendance);
+sortByNumber(accounts, 'role');
+fillTable(accounts);
 }
 
-askForAttendance((rec) => {
+askForAccounts((rec) => {
   fillTable(rec);
-  attendance = rec;
+  accounts = rec;
 });
