@@ -152,7 +152,7 @@ function userInfoCreateCalendar(monthShift) {
         var resItemDate = new Date(resItem.date);
         if (resItemDate.getDate() !== dayDate)
           break;
-        userInfoAttendance[dayDate].push({action: resItem.action, date: resItem.date});
+        userInfoAttendance[dayDate].push({action: resItem.action, date: resItemDate});
         attCursor++;
       }
 
