@@ -134,17 +134,12 @@ function userInfoCreateCalendar(monthShift) {
   var attCursor = 0;
   userInfoAttendance = new Array(lastDay.getDate());
   for (let x = 0; x < userInfoAttendance.length; x++)
-  userInfoAttendance[x] = new Array();
+    userInfoAttendance[x] = new Array();
   attendanceRequest(setUserObj._id, monthShiftToSeason(monthShift, season), (res) => {
     for (from; from < to; from++) {
 
       monthChildrens[from].innerHTML = dayDate;
-      monthChildrens[from].insertAdjacentHTML('afterbegin', '<div class="triangle"></div> <div class="tooltip"></div>');
-      // monthChildrens[from].addEventListener('mousemove', (event) => {
-      //   document.querySelectorAll('.tooltip')[asdf].style.display = 'true';
-      //   document.querySelectorAll('.tooltip')[asdf].style.left = event.clientX;
-      //   document.querySelectorAll('.tooltip')[asdf].style.top = event.clientY;
-      // });
+      monthChildrens[from].insertAdjacentHTML('afterbegin', '<div></div>');
       while (true) {
         var resItem = res[attCursor];
         if (resItem === undefined)
@@ -152,21 +147,71 @@ function userInfoCreateCalendar(monthShift) {
         var resItemDate = new Date(resItem.date);
         if (resItemDate.getDate() !== dayDate)
           break;
-        userInfoAttendance[dayDate].push({action: resItem.action, date: resItemDate});
+        userInfoAttendance[dayDate - 1].push({action: resItem.action, date: resItemDate});
         attCursor++;
       }
 
-      // if((dayDate > date.getDate() && monthShift === 0) || monthShift > 0){
-      //   monthChildrens[from].classList.add('no-hover');
-      //   monthChildrens[from].classList.add('unselectable');
-      // } else {
-      //   document.getElementById("userInfoCalMonth").children[from].onclick = function() {
-      //   on date click
-      //  }
-      // }
+      if ((dayDate > date.getDate() && monthShift === 0) || monthShift > 0) {
+        monthChildrens[from].classList.add('no-hover');
+        monthChildrens[from].classList.add('unselectable');
+      } else {
+
+        if (userInfoAttendance[dayDate - 1].length !== 0) {
+
+          monthChildrens[from].getElementsByTagName('div')[0].setAttribute("class", "triangle");
+          for (let i = 0; i < userInfoAttendance[dayDate - 1].length; i += 2) { // neuplna dochadzka
+            let recordOne = userInfoAttendance[dayDate - 1][i];
+            let recordTwo = userInfoAttendance[dayDate - 1][i + 1];
+            if(recordOne == undefined || recordTwo == undefined || !recordOne.action.includes('arrival') || !recordTwo.action.includes('departure')){
+              monthChildrens[from].getElementsByTagName('div')[0].style.background = '#ca4646';
+              break;
+            }
+          }
+        }
+
+        monthChildrens[from].addEventListener('click', (event) => {
+          let eventN = Number(event.path[0].innerText);
+          document.getElementById('userInfoTableBody').innerHTML = '';
+          for(let i = 0; i < userInfoAttendance[eventN - 1].length; i++){ //length undefined??
+            let records = userInfoAttendance[eventN - 1];
+            document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', '<tr>');
+            if(records[i + 1] !== undefined && records[i].action.includes('arrival') && records[i + 1].action.includes('departure')){
+              let minDif = (records[i + 1].date.getTime() - records[i].date.getTime())/60000;
+              document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
+                <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes()}</td>
+                <td>${records[i + 1].date.getHours() + ':' + records[i + 1].date.getMinutes()}</td>
+                <td>${(records[i + 1].action.split('-'))[1]}</td>
+                <td>${(minDif / 60) + 'h ' + (minDif % 60) + 'm'}
+              `);
+              i++;
+            } else {
+              if(records[i].action.includes('arrival')){
+                document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
+                  <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes()}</td>
+                  <td></td>
+                `);
+              } else if (records[i].action.includes('departure')){
+                document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
+                  <td></td>
+                  <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes()}</td>
+                  <td>${(records[i].action.split('-'))[1]}</td>
+                `);
+              }
+            }
+            document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', '<tr>');
+          }
+          document.getElementById('userInfoCalendar').style.display = 'none';
+          document.getElementById('userInfoAttDetail').style.display = 'flex';
+        });
+      }
       dayDate++;
     }
   });
+}
+
+document.getElementById('userInfoBackToCalendar').onclick = function () {
+  document.getElementById('userInfoAttDetail').style.display = 'none';
+  document.getElementById('userInfoCalendar').style.display = 'flex';
 }
 
 function monthShiftToSeason(mountShft, actualSeason) {
@@ -201,6 +246,7 @@ document.getElementById('userInfoCalPrev').onclick = function() {
 }
 
 document.getElementById('userInfoCalNext').onclick = function() {
+  if(slctMonth >= 0) return;
   slctMonth++;
   userInfoCreateCalendar(slctMonth);
 }

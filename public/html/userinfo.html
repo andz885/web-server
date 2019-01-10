@@ -37,6 +37,7 @@ flex-wrap: wrap;
 width: 670px;
 }
 
+
 #userInfoCalFooter {
   display: flex;
   flex-wrap: wrap;
@@ -91,14 +92,6 @@ cursor: pointer;
   bottom: 16px;
 }
 
-.tooltip {
-  width:10px;
-  height:10px;
-  background:red;
-  position: absolute;
-  display: none;
-}
-
 #userInfoCalMonth li:not(.no-hover):hover {
 cursor: pointer;
 background: #B86480;
@@ -108,6 +101,10 @@ background: #B86480;
 width: 92px;
 height: 0;
 padding: 0;
+}
+
+#userInfoCalMonth li:hover .tooltip{
+display: block;
 }
 
 .unselectable {
@@ -250,6 +247,52 @@ input:checked + .slider:before {
   bottom: 4px;
   padding-left: 8px;
   margin: 0;
+}
+
+#userInfoAttDetail {
+  display:flex;
+  flex-direction:column;
+  align-items: center;
+font-family: Roboto;
+position:relative;
+float: left;
+display: none;
+flex-wrap: wrap;
+width: 670px;
+top:24px;
+}
+
+.useless {
+  height:527px;
+}
+
+  #userInfoTable th, td{
+    width:200px;
+    font-weight:300;
+    text-align: center;
+    padding-bottom: 10px;
+  }
+
+  #userInfoTable th{
+    padding-bottom: 30px;
+  }
+
+  #userInfoBackToCalendar{
+    border-radius: 2px;
+    cursor: pointer;
+    height: 35px;
+    width: 100px;
+    background-color: #3C5D6E;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 100;
+    color: white;
+    border: 0;
+  }
+
+  #userInfoBackToCalendar:hover {
+      background-color: #5F7885;
+  }
 
 </style>
 
@@ -290,4 +333,21 @@ input:checked + .slider:before {
   <img id="userInfoCalNext" src="mbri-arrow-next.svg">
   <img id="downloadCSV" src="mbri-save.svg">
 </div>
+</div>
+<div id="userInfoAttDetail">
+  <div class="useless">
+    <table id="userInfoTable">
+      <thead>
+      <tr>
+        <th>Arrival</th>
+        <th>Departure</th>
+        <th>Type</th>
+        <th>Working Time</th>
+      </tr>
+      </thead>
+      <tbody id="userInfoTableBody">
+      </tbody>
+    </table>
+    </div>
+    <button id="userInfoBackToCalendar">Back</button>
 </div>
