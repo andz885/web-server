@@ -48,7 +48,9 @@ var accounts = mongoose.model('accounts', accountSchema);
 
 var attendanceSchema = new mongoose.Schema({
   user_id: String,
-  action: String, //departure-doctor-user
+  action: String, //departure
+  type: String, //doctor
+  from: String, //user
   date: Date,
 }, {
   versionKey: false,
@@ -275,7 +277,6 @@ app.post('/addpassword', (req, res) => {
 
 
 app.post('/cardattached', (req, res) => {
-  console.log("from esp");
   if (req.body.cardUID.length === 8) {
     accounts.findOne({
       cardUID: req.body.cardUID
@@ -287,6 +288,8 @@ app.post('/cardattached', (req, res) => {
       var att = new attendance({
         user_id: doc._id,
         action: req.body.action,
+        type: req.body.type,
+        from: req.body.from,
         date: new Date(req.body.date*1000).toISOString()
       });
       att.save().then(() => {
