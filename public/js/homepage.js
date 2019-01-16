@@ -139,6 +139,13 @@ function isValidCardUID(string) {
   return true;
 }
 
+function showShadow() {
+document.getElementById('content').insertAdjacentHTML('beforeend', '<div id="contentShadow" class="contentShadow"></div>');
+document.getElementById('contentShadow').onclick = function () {
+document.getElementById('contentShadow').remove();
+}
+}
+
 //refresh page by clicking on TOMKO
 document.getElementsByClassName('logo')[0].onclick = () => {
   window.location = postURL;
@@ -154,9 +161,6 @@ document.getElementById('employees').onclick = () => {
   askForContent('employees');
 }
 
-document.getElementById('dateBack').onclick = () => {
-  askForContent('dateback');
-}
 //Add User tab button
 document.getElementById('addUser').onclick = () => {
   askForContent('adduser');

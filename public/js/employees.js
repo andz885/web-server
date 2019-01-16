@@ -138,14 +138,9 @@ function sortByDate(records, property) {
 }
 
 document.getElementById('filterIcon').onclick = function() {
-  document.getElementById("contentShadow").classList.toggle("show");
-  document.getElementById("filter").classList.toggle("show");
+  showShadow();
 }
 
-document.getElementById('contentShadow').onclick = function() {
-  document.getElementById("contentShadow").classList.toggle("show");
-  document.getElementById('filter').classList.toggle("show");
-}
 
 document.getElementById('tableFirstName').onclick = function() {
 sortByName(accounts, 'firstName');

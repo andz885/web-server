@@ -3,17 +3,21 @@
 
 #backToEmployees {
   cursor: pointer;
-  display:block;
+  display: flex;
+  position: absolute;
+  left: 70px;
+  top: 76px;
+  height: 45px;
 }
 
-#employeeSettings {
+#userInfoRightSide {
   display: flex;
   flex-direction: column;
   float:left;
   width: 450px;
 }
 
-#employeeSettings input {
+#userInfoRightSide input {
   background: #fff;
   height: 44px;
   width: 300px;
@@ -28,7 +32,7 @@
 }
 
 
-#userInfoCalendar {
+#userInfoLeftSide {
 font-family: Roboto;
 position:relative;
 float: left;
@@ -50,11 +54,11 @@ width: 670px;
   font-size: 17px;
 }
 
-#userInfoCalFooter *:not(:nth-child(2)) {
-cursor: pointer;
+#userInfoCalFooter img {
+  cursor: pointer;
 }
 
-#userInfoCalendar li {
+#userInfoLeftSide li {
   margin-left: 3px;
   font-size: 18px;
   width: 92px;
@@ -103,10 +107,6 @@ height: 0;
 padding: 0;
 }
 
-#userInfoCalMonth li:hover .tooltip{
-display: block;
-}
-
 .unselectable {
   color:#00000057;
   cursor: context-menu;
@@ -120,10 +120,22 @@ margin-top: 20px;
 margin-bottom: 10px;
 }
 
+#userInfoCalDateParent {
+  width: auto;
+  display:flex;
+}
+
 #userInfoCalDate {
-width: 143px;
+  width: 150px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#userInfoCalDay {
+width: 30px;
+height: 20px;
 display: flex;
-justify-content: center;
+justify-content: flex-end;
 }
 
 #userInfoFirstName, #userInfoLastName {
@@ -262,9 +274,6 @@ width: 670px;
 top:24px;
 }
 
-.useless {
-  height:527px;
-}
 
   #userInfoTable th, td{
     width:200px;
@@ -277,27 +286,43 @@ top:24px;
     padding-bottom: 30px;
   }
 
-  #userInfoBackToCalendar{
-    border-radius: 2px;
-    cursor: pointer;
-    height: 35px;
-    width: 100px;
-    background-color: #3C5D6E;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 100;
-    color: white;
-    border: 0;
-  }
+#userInfoCalendar {
+  display:flex;
+  flex-wrap:wrap;
+}
 
-  #userInfoBackToCalendar:hover {
-      background-color: #5F7885;
-  }
+#userInfoBackToCalendar{
+  position: absolute;
+  left: 640px;
+  width: 30px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+#footerForCal{
+display: flex;
+width: 100px;
+justify-content: space-between;
+}
+
+#userInfoNoRecords{
+display: flex;
+font-size: 20px;
+font-weight: 300;
+position: absolute;
+top: 160px;
+}
+
+#userInfoDayPrev, #userInfoDayNext {
+  display: none;
+}
+
 
 </style>
 
-<div id="employeeSettings">
+<div id="userInfoRightSide">
   <div id="userInfoImg">
+    <img id="backToEmployees" src="back-arrow.svg" title="Back">
   <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg">
   </div>
   <input id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
@@ -317,7 +342,8 @@ top:24px;
   </div>
 </div>
 
-<div id="userInfoCalendar">
+<div id="userInfoLeftSide">
+  <div id="userInfoCalendar">
   <li>Mon</li> <li>Tue</li> <li>Wed</li> <li>Thu</li> <li>Fri</li> <li>Sat</li> <li>Sun</li>
 <div id="userInfoCalMonth">
   <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
@@ -327,27 +353,35 @@ top:24px;
   <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
   <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
 </div>
-<div id="userInfoCalFooter">
-  <img id="userInfoCalPrev" src="mbri-arrow-prev.svg">
-  <div id="userInfoCalDate"></div>
-  <img id="userInfoCalNext" src="mbri-arrow-next.svg">
-  <img id="downloadCSV" src="mbri-save.svg">
-</div>
 </div>
 <div id="userInfoAttDetail">
-  <div class="useless">
+  <div id="userInfoNoRecords">No Records Here</div>
     <table id="userInfoTable">
       <thead>
       <tr>
         <th>Arrival</th>
         <th>Departure</th>
-        <th>Type</th>
         <th>Working Time</th>
       </tr>
       </thead>
       <tbody id="userInfoTableBody">
       </tbody>
     </table>
-    </div>
-    <button id="userInfoBackToCalendar">Back</button>
+    <img id="userInfoBackToCalendar" src="red-cross.svg">
+</div>
+<div id="userInfoCalFooter">
+  <img id="userInfoCalPrev" src="mbri-arrow-prev.svg" title="Previous">
+  <img id="userInfoDayPrev" src="mbri-arrow-prev.svg" title="Previous">
+  <div id="userInfoCalDateParent">
+  <div id="userInfoCalDay"></div>
+  <div id="userInfoCalDate"></div>
+  </div>
+  <img id="userInfoDayNext" src="mbri-arrow-next.svg" title="Next">
+  <img id="userInfoCalNext" src="mbri-arrow-next.svg" title="Next">
+  <div id="footerForCal">
+  <img id="userInfoCalSetting" src="mbri-setting2.svg" title="Settings">
+  <img id="downloadCSV" src="mbri-save.svg" title="Download">
+  <img id="userInfoDateBack" src="mbri-share.svg" title="Insert Record" style="display:none;">
+  </div>
+</div>
 </div>

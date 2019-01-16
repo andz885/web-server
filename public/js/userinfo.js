@@ -1,8 +1,8 @@
 var setUserObj;
 var userInfoAttendance;
-var season = (1 + (new Date()).getMonth()) + '-' + (
-new Date()).getFullYear();
+var season = (1 + (new Date()).getMonth()) + '-' + (new Date()).getFullYear();
 var slctMonth = 0;
+var slctDay;
 
 function updateSelectedUserObject() {
   setUserObj = accounts.find(function(obj) {
@@ -45,7 +45,7 @@ function downloadAttendance(data, filename) {
 
 function jsonToCsv(json) {
   var csvFile = '';
-  csvFile += 'Date;Arrival;Departure;Type;\n';
+  csvFile += 'Date;Arrival;Type;From;Departure;Type;from;\n';
   for (let i = 0; i < json.length; i++) {
     var date1 = new Date(json[i].date);
     var action1 = json[i].action.split('-');
@@ -97,7 +97,7 @@ function jsonToCsv(json) {
   return csvFile;
 }
 
-function userInfoCreateCalendar(monthShift) {
+function userInfoCreateCalendar(monthShift, callback) {
   var date = new Date();
   var year = date.getFullYear();
   var month = date.getMonth() + monthShift;
@@ -119,7 +119,7 @@ function userInfoCreateCalendar(monthShift) {
   ];
   document.getElementById('userInfoCalDate').innerHTML = monthNames[((month % 12) + 12) % 12] + ' ' + firstDay.getFullYear();
   var monthChildrens = document.getElementById("userInfoCalMonth").children;
-  for (var i = 0; i < 42; i++) {
+  for (var i = 0; i < 42; i++) { //vymazanie vyplnenia kalendáru kvôli listovaniu mesiacov
     monthChildrens[i].innerHTML = '';
     monthChildrens[i].classList.remove('no-hover');
     monthChildrens[i].classList.remove('unselectable');
@@ -131,27 +131,27 @@ function userInfoCreateCalendar(monthShift) {
     from = 7;
   from--;
   var to = lastDay.getDate() + from;
-  var attCursor = 0;
   userInfoAttendance = new Array(lastDay.getDate());
   for (let x = 0; x < userInfoAttendance.length; x++)
     userInfoAttendance[x] = new Array();
   attendanceRequest(setUserObj._id, monthShiftToSeason(monthShift, season), (res) => {
+    var attCursor = 0;
     for (from; from < to; from++) {
 
-      monthChildrens[from].innerHTML = dayDate;
-      monthChildrens[from].insertAdjacentHTML('afterbegin', '<div></div>');
-      while (true) {
+      while (true) { //filling userInfoAttendance
         var resItem = res[attCursor];
         if (resItem === undefined)
           break;
         var resItemDate = new Date(resItem.date);
         if (resItemDate.getDate() !== dayDate)
           break;
-        userInfoAttendance[dayDate - 1].push({action: resItem.action, date: resItemDate});
+        userInfoAttendance[dayDate - 1].push({action: resItem.action, type: resItem.type, from: resItem.from, date: resItemDate});
         attCursor++;
       }
 
-      if ((dayDate > date.getDate() && monthShift === 0) || monthShift > 0) {
+      monthChildrens[from].innerHTML = dayDate;
+      monthChildrens[from].insertAdjacentHTML('afterbegin', '<div></div>');
+      if ((dayDate > date.getDate() && monthShift === 0) || monthShift > 0) { //future days unselectable
         monthChildrens[from].classList.add('no-hover');
         monthChildrens[from].classList.add('unselectable');
       } else {
@@ -162,56 +162,130 @@ function userInfoCreateCalendar(monthShift) {
           for (let i = 0; i < userInfoAttendance[dayDate - 1].length; i += 2) { // neuplna dochadzka
             let recordOne = userInfoAttendance[dayDate - 1][i];
             let recordTwo = userInfoAttendance[dayDate - 1][i + 1];
-            if(recordOne == undefined || recordTwo == undefined || !recordOne.action.includes('arrival') || !recordTwo.action.includes('departure')){
+          if (recordOne == undefined || recordTwo == undefined || recordOne.action !== 'arrival' || recordTwo.action !== 'departure') {
               monthChildrens[from].getElementsByTagName('div')[0].style.background = '#ca4646';
               break;
             }
           }
         }
-
-        monthChildrens[from].addEventListener('click', (event) => {
-          let eventN = Number(event.path[0].innerText);
+        monthChildrens[from].onclick = function () {
+          slctDay = Array.from(this.parentNode.children).indexOf(this);
           document.getElementById('userInfoTableBody').innerHTML = '';
-          for(let i = 0; i < userInfoAttendance[eventN - 1].length; i++){ //length undefined??
-            let records = userInfoAttendance[eventN - 1];
-            document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', '<tr>');
-            if(records[i + 1] !== undefined && records[i].action.includes('arrival') && records[i + 1].action.includes('departure')){
-              let minDif = (records[i + 1].date.getTime() - records[i].date.getTime())/60000;
-              document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
-                <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes()}</td>
-                <td>${records[i + 1].date.getHours() + ':' + records[i + 1].date.getMinutes()}</td>
-                <td>${(records[i + 1].action.split('-'))[1]}</td>
-                <td>${(minDif / 60) + 'h ' + (minDif % 60) + 'm'}
-              `);
-              i++;
-            } else {
-              if(records[i].action.includes('arrival')){
+          let eventN = Number(event.path[0].innerText);
+          let numbOfRecords = userInfoAttendance[eventN - 1].length; //length undefined??
+          if (!numbOfRecords) {
+            document.getElementById('userInfoNoRecords').style.display = 'flex';
+          } else {
+            document.getElementById('userInfoNoRecords').style.display = 'none';
+          }
+            for (let i = 0; i < numbOfRecords; i++) {
+              let records = userInfoAttendance[eventN - 1];
+              if (records[i + 1] !== undefined && records[i].action === 'arrival' && records[i + 1].action === 'departure') {
+                let minuteDif = (Math.trunc(records[i + 1].date.getTime() / 60000) - Math.trunc(records[i].date.getTime() / 60000));
                 document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
-                  <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes()}</td>
-                  <td></td>
+                <tr>
+                  <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes() + ' - ' + records[i].type}</td>
+                  <td>${records[i + 1].date.getHours() + ':' + records[i + 1].date.getMinutes() + ' - ' + records[i + 1].type}</td>
+                  <td>${Math.trunc(minuteDif / 60) + 'h ' + (
+                minuteDif % 60) + 'm'}
+                </tr>
                 `);
-              } else if (records[i].action.includes('departure')){
-                document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
-                  <td></td>
-                  <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes()}</td>
-                  <td>${(records[i].action.split('-'))[1]}</td>
-                `);
+                i++;
+              } else {
+                if (records[i].action === 'arrival') {
+                  document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
+                  <tr>
+                    <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes() + ' - ' + records[i].type}</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  `);
+                } else if (records[i].action.includes('departure')) {
+                  document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
+                  <tr>
+                    <td></td>
+                    <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes() + ' - ' + records[i].type}</td>
+                    <td></td>
+                  </tr>
+                  `);
+                }
               }
             }
-            document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', '<tr>');
-          }
-          document.getElementById('userInfoCalendar').style.display = 'none';
-          document.getElementById('userInfoAttDetail').style.display = 'flex';
-        });
+            document.getElementById('userInfoCalendar').style.display = 'none';
+            document.getElementById('downloadCSV').style.display = 'none';
+
+            document.getElementById('userInfoCalPrev').style.display = 'none';
+            document.getElementById('userInfoCalNext').style.display = 'none';
+
+            document.getElementById('userInfoDateBack').style.display = 'flex';
+
+            document.getElementById('userInfoDayPrev').style.display = 'flex';
+            document.getElementById('userInfoDayNext').style.display = 'flex';
+
+            document.getElementById('userInfoAttDetail').style.display = 'flex';
+            document.getElementById('userInfoCalDay').innerHTML = eventN + '.&nbsp';
+        };
       }
       dayDate++;
     }
+    callback();
   });
 }
 
 document.getElementById('userInfoBackToCalendar').onclick = function () {
   document.getElementById('userInfoAttDetail').style.display = 'none';
+  document.getElementById('userInfoDateBack').style.display = 'none';
+
+  document.getElementById('userInfoDayPrev').style.display = 'none';
+  document.getElementById('userInfoDayNext').style.display = 'none';
+
+  document.getElementById('downloadCSV').style.display = 'flex';
+
+  document.getElementById('userInfoCalPrev').style.display = 'flex';
+  document.getElementById('userInfoCalNext').style.display = 'flex';
+
   document.getElementById('userInfoCalendar').style.display = 'flex';
+  document.getElementById('userInfoCalDay').innerHTML = '';
+}
+
+document.getElementById('userInfoDayPrev').onclick = function () {
+  var monthDays = document.getElementById('userInfoCalMonth').children;
+  if(Number(monthDays[slctDay].innerText) > 1){
+    monthDays[slctDay - 1].click();
+  } else {
+    slctMonth--;
+    userInfoCreateCalendar(slctMonth, () => {
+      monthDays = document.getElementById('userInfoCalMonth').children;
+      let i = 26;
+      while(i < 42){
+        if(monthDays[i].innerText === ""){
+          monthDays[i - 1].click();
+          break;
+        }
+        i++;
+      }
+    });
+  }
+}
+
+document.getElementById('userInfoDayNext').onclick = function () {
+  var monthDays = document.getElementById('userInfoCalMonth').children;
+  if(monthDays[slctDay + 1].innerText !== ""){
+    monthDays[slctDay + 1].click();
+  } else {
+    slctMonth++;
+    userInfoCreateCalendar(slctMonth, () => {
+      monthDays = document.getElementById('userInfoCalMonth').children;
+      let i = 8;
+      while(i >= 0){
+        if(monthDays[i].innerText === "1"){
+          monthDays[i].click();
+          break;
+        }
+        i--;
+      }
+    });
+  }
 }
 
 function monthShiftToSeason(mountShft, actualSeason) {
@@ -242,13 +316,21 @@ document.getElementById('downloadCSV').onclick = function() {
 
 document.getElementById('userInfoCalPrev').onclick = function() {
   slctMonth--;
-  userInfoCreateCalendar(slctMonth);
+  userInfoCreateCalendar(slctMonth, () => {});
 }
 
 document.getElementById('userInfoCalNext').onclick = function() {
   if(slctMonth >= 0) return;
   slctMonth++;
-  userInfoCreateCalendar(slctMonth);
+  userInfoCreateCalendar(slctMonth, () => {});
+}
+
+document.getElementById('userInfoDateBack').onclick = function() {
+  showShadow();
+}
+
+document.getElementById('backToEmployees').onclick = function() {
+  document.getElementById('employees').click();
 }
 
 document.getElementById('userInfoEdit').onclick = function() {
@@ -354,5 +436,5 @@ document.getElementById('userInfoEdit').onclick = function() {
 }
 
 updateSelectedUserObject();
-userInfoCreateCalendar(slctMonth);
+userInfoCreateCalendar(slctMonth, () => {});
 fillUserInfo(setUserObj, season);

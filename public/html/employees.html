@@ -66,45 +66,6 @@
    cursor: pointer;
  }
 
- #filter {
-   position: fixed;
-   border-radius:2px;
-   background: white;
-   width: 500px;
-   height: 200px;
-   top: calc(50vh + 22.5px);
-   left: calc(50vw + 100px);
-   transform: translate(-50%,-50%);
- }
-
- #contentShadow {
-   background-color: #0000005c;
-   height: calc(100% - 45px);
-   width: calc(100% - 200px);
-   position: fixed;
-   right: 0;
- }
-
- .hidden {
-   visibility: hidden;
- }
-
- .show {
-   visibility: visible;
-   -webkit-animation: fadeIn 300ms;
-   animation: fadeIn 300ms;
- }
-
- @-webkit-keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
-}
-
 th abc {
   cursor: pointer;
 }
@@ -128,10 +89,4 @@ th abc {
     <tbody id="table">
     </tbody>
   </table>
-</div>
-
-<div id="contentShadow" class="hidden">
-</div>
-
-<div id="filter" class="hidden">
 </div>
