@@ -2,7 +2,7 @@ var setUserObj;
 var userInfoAttendance;
 var season = (1 + (new Date()).getMonth()) + '-' + (new Date()).getFullYear();
 var slctMonth = 0;
-var slctDay;
+var slctLi;
 
 function updateSelectedUserObject() {
   setUserObj = accounts.find(function(obj) {
@@ -47,54 +47,47 @@ function jsonToCsv(json) {
   var csvFile = '';
   csvFile += 'Date;Arrival;Type;From;Departure;Type;from;\n';
   for (let i = 0; i < json.length; i++) {
+
     var date1 = new Date(json[i].date);
-    var action1 = json[i].action.split('-');
+    var date2 = new Date(json[i + 1] === undefined ? 0 : json[i + 1].date);
 
-    if (i === (json.length - 1)) {
-      if (action1[0] === 'arrival') {
-        csvFile += date1.getDate() + '.' + (
-        date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
-        csvFile += date1.getHours() + ':' + date1.getMinutes() + ';';
-        csvFile += ';'
-        csvFile += ';'
-      }
-      if (action1[0] === 'departure') {
-        csvFile += date1.getDate() + '.' + (
-        date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
-        csvFile += ';'
-        csvFile += date1.getHours() + ':' + date1.getMinutes() + ';';
-        csvFile += action1[1] + ';'
-      }
-      csvFile += '\n';
-      break;
-    }
-
-    var date2 = new Date(json[i + 1].date);
-    var action2 = json[i + 1].action.split('-');
-
-    if (action1[0] === 'arrival' && action2[0] === 'departure' && date1.getDate() === date2.getDate()) {
-      csvFile += date1.getDate() + '.' + (
-      date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
+    if (json[i + 1] !== undefined && json[i].action === 'arrival' && json[i + 1].action === 'departure' && date1.getDate() === date2.getDate()) {
+      csvFile += date1.getDate() + '.' + (date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
       csvFile += date1.getHours() + ':' + date1.getMinutes() + ';';
+      csvFile += json[i].type + ';';
+      csvFile += json[i].from + ';';
       csvFile += date2.getHours() + ':' + date2.getMinutes() + ';';
-      csvFile += action2[1] + ';';
+      csvFile += json[i + 1].type + ';';
+      csvFile += json[i + 1].from + ';';
       i++;
-    } else if (action1[0] === 'arrival') {
-      csvFile += date1.getDate() + '.' + (
-      date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
+    } else if (json[i].action === 'arrival') {
+      csvFile += date1.getDate() + '.' + (date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
       csvFile += date1.getHours() + ':' + date1.getMinutes() + ';';
-      csvFile += ';'
-      csvFile += ';'
-    } else if (action1[0] === 'departure') {
-      csvFile += date1.getDate() + '.' + (
-      date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
-      csvFile += ';'
+      csvFile += json[i].type + ';';
+      csvFile += json[i].from + ';;;;';
+    } else if (json[i].action === 'departure') {
+      csvFile += date1.getDate() + '.' + (date1.getMonth() + 1) + '.' + date1.getFullYear() + ';';
+      csvFile += ';;;'
       csvFile += date1.getHours() + ':' + date1.getMinutes() + ';';
-      csvFile += action1[1] + ';'
+      csvFile += json[i].type + ';';
+      csvFile += json[i].from + ';';
     }
     csvFile += '\n';
   }
   return csvFile;
+}
+
+function slctLiToInnerText(selectedMonth, selectedLi){
+let date = new Date();
+date.setMonth(date.getMonth() + selectedMonth);
+date.setDate(1);
+let day = selectedLi + 1 - (date.getDay() === 0 ? 6 : (date.getDay() - 1));
+date.setMonth(date.getMonth() + selectedMonth + 1);
+date.setDate(0);
+if(day > date.getDate())
+return 'OVERFLOW';
+else
+return day;
 }
 
 function userInfoCreateCalendar(monthShift, callback) {
@@ -169,7 +162,7 @@ function userInfoCreateCalendar(monthShift, callback) {
           }
         }
         monthChildrens[from].onclick = function () {
-          slctDay = Array.from(this.parentNode.children).indexOf(this);
+          slctLi = Array.from(this.parentNode.children).indexOf(this);
           document.getElementById('userInfoTableBody').innerHTML = '';
           let eventN = Number(event.path[0].innerText);
           let numbOfRecords = userInfoAttendance[eventN - 1].length; //length undefined??
@@ -184,8 +177,8 @@ function userInfoCreateCalendar(monthShift, callback) {
                 let minuteDif = (Math.trunc(records[i + 1].date.getTime() / 60000) - Math.trunc(records[i].date.getTime() / 60000));
                 document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
                 <tr>
-                  <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes() + ' - ' + records[i].type}</td>
-                  <td>${records[i + 1].date.getHours() + ':' + records[i + 1].date.getMinutes() + ' - ' + records[i + 1].type}</td>
+                  <td>${records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i].type}</td>
+                  <td>${records[i + 1].date.getHours() + ':' + `${records[i + 1].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i + 1].type}</td>
                   <td>${Math.trunc(minuteDif / 60) + 'h ' + (
                 minuteDif % 60) + 'm'}
                 </tr>
@@ -195,16 +188,16 @@ function userInfoCreateCalendar(monthShift, callback) {
                 if (records[i].action === 'arrival') {
                   document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
                   <tr>
-                    <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes() + ' - ' + records[i].type}</td>
+                    <td>${records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i].type}</td>
                     <td></td>
                     <td></td>
                   </tr>
                   `);
-                } else if (records[i].action.includes('departure')) {
+                } else if (records[i].action ==='departure') {
                   document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
                   <tr>
                     <td></td>
-                    <td>${records[i].date.getHours() + ':' + records[i].date.getMinutes() + ' - ' + records[i].type}</td>
+                    <td>${records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i].type}</td>
                     <td></td>
                   </tr>
                   `);
@@ -250,15 +243,15 @@ document.getElementById('userInfoBackToCalendar').onclick = function () {
 
 document.getElementById('userInfoDayPrev').onclick = function () {
   var monthDays = document.getElementById('userInfoCalMonth').children;
-  if(Number(monthDays[slctDay].innerText) > 1){
-    monthDays[slctDay - 1].click();
+  if(slctLiToInnerText(slctMonth, slctLi) > 1){
+    monthDays[slctLi - 1].click();
   } else {
     slctMonth--;
     userInfoCreateCalendar(slctMonth, () => {
       monthDays = document.getElementById('userInfoCalMonth').children;
       let i = 26;
       while(i < 42){
-        if(monthDays[i].innerText === ""){
+        if(slctLiToInnerText(slctMonth, i) === "OVERFLOW"){
           monthDays[i - 1].click();
           break;
         }
@@ -270,15 +263,15 @@ document.getElementById('userInfoDayPrev').onclick = function () {
 
 document.getElementById('userInfoDayNext').onclick = function () {
   var monthDays = document.getElementById('userInfoCalMonth').children;
-  if(monthDays[slctDay + 1].innerText !== ""){
-    monthDays[slctDay + 1].click();
-  } else {
+  if(slctLiToInnerText(slctMonth, slctLi + 1) !== "OVERFLOW"){
+    monthDays[slctLi + 1].click();
+  } else if (slctMonth < 0){
     slctMonth++;
     userInfoCreateCalendar(slctMonth, () => {
       monthDays = document.getElementById('userInfoCalMonth').children;
       let i = 8;
       while(i >= 0){
-        if(monthDays[i].innerText === "1"){
+        if(slctLiToInnerText(slctMonth, i) === 1){
           monthDays[i].click();
           break;
         }
@@ -325,12 +318,30 @@ document.getElementById('userInfoCalNext').onclick = function() {
   userInfoCreateCalendar(slctMonth, () => {});
 }
 
-document.getElementById('userInfoDateBack').onclick = function() {
-  showShadow();
-}
-
 document.getElementById('backToEmployees').onclick = function() {
   document.getElementById('employees').click();
+}
+
+document.getElementById('userInfoDateBack').onclick = function() {
+  showShadow();
+  document.getElementsByClassName('beforeShadow')[0].style.display = 'flex';
+  document.getElementById('userInfoDateBackHours').value = '';
+  document.getElementById('userInfoDateBackMinutes').value = '';
+  document.getElementById('userInfoDateBackType').value = '';
+  document.getElementById('content').style = '--main-size : 15px'
+  document.getElementById('userInfoDateBackHours').focus();
+}
+
+document.getElementById('userInfoDateBackArrival').onclick = function() {
+  document.getElementById('content').style = '--main-size : 10px'
+}
+
+document.getElementById('userInfoDateBackDeparture').onclick = function() {
+  document.getElementById('content').style = '--main-size : 20px'
+}
+
+document.getElementById('userInfoCancelDateBack').onclick = function() {
+  document.getElementById('contentShadow').click();
 }
 
 document.getElementById('userInfoEdit').onclick = function() {

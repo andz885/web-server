@@ -3,6 +3,7 @@
 
 #backToEmployees {
   cursor: pointer;
+  -webkit-user-drag: none;
   display: flex;
   position: absolute;
   left: 70px;
@@ -15,20 +16,6 @@
   flex-direction: column;
   float:left;
   width: 450px;
-}
-
-#userInfoRightSide input {
-  background: #fff;
-  height: 44px;
-  width: 300px;
-  margin: 20px auto;
-  margin-bottom: 17px;
-  font-size: 16px;
-  font-family: Quicksand;
-  font-weight: 100;
-  border: 1px solid #d9d9d9;
-  border-top: 1px solid #c0c0c0;
-  padding: 0 8px;
 }
 
 
@@ -292,6 +279,7 @@ top:24px;
 }
 
 #userInfoBackToCalendar{
+  -webkit-user-drag: none;
   position: absolute;
   left: 640px;
   width: 30px;
@@ -317,6 +305,88 @@ top: 160px;
   display: none;
 }
 
+.dateBackWindow {
+  z-index:5;
+  border-radius:2px;
+  width: 225px;
+  height: 250px;
+  left:50%;
+  top:40%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  display: none;
+  background:white;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  border: 25px solid white;
+  font-family: Roboto;
+  font-weight:300;
+  font-size:20px;
+}
+
+.userInfoDateBackRadio{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.userInfoDateBackRadio * {
+  cursor:pointer;
+}
+
+.textInputClass{
+  background: #fff;
+  height: 44px;
+  width: 300px;
+  margin: 20px auto;
+  margin-bottom: 17px;
+  font-size: 16px;
+  font-family: Quicksand;
+  font-weight: 100;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  padding: 0 8px;
+}
+
+.inputTime{
+  width: 45px;
+  text-align: center;
+  margin: 0;
+}
+
+.buttonClass{
+  border-radius: 2px;
+  cursor: pointer;
+  height: 35px;
+  width: 100px;
+  background-color: #3C5D6E;
+  font-size: 16px;
+  font-family: Quicksand;
+  font-weight: 100;
+  color: white;
+  border: 0;
+}
+
+.arrivalDeparture {
+display: flex;
+justify-content: center;
+align-items: center;
+font-size:15px;
+width: 100px;
+height: 21px;
+}
+
+.arrivalTransition {
+  font-size: calc(30px - var(--main-size));
+  transition: all 300ms ease;
+}
+
+.departureTransition {
+  font-size: var(--main-size);
+  transition: all 300ms ease;
+}
 
 </style>
 
@@ -325,10 +395,10 @@ top: 160px;
     <img id="backToEmployees" src="back-arrow.svg" title="Back">
   <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg">
   </div>
-  <input id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
-  <input id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
-  <input id="userInfoEmail" type="text" disabled autocomplete="off" spellcheck="false">
-  <input id="userInfoCardUID" type="text" disabled autocomplete="off" spellcheck="false">
+  <input class="textInputClass" id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
+  <input class="textInputClass" id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
+  <input class="textInputClass" id="userInfoEmail" type="text" disabled autocomplete="off" spellcheck="false">
+  <input class="textInputClass" id="userInfoCardUID" type="text" disabled autocomplete="off" spellcheck="false">
   <div class="toggle">
     <li>Administrator:</li>
     <label class="switch">
@@ -383,5 +453,21 @@ top: 160px;
   <img id="downloadCSV" src="mbri-save.svg" title="Download">
   <img id="userInfoDateBack" src="mbri-share.svg" title="Insert Record" style="display:none;">
   </div>
+</div>
+</div>
+<div class="beforeShadow dateBackWindow">
+<div style="margin: 0 auto;">
+  <input class="textInputClass inputTime" id="userInfoDateBackHours" type="text"  autocomplete="off" spellcheck="false">
+  <span style="font-weight:900; color:#5d5d5d; margin:0 15px;">:</span>
+  <input class="textInputClass inputTime" id="userInfoDateBackMinutes" type="text"  autocomplete="off" spellcheck="false">
+</div>
+<input style="width: 180px; margin-top:0; margin-bottom:0;" class="textInputClass" id="userInfoDateBackType" type="text"  autocomplete="off" spellcheck="false" placeholder="Note">
+<div class="userInfoDateBackRadio" style="text-align: center;">
+  <div id="userInfoDateBackArrival" class="arrivalTransition arrivalDeparture">Arrival</div>
+  <div id="userInfoDateBackDeparture" class="departureTransition arrivalDeparture">Departure</div>
+</div>
+<div class="userInfoDateBackRadio">
+  <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelDateBack">Cancel</button>
+  <button class="buttonClass" id="userInfoSentDateBack">Insert</button>
 </div>
 </div>

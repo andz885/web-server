@@ -7,6 +7,8 @@ html, body {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
+  user-drag: none;
+  -webkit-user-drag: none;
   margin: 0px;
   height: 100%;
   width: 100%;
@@ -240,8 +242,8 @@ html, body {
   width: calc(100% - 200px);
   position: fixed;
   right: 0;
-  -webkit-animation: fadeIn 300ms;
-  animation: fadeIn 300ms;
+  -webkit-animation: fadeIn 200ms;
+  animation: fadeIn 200ms;
 }
 
 @-webkit-keyframes fadeIn {
