@@ -318,7 +318,6 @@ top: 160px;
   background:white;
   flex-direction: column;
   flex-wrap: wrap;
-  align-items: center;
   justify-content: space-between;
   border: 25px solid white;
   font-family: Roboto;
@@ -351,7 +350,8 @@ top: 160px;
 }
 
 .inputTime{
-  width: 45px;
+  height: 34px;
+  width: 25px;
   text-align: center;
   margin: 0;
 }
@@ -379,13 +379,30 @@ height: 21px;
 }
 
 .arrivalTransition {
-  font-size: calc(30px - var(--main-size));
-  transition: all 300ms ease;
+  font-size: calc(30px - var(--cssArDpSizeVar));
+  transition: all 100ms linear;
 }
 
 .departureTransition {
-  font-size: var(--main-size);
-  transition: all 300ms ease;
+  font-size: var(--cssArDpSizeVar);
+  transition: all 100ms linear;
+}
+
+.doubleDot{
+font-weight: 900;
+color: #5d5d5d;
+display: inline-block;
+position: absolute;
+left: 71px;
+top: 4px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
 }
 
 </style>
@@ -456,10 +473,11 @@ height: 21px;
 </div>
 </div>
 <div class="beforeShadow dateBackWindow">
-<div style="margin: 0 auto;">
-  <input class="textInputClass inputTime" id="userInfoDateBackHours" type="text"  autocomplete="off" spellcheck="false">
-  <span style="font-weight:900; color:#5d5d5d; margin:0 15px;">:</span>
-  <input class="textInputClass inputTime" id="userInfoDateBackMinutes" type="text"  autocomplete="off" spellcheck="false">
+<div style="display:flex; justify-content:space-around;">
+  <input class="textInputClass inputTime" id="userInfoDateBackHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+  <span class="doubleDot">:</span>
+  <input class="textInputClass inputTime" id="userInfoDateBackMinutes" type="number" min="0" max="59" autocomplete="off" spellcheck="false">
+  <button class="buttonClass" style="width:50px;" id="userInfoDateBackNow">Now</button>
 </div>
 <input style="width: 180px; margin-top:0; margin-bottom:0;" class="textInputClass" id="userInfoDateBackType" type="text"  autocomplete="off" spellcheck="false" placeholder="Note">
 <div class="userInfoDateBackRadio" style="text-align: center;">
@@ -468,6 +486,6 @@ height: 21px;
 </div>
 <div class="userInfoDateBackRadio">
   <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelDateBack">Cancel</button>
-  <button class="buttonClass" id="userInfoSentDateBack">Insert</button>
+  <button class="buttonClass" id="userInfoInsertDateBack">Insert</button>
 </div>
 </div>

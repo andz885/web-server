@@ -328,20 +328,112 @@ document.getElementById('userInfoDateBack').onclick = function() {
   document.getElementById('userInfoDateBackHours').value = '';
   document.getElementById('userInfoDateBackMinutes').value = '';
   document.getElementById('userInfoDateBackType').value = '';
-  document.getElementById('content').style = '--main-size : 15px'
+  document.getElementById('content').style.setProperty('--cssArDpSizeVar', '15px');
   document.getElementById('userInfoDateBackHours').focus();
 }
 
 document.getElementById('userInfoDateBackArrival').onclick = function() {
-  document.getElementById('content').style = '--main-size : 10px'
+  document.getElementById('content').style.setProperty('--cssArDpSizeVar', '10px');
 }
 
 document.getElementById('userInfoDateBackDeparture').onclick = function() {
-  document.getElementById('content').style = '--main-size : 20px'
+  document.getElementById('content').style.setProperty('--cssArDpSizeVar', '20px');
+}
+
+document.getElementById('userInfoDateBackNow').onclick = function() {
+  let date = new Date();
+  document.getElementById('userInfoDateBackHours').value = date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours();
+  document.getElementById('userInfoDateBackMinutes').value = date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes();
+  document.getElementById('userInfoDateBackType').focus();
 }
 
 document.getElementById('userInfoCancelDateBack').onclick = function() {
   document.getElementById('contentShadow').click();
+}
+
+document.getElementById('userInfoDateBackHours').oninput  = function() {
+setTimeout(() => {
+  let value = document.getElementById('userInfoDateBackHours').value;
+    let i = -1;
+    while(Number(value) > 23 || Number(value) == NaN || value.length > 2){
+      value = value.slice(0, i);
+      i--;
+    }
+    document.getElementById('userInfoDateBackHours').value = value;
+    if(value.length === 2) {
+      document.getElementById('userInfoDateBackMinutes').focus();
+    }
+},100);
+}
+
+document.getElementById('userInfoDateBackMinutes').oninput  = function() {
+setTimeout(() => {
+  let value = document.getElementById('userInfoDateBackMinutes').value;
+    let i = -1;
+    while(Number(value) > 59 || Number(value) == NaN || value.length > 2){
+      value = value.slice(0, i);
+      i--;
+    }
+    document.getElementById('userInfoDateBackMinutes').value = value;
+    if(value.length === 2) {
+      document.getElementById('userInfoDateBackType').focus();
+    }
+},100);
+}
+
+
+document.getElementById('userInfoInsertDateBack').onclick = function() {
+
+let type = document.getElementById('userInfoDateBackType').value;
+if(type.length > 12) {
+  alert('Maximum note length is 12 characters');
+  return;
+}
+
+let action;
+if(getComputedStyle(document.getElementById('content')).getPropertyValue('--cssArDpSizeVar') === '10px'){
+  action = 'arrival';
+} else if (getComputedStyle(document.getElementById('content')).getPropertyValue('--cssArDpSizeVar') === '20px'){
+  action = 'departure';
+} else {
+  alert('Please, select an action');
+  return;
+}
+  let data = JSON.stringify({
+  "cardUID": setUserObj.cardUID,
+  "action": action,
+  "type" : type,
+  "from" : "PC",
+  "date": (new Date(monthShiftToSeason(slctMonth,season).split('-')[1],
+                   Number(monthShiftToSeason(slctMonth,season).split('-')[0]) - 1,
+                   slctLiToInnerText(slctMonth,slctLi),
+                   document.getElementById('userInfoDateBackHours').value,
+                   document.getElementById('userInfoDateBackMinutes').value,
+                   0,
+                   0)).getTime() / 1000
+});
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function() {
+  if (this.readyState === 4) {
+    let status = this.responseText;
+    if (status === "ok") {
+      userInfoCreateCalendar(slctMonth, () => {
+        document.getElementById('userInfoCalMonth').children[slctLi].click();
+        document.getElementById('contentShadow').click();
+      });
+    } else {
+      alert(status);
+    }
+  }
+});
+
+xhr.open("POST", postURL + '/cardattached');
+xhr.setRequestHeader("content-type", "application/json");
+xhr.setRequestHeader("cache-control", "no-cache");
+xhr.send(data);
 }
 
 document.getElementById('userInfoEdit').onclick = function() {
