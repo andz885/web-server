@@ -311,7 +311,13 @@ app.post('/cardattached', (req, res) => {
 });
 
 
-app.get('/getattendance', (req, res) => {
+app.get('/getunixtime', (req, res) => {
+  res.setHeader('x-status', 'ok');
+  res.send((Math.round(((new Date()).getTime()) / 1000)).toString());
+});
+
+
+app.get('/getattendance', (req, res) => {  // pridať http status kódy
   var season = req.headers.season.split('-');
   let startDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
   let endDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
@@ -341,6 +347,7 @@ app.get('/getattendance', (req, res) => {
     res.send();
   });
 });
+
 
 app.get('/getaccounts', (req, res) => {
   accounts.find({},{
