@@ -94,7 +94,7 @@ app.use(function(req, res, next) {
     next();
   } else if (verifyJWT(req.query.token) || req.url === '/loginverify' || req.url === '/addpassword') {
     next();
-  } else if ((req.url === '/cardattached' || req.url === '/getunixtime') && req.headers.MCU_KEY === MCU_KEY) {
+  } else if ((req.url === '/cardattached' || req.url === '/getunixtime') && req.headers.mcu_key === MCU_KEY) {
     next();
   } else if (req.method === 'GET') {
     res.render('login.html');
