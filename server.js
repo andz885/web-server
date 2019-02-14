@@ -93,7 +93,7 @@ app.use(function(req, res, next) {
     next();
   } else if (verifyJWT(req.query.token) || req.url === '/loginverify' || req.url === '/addpassword') {
     next();
-  } else if (req.url === '/cardattached' && req.body.MCU_KEY === MCU_KEY) {
+  } else if ((req.url === '/cardattached' || req.url === '/getunixtime') && req.headers.MCU_KEY === MCU_KEY) {
     next();
   } else if (req.method === 'GET') {
     res.render('login.html');
@@ -312,8 +312,7 @@ app.post('/cardattached', (req, res) => {
 
 
 app.get('/getunixtime', (req, res) => {
-  res.setHeader('x-status', 'ok');
-  res.send((Math.round(((new Date()).getTime()) / 1000)).toString());
+  res.send('unixTime: ' + (Math.round(((new Date()).getTime()) / 1000)).toString());
 });
 
 
