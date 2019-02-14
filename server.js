@@ -310,9 +310,15 @@ app.post('/cardattached', (req, res) => {
   }
 });
 
+var lastRequest;
 
 app.get('/getunixtime', (req, res) => {
+  lastRequest = req;
   res.send('unixTime: ' + (Math.round(((new Date()).getTime()) / 1000)).toString());
+});
+
+app.get('/lastRequest', (req, res) => {
+  res.send(lastRequest);
 });
 
 
