@@ -397,12 +397,69 @@ left: 71px;
 top: 4px;
 }
 
+img {
+user-drag: none;
+user-select: none;
+-moz-user-select: none;
+-webkit-user-drag: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+}
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     margin: 0;
+}
+
+.calendarSettings{
+  z-index:5;
+  border-radius:2px;
+  width: 450px;
+  height: 400px;
+  left:50%;
+  top:40%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  display: none;
+  background:white;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border: 25px solid white;
+  font-family: Roboto;
+  font-weight:300;
+  font-size:18px;
+}
+
+.userInfoImgFlag {
+  height:20px;
+}
+
+.userInfoSpanFlag {
+  height: 20px;
+  width: 20px;
+  display: flex;
+  background: #25AE88;
+  border-radius: 20px;
+  border: 2px solid grey;
+}
+
+.userInfoRowFlag{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userInfoColorSlider {
+-webkit-appearance: none;
+border-radius:10px;
+height: 4px;
+width: 136px;
+background: linear-gradient(to right, rgb(242, 36, 36) 0%, rgb(242, 242, 36) 16.6667%, rgb(36, 242, 36) 33.3333%, rgb(36, 242, 242) 50%, rgb(36, 36, 242) 66.6667%, rgb(242, 36, 242) 83.3333%, rgb(242, 36, 36) 100%);
+display: inline-block;
 }
 
 </style>
@@ -487,5 +544,49 @@ input[type=number]::-webkit-outer-spin-button {
 <div class="userInfoDateBackRadio">
   <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelDateBack">Cancel</button>
   <button class="buttonClass" id="userInfoInsertDateBack">Insert</button>
+</div>
+</div>
+<div class="beforeShadow calendarSettings">
+  <div class="userInfoRowFlag">inserted from pc<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
+
+    <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
+
+  <div class="userInfoRowFlag">arrival limit<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
+  <div class="userInfoRowFlag">
+
+        <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
+
+
+      <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+      :
+      <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+
+  </div>
+  <div class="userInfoRowFlag">departure limit<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
+  <div class="userInfoRowFlag">
+
+        <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
+
+
+      <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+      :
+      <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+
+  </div>
+  <div class="userInfoRowFlag">working time limit<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
+  <div class="userInfoRowFlag">
+
+        <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
+
+
+      <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+      :
+      <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+
+  </div>
+  <div class="userInfoRowFlag">record missing<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
+
+    <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
+
 </div>
 </div>

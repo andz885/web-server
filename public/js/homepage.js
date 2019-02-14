@@ -143,7 +143,9 @@ function showShadow() {
 document.getElementById('content').insertAdjacentHTML('beforeend', '<div id="contentShadow" class="contentShadow"></div>');
 document.getElementById('contentShadow').onclick = function () {
 document.getElementById('contentShadow').remove();
-document.getElementsByClassName('beforeShadow')[0].style.display = 'none';
+for (var prop in document.getElementsByClassName('beforeShadow')) {
+  document.getElementsByClassName('beforeShadow')[prop].style.display = 'none';
+}
 }
 }
 

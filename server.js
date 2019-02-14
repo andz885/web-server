@@ -248,7 +248,7 @@ if (verifyJWT(req.cookies.token).role === 'true') {
 
 
 app.post('/addpassword', (req, res) => {
-  var token = verifyJWT(req.headers.token);
+  var token = verifyJWT(req.headers.token);  //?? overenie druhý krát? prečo nie v app.use?
   if(!token){
     res.setHeader('x-status', 'Authentication failed');
     res.send();
@@ -282,7 +282,8 @@ app.post('/cardattached', (req, res) => {
       cardUID: req.body.cardUID
     }).then((doc) => {
       if (!doc) {
-        res.send('could not find a user');
+        res.setHeader('x-status', 'could not find a user');
+        res.send();
         return
       }
       var att = new attendance({
@@ -293,15 +294,19 @@ app.post('/cardattached', (req, res) => {
         date: new Date(req.body.date*1000).toISOString()
       });
       att.save().then(() => {
-        res.send('ok');
+        res.setHeader('x-status', 'ok');
+        res.send();
       }, (e) => {
-        res.send('cannot instert document into attendance');
+        res.setHeader('x-status', 'cannot instert document into attendance');
+        res.send();
       });
     }, (e) => {
-      res.send('cannot browse accounts database');
+      res.setHeader('x-status', 'cannot browse accounts database');
+      res.send();
     });
   } else {
-    res.send('invalid card ID');
+    res.setHeader('x-status', 'invalid card ID');
+    res.send();
   }
 });
 

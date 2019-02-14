@@ -318,6 +318,17 @@ document.getElementById('userInfoCalNext').onclick = function() {
   userInfoCreateCalendar(slctMonth, () => {});
 }
 
+//neskorý príchod
+//skorý odchod
+//neuplna dochadzka
+//málo odrobeného času
+//vložený záznam z PC
+
+document.getElementById('userInfoCalSetting').onclick = function() {
+  showShadow();
+  document.getElementsByClassName('beforeShadow')[1].style.display = 'flex';
+}
+
 document.getElementById('backToEmployees').onclick = function() {
   document.getElementById('employees').click();
 }
@@ -418,7 +429,7 @@ xhr.withCredentials = true;
 
 xhr.addEventListener("readystatechange", function() {
   if (this.readyState === 4) {
-    let status = this.responseText;
+    let status = xhr.getResponseHeader('x-status');
     if (status === "ok") {
       userInfoCreateCalendar(slctMonth, () => {
         document.getElementById('userInfoCalMonth').children[slctLi].click();
