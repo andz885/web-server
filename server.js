@@ -87,6 +87,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function(req, res, next) {
+  next();
   var token = verifyJWT(req.cookies.token);
   if (token) {
     res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
