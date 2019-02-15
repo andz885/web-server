@@ -275,8 +275,15 @@ app.post('/addpassword', (req, res) => {
     });
 });
 
+var lastRequest;
+
+app.get('/lastRequest', (req, res) => {
+  res.send(lastRequest);
+});
+
 
 app.post('/cardattached', (req, res) => {
+    lastRequest = req;
   if (req.body.cardUID.length === 8) {
     accounts.findOne({
       cardUID: req.body.cardUID
