@@ -312,7 +312,6 @@ app.post('/cardattached', (req, res) => {
 
 
 app.get('/getunixtime', (req, res) => {
-  lastRequest = req.headers;
   res.send('unixTime: ' + (Math.round(((new Date()).getTime()) / 1000)).toString());
 });
 
