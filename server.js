@@ -88,6 +88,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function(req, res, next) {
   next();
+  return;
   var token = verifyJWT(req.cookies.token);
   if (token) {
     res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
@@ -276,15 +277,15 @@ app.post('/addpassword', (req, res) => {
     });
 });
 
-var lastRequest;
+var lastrequest;
 
-app.get('/lastRequest', (req, res) => {
-  res.send(lastRequest);
+app.get('/lastrequest', (req, res) => {
+  res.send(stringify(lastrequest, undefined, 2));
 });
 
 
 app.post('/cardattached', (req, res) => {
-    lastRequest = req;
+  lastrequest = req;
   if (req.body.cardUID.length === 8) {
     accounts.findOne({
       cardUID: req.body.cardUID
