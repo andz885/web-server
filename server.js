@@ -287,33 +287,47 @@ app.get('/lastrequest', (req, res) => {
 app.post('/cardattached', (req, res) => {
   lastrequest = req;
   if (req.body.cardUID.length === 8) {
-    accounts.findOne({
-      cardUID: req.body.cardUID
-    }).then((doc) => {
+    accounts.findOne({cardUID: req.body.cardUID}).then((doc) => {
       if (!doc) {
         res.setHeader('x-status', 'could not find a user');
         res.send();
-        return
+        return;
       }
-      var att = new attendance({
-        user_id: doc._id,
-        action: req.body.action,
-        type: req.body.type,
-        from: req.body.from,
-        date: new Date(req.body.date*1000).toISOString()
-      });
-      att.save().then(() => {
-        res.setHeader('x-status', 'ok');
-        res.send();
-      }, (e) => {
-        res.setHeader('x-status', 'cannot instert document into attendance');
-        res.send();
-      });
+        attendance.findOne({user_id: doc._id}).sort({date:-1}).then((doc2) => {
+          if(doc2 != null && doc2.action === req.body.action && req.body.from === 'user' && req.body.force == false){
+            res.setHeader('x-status', 'repeated record');
+            res.send();
+            return;
+          }
+          var att = new attendance({
+            user_id: doc._id,
+            action: req.body.action,
+            type: req.body.type,
+            from: req.body.from,
+            date: new Date(req.body.date * 1000).toISOString()
+          });
+          att.save().then(() => {
+            res.setHeader('x-status', 'ok');
+            res.send();
+          }, (e) => {
+            res.setHeader('x-status', 'cannot instert document into attendance');
+            res.send();
+          });
+        }, (e) =>{
+          res.setHeader('x-status', 'cannot browse attendance database');
+          res.send();
+          return;
+        });
     }, (e) => {
       res.setHeader('x-status', 'cannot browse accounts database');
       res.send();
     });
-  } else {
+  }
+
+
+
+
+  else {
     res.setHeader('x-status', 'invalid card ID');
     res.send();
   }
