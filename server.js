@@ -94,6 +94,7 @@ app.use(function(req, res, next) {
   } else if (verifyJWT(req.query.token) || req.url === '/loginverify' || req.url === '/addpassword') {
     next();
   } else if ((req.url === '/cardattached' || req.url === '/getunixtime') && req.headers.mcu_key === MCU_KEY) {
+    console.log("here");
     next();
   } else if (req.method === 'GET') {
     res.render('login.html');
@@ -275,15 +276,8 @@ app.post('/addpassword', (req, res) => {
     });
 });
 
-var lastrequest;
-
-app.get('/lastrequest', (req, res) => {
-  res.send(stringify(lastrequest, undefined, 2));
-});
-
 
 app.post('/cardattached', (req, res) => {
-  lastrequest = req;
   if (req.body.cardUID.length === 8) {
     accounts.findOne({cardUID: req.body.cardUID}).then((doc) => {
       if (!doc) {
@@ -297,6 +291,11 @@ app.post('/cardattached', (req, res) => {
             res.send();
             return;
           }
+          // if(req.body.date * 1000 < (new Date()).getTime() - 60000){
+          //   res.setHeader('x-status', 'unactual time');
+          //   res.send();
+          //   return;
+          // }
           var att = new attendance({
             user_id: doc._id,
             action: req.body.action,
