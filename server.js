@@ -94,7 +94,6 @@ app.use(function(req, res, next) {
   } else if (verifyJWT(req.query.token) || req.url === '/loginverify' || req.url === '/addpassword') {
     next();
   } else if ((req.url === '/cardattached' || req.url === '/getunixtime') && req.headers.mcu_key === MCU_KEY) {
-    console.log("here");
     next();
   } else if (req.method === 'GET') {
     res.render('login.html');
@@ -276,6 +275,12 @@ app.post('/addpassword', (req, res) => {
     });
 });
 
+var lastRequest;
+app.get('/lastRequest', (req, res) => {
+  res.send(lastRequest);
+});
+
+
 
 app.post('/cardattached', (req, res) => {
   if (req.body.cardUID.length === 8) {
@@ -286,6 +291,7 @@ app.post('/cardattached', (req, res) => {
         return;
       }
         attendance.findOne({user_id: doc._id}).sort({date:-1}).then((doc2) => {
+          lastRequest = doc2;
           if(doc2 != null && doc2.action === req.body.action && req.body.from === 'user' && req.body.force == false){
             res.setHeader('x-status', 'repeated record');
             res.send();
@@ -319,12 +325,7 @@ app.post('/cardattached', (req, res) => {
       res.setHeader('x-status', 'cannot browse accounts database');
       res.send();
     });
-  }
-
-
-
-
-  else {
+  } else {
     res.setHeader('x-status', 'invalid card ID');
     res.send();
   }
