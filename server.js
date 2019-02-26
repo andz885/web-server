@@ -1,4 +1,4 @@
-//zošiť z matematiky, 3D TOMKO krabička
+//nodejs HTTP server
 
 const express = require('express');
 const validator = require('validator');
@@ -297,11 +297,11 @@ app.post('/cardattached', (req, res) => {
             res.send();
             return;
           }
-          // if(req.body.date * 1000 < (new Date()).getTime() - 60000){
-          //   res.setHeader('x-status', 'unactual time');
-          //   res.send();
-          //   return;
-          // }
+          if(req.body.date * 1000 < ((new Date()).getTime() - 60000) && req.body.from === 'user'){
+            res.setHeader('x-status', 'unactual time');
+            res.send();
+            return;
+          }
           var att = new attendance({
             user_id: doc._id,
             action: req.body.action,
