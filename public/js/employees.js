@@ -1,4 +1,4 @@
-var accounts;
+var accounts; //test comment
 
 function askForAccounts(callback) {
   var xhr = new XMLHttpRequest();
