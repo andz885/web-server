@@ -1,18 +1,15 @@
 //nodejs HTTP server
 
+require('dotenv').config({path: __dirname + '/process.env'});
 const express = require('express');
 const validator = require('validator');
-const SHA256 = require('crypto-js').SHA256;
 const jwt = require('jsonwebtoken');
 const EMAIL_HTML = '<div style="text-align:center; margin-top:30px; margin-bottom:0px;"><a style="background:#3C5D6E; font-family:sans-serif; text-decoration:none; font-size:16px; color:white; padding:10px 15px; border-radius:2px;" <placeForURI> target="_blank">Click Here</a></div><div style="margin:20px auto; font-family:system-ui; font-weight:100; font-size:20px; text-align:center;">to create your new password</div>';
-
-const port = process.env.PORT || 3000;
-const SECRET = process.env.SECRET || 'Mp;|wP78jka(rRf-aO}dZ~cFxFEf';
-const MCU_KEY = process.env.MCU_KEY || 'localhostMcuKey';
-const ADMIN_LOGIN = {
-  email: process.env.ADMIN_EMAIL || 'admin',
-  password: SHA256(process.env.ADMIN_PASSWORD || 'adminpass').toString()
-}
+const SHA256 = require('crypto-js').SHA256;
+const port = process.env.PORT;
+const SECRET = process.env.SECRET;
+const MCU_KEY = process.env.MCU_KEY;
+const ADMIN_LOGIN = process.env.ADMIN_LOGIN;
 
 var stringify = require('json-stringify-safe');
 var cookieParser = require('cookie-parser');
@@ -24,12 +21,12 @@ var favicon = require('serve-favicon');
 var nodemailer = require('nodemailer');
 var enforce = require('express-sslify');
 var transporter = nodemailer.createTransport({
-  host: `${process.env.PORT ? "smtp.zoho.com" : "smtp.ethereal.email"}`,
-  port: process.env.PORT ? 465 : 587,
-  secure: process.env.PORT ? true : undefined,
+  host: 'smtp.zoho.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.EMAIL_USERNAME || 'i73epgl72yzaebox@ethereal.email',
-    pass: process.env.EMAIL_PASSWORD || 'Tb1THW7xXzaPRFGVxc'
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD
   },
 });
 
@@ -59,7 +56,7 @@ var attendanceSchema = new mongoose.Schema({
 var attendance = mongoose.model('attendances', attendanceSchema);
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tomko', {useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 
 function verifyJWT(token) {
   var result;
@@ -75,7 +72,7 @@ function verifyJWT(token) {
   return result;
 }
 
-if (process.env.PORT) {app.use(enforce.HTTPS({trustProtoHeader: true}));}
+if (!process.env.TESTING_LOCALLY) {app.use(enforce.HTTPS({trustProtoHeader: true}));}
 app.set('view engine', 'html');
 app.set('views', __dirname + '/public/html');
 app.engine('html', require('ejs').renderFile);
@@ -172,9 +169,9 @@ res.render('userinfo.html');
 app.post('/loginverify', (req, res) => {
   var loginData = {
     email: req.body.email,
-    password: SHA256(req.body.pass).toString()
+    password: SHA256(req.body.pass).toString() //security fail
   };
-  if (JSON.stringify(loginData) === JSON.stringify(ADMIN_LOGIN)) {
+  if (loginData.email + ' ' + loginData.password === ADMIN_LOGIN) {
     res.cookie('token', tokenGenerate('admin', '', '', 'true'));
     res.setHeader('x-status', 'ok');
     res.send();
