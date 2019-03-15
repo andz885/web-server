@@ -1,12 +1,15 @@
 //nodejs HTTP server
 
 require('dotenv').config({path: __dirname + '/process.env'});
+const https = require('https');
+const http = require('http');
 const express = require('express');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const EMAIL_HTML = '<div style="text-align:center; margin-top:30px; margin-bottom:0px;"><a style="background:#3C5D6E; font-family:sans-serif; text-decoration:none; font-size:16px; color:white; padding:10px 15px; border-radius:2px;" <placeForURI> target="_blank">Click Here</a></div><div style="margin:20px auto; font-family:system-ui; font-weight:100; font-size:20px; text-align:center;">to create your new password</div>';
 const SHA256 = require('crypto-js').SHA256;
-const port = process.env.PORT;
+const http_port = process.env.HTTP_PORT;
+const https_port = process.env.HTTPS_PORT;
 const SECRET = process.env.SECRET;
 const MCU_KEY = process.env.MCU_KEY;
 const ADMIN_LOGIN = process.env.ADMIN_LOGIN;
@@ -16,7 +19,6 @@ var cookieParser = require('cookie-parser');
 var randomstring = require("randomstring");
 var bodyParser = require('body-parser');
 var fs = require('fs');
-var https = require('https');
 var app = express();
 var mongoose = require('mongoose');
 var favicon = require('serve-favicon');
@@ -217,7 +219,7 @@ if (verifyJWT(req.cookies.token).role === 'true') {
         acc.save().then(() => {
           res.setHeader('x-status', 'ok');
           res.send();
-          let html = htmlEmailGenerate(`${process.env.PORT ? "https://" : "http://"}` + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
+          let html = htmlEmailGenerate("https://" + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
           sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
         }, (e) => {
           res.setHeader('x-status', 'database problem, cannot add new user');
@@ -401,11 +403,19 @@ app.post('/edituser', (req, res) => {
   });
 });
 
+http.createServer((req, res) => {
+  res.writeHead(301, {
+    "Location": "https://" + req.headers['host'].replace(http_port, https_port) + req.url
+  });
+  res.end();
+}).listen(http_port, () => {
+  console.log(`HTTP server is running at port ${http_port}`);
+});
+
 
 https.createServer({
   key: fs.readFileSync('server.key'),
   cert: fs.readFileSync('server.cert')
-}, app)
-.listen(port, () => {
-  console.log(`Server is running at port ${port}`)
+}, app).listen(https_port, () => {
+  console.log(`HTTPS server is running at port ${https_port}`);
 });
