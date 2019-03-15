@@ -15,6 +15,8 @@ var stringify = require('json-stringify-safe');
 var cookieParser = require('cookie-parser');
 var randomstring = require("randomstring");
 var bodyParser = require('body-parser');
+var fs = require('fs');
+var https = require('https');
 var app = express();
 var mongoose = require('mongoose');
 var favicon = require('serve-favicon');
@@ -72,7 +74,7 @@ function verifyJWT(token) {
   return result;
 }
 
-if (!process.env.TESTING_LOCALLY) {app.use(enforce.HTTPS({trustProtoHeader: true}));}
+app.use(enforce.HTTPS({trustProtoHeader: true}));
 app.set('view engine', 'html');
 app.set('views', __dirname + '/public/html');
 app.engine('html', require('ejs').renderFile);
@@ -400,4 +402,10 @@ app.post('/edituser', (req, res) => {
 });
 
 
-app.listen(port);
+https.createServer({
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.cert')
+}, app)
+.listen(port, () => {
+  console.log(`Server is running at port ${port}`)
+});
