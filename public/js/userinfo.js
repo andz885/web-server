@@ -1,14 +1,21 @@
 var setUserObj;
-var userInfoAttendance;
+var userInfoAttendance = new Array(42);
 var season = (1 + (new Date()).getMonth()) + '-' + (new Date()).getFullYear();
 var slctMonth = 0;
 var slctLi;
+
 
 function updateSelectedUserObject() {
   setUserObj = accounts.find(function(obj) {
     return obj._id === localStorage.getItem('user_id');
   });
   delete setUserObj.createdAt;
+}
+
+function monthShiftToSeason(mountShft, actualSeason) {
+  let splited = actualSeason.split('-');
+  return (((((Number(splited[0]) - 1 + mountShft) % 12) + 12) % 12) + 1) + '-' + (
+  Number(splited[1]) + Math.floor((Number(splited[0]) - 1 + mountShft) / 12));
 }
 
 function attendanceRequest(user_id, season, callback) {
@@ -77,25 +84,22 @@ function jsonToCsv(json) {
   return csvFile;
 }
 
-function slctLiToInnerText(selectedMonth, selectedLi){
-let date = new Date();
-date.setMonth(date.getMonth() + selectedMonth);
-date.setDate(1);
-let day = selectedLi + 1 - (date.getDay() === 0 ? 6 : (date.getDay() - 1));
-date.setMonth(date.getMonth() + selectedMonth + 1);
-date.setDate(0);
-if(day > date.getDate())
-return 'OVERFLOW';
-else
-return day;
+function fillAttWithReq(res1, att1, shiftOfM){
+  let year = (new Date()).getFullYear();
+  let month = (new Date()).getMonth() + shiftOfM;
+  let firstDay = new Date(year, month, 1);
+  let from = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+  from--;
+  for(let x = 0; x < att1.length; x++){
+    att1[x] = new Array;
+  }
+  res1.forEach((rec) => {
+    let date = new Date(rec.date);
+    att1[date.getDate() + from - 1].push({action: rec.action, type: rec.type, from: rec.from, date: date});
+  });
 }
 
 function userInfoCreateCalendar(monthShift, callback) {
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = date.getMonth() + monthShift;
-  var firstDay = new Date(year, month, 1);
-  var lastDay = new Date(year, month + 1, 0);
   const monthNames = [
     "January",
     "February",
@@ -110,149 +114,139 @@ function userInfoCreateCalendar(monthShift, callback) {
     "November",
     "December"
   ];
+
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = date.getMonth() + monthShift;
+  let firstDay = new Date(year, month, 1);
+  let lastDay = new Date(year, month + 1, 0);
+  let from = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+  from--;
+  var to = lastDay.getDate() + from;
+
   document.getElementById('userInfoCalDate').innerHTML = monthNames[((month % 12) + 12) % 12] + ' ' + firstDay.getFullYear();
   var monthChildrens = document.getElementById("userInfoCalMonth").children;
   for (var i = 0; i < 42; i++) { //vymazanie vyplnenia kalendáru kvôli listovaniu mesiacov
     monthChildrens[i].innerHTML = '';
     monthChildrens[i].classList.remove('no-hover');
     monthChildrens[i].classList.remove('unselectable');
-    document.getElementById("userInfoCalMonth").children[i].onclick = function() {};
+    document.getElementById("userInfoCalMonth").children[i].onclick = function() {}; //vymazanie predchádzajúcej funckie
   }
-  var dayDate = 1;
-  var from = firstDay.getDay();
-  if (from === 0)
-    from = 7;
-  from--;
-  var to = lastDay.getDate() + from;
-  userInfoAttendance = new Array(lastDay.getDate());
-  for (let x = 0; x < userInfoAttendance.length; x++)
-    userInfoAttendance[x] = new Array();
+
   attendanceRequest(setUserObj._id, monthShiftToSeason(monthShift, season), (res) => {
-    var attCursor = 0;
-    for (from; from < to; from++) {
+    fillAttWithReq(res, userInfoAttendance, monthShift);
+    userInfoAttendance.forEach((rec) => {
+      rec.unshift({overlap: false});
+    });
+    for (let liNumb = 0; liNumb < 42; liNumb++) {
+      if (liNumb >= from && liNumb < to) {
+        userInfoAttendance[liNumb][0].overlap = liNumb - from + 1;
+        let dayDate = liNumb + 1 - from;
+        monthChildrens[liNumb].innerHTML = dayDate;
+        monthChildrens[liNumb].insertAdjacentHTML('afterbegin', '<div></div>');
+        if ((dayDate > date.getDate() && monthShift === 0) || monthShift > 0) { //future days unselectable
+          monthChildrens[liNumb].classList.add('no-hover');
+          monthChildrens[liNumb].classList.add('unselectable');
+        } else {
 
-      while (true) { //filling userInfoAttendance
-        var resItem = res[attCursor];
-        if (resItem === undefined)
-          break;
-        var resItemDate = new Date(resItem.date);
-        if (resItemDate.getDate() !== dayDate)
-          break;
-        userInfoAttendance[dayDate - 1].push({action: resItem.action, type: resItem.type, from: resItem.from, date: resItemDate});
-        attCursor++;
-      }
-
-      monthChildrens[from].innerHTML = dayDate;
-      monthChildrens[from].insertAdjacentHTML('afterbegin', '<div></div>');
-      if ((dayDate > date.getDate() && monthShift === 0) || monthShift > 0) { //future days unselectable
-        monthChildrens[from].classList.add('no-hover');
-        monthChildrens[from].classList.add('unselectable');
-      } else {
-
-        if (userInfoAttendance[dayDate - 1].length !== 0) {
-
-          monthChildrens[from].getElementsByTagName('div')[0].setAttribute("class", "triangle");
-          for (let i = 0; i < userInfoAttendance[dayDate - 1].length; i += 2) { // neuplna dochadzka
-            let recordOne = userInfoAttendance[dayDate - 1][i];
-            let recordTwo = userInfoAttendance[dayDate - 1][i + 1];
-          if (recordOne == undefined || recordTwo == undefined || recordOne.action !== 'arrival' || recordTwo.action !== 'departure') {
-              monthChildrens[from].getElementsByTagName('div')[0].style.background = '#ca4646';
-              break;
+          if (userInfoAttendance[liNumb].length - 1 !== 0) {
+            monthChildrens[liNumb].getElementsByTagName('div')[0].setAttribute("class", "triangle");
+            for (let i = 1; i < userInfoAttendance[liNumb].length; i += 2) { // neuplna dochadzka
+              let recordOne = userInfoAttendance[liNumb][i];
+              let recordTwo = userInfoAttendance[liNumb][i + 1];
+              if (recordOne == undefined || recordTwo == undefined || recordOne.action !== 'arrival' || recordTwo.action !== 'departure') {
+                monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
+                break;
+              }
             }
           }
-        }
-        monthChildrens[from].onclick = function () {
-          slctLi = Array.from(this.parentNode.children).indexOf(this);
-          document.getElementById('userInfoTableBody').innerHTML = '';
-          let eventN = Number(event.path[0].innerText);
-          let numbOfRecords = userInfoAttendance[eventN - 1].length; //length undefined??
-          if (!numbOfRecords) {
-            document.getElementById('userInfoNoRecords').style.display = 'flex';
-          } else {
-            document.getElementById('userInfoNoRecords').style.display = 'none';
-          }
-            for (let i = 0; i < numbOfRecords; i++) {
-              let records = userInfoAttendance[eventN - 1];
+
+          monthChildrens[liNumb].onclick = function() {
+            slctLi = Array.from(this.parentNode.children).indexOf(this);
+            document.getElementById('userInfoTableBody').innerHTML = '';
+            let numbOfRecords = userInfoAttendance[slctLi].length; //length undefined??
+            if (!(numbOfRecords - 1)) {
+              document.getElementById('userInfoNoRecords').style.display = 'flex';
+            } else {
+              document.getElementById('userInfoNoRecords').style.display = 'none';
+            }
+            for (let i = 1; i < numbOfRecords; i++) {
+              let lateFlag = true;
+              let workTime = 8000;
+              let records = userInfoAttendance[slctLi];
               if (records[i + 1] !== undefined && records[i].action === 'arrival' && records[i + 1].action === 'departure') {
                 let minuteDif = (Math.trunc(records[i + 1].date.getTime() / 60000) - Math.trunc(records[i].date.getTime() / 60000));
                 document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
-                <tr>
-                  <td>${records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i].type}</td>
-                  <td>${records[i + 1].date.getHours() + ':' + `${records[i + 1].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i + 1].type}</td>
-                  <td>${Math.trunc(minuteDif / 60) + 'h ' + (
-                minuteDif % 60) + 'm'}
-                </tr>
-                `);
+                         <tr>
+                           ${`${lateFlag == true ? '<td class="donut">' : '<td>'}` + `${records[i].from == 'PC' ? '(PC) ' : ''}` + records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2, '0') + `${records[i].type.length != 0 ? (' - ' + records[i].type) : ''}`}</td>
+                           <td>${`${records[i + 1].from == 'PC' ? '(PC) ' : ''}` + records[i + 1].date.getHours() + ':' + `${records[i + 1].date.getMinutes()}`.padStart(2, '0') + `${records[i + 1].type.length != 0 ? (' - ' + records[i + 1].type) : ''}`}</td>
+                           ${`${minuteDif < workTime ? '<td class="donut">' : '<td>'}` + `${Math.trunc(minuteDif / 60) != 0 ? (Math.trunc(minuteDif / 60) + 'h') : ''}` + (minuteDif % 60) + 'm'}</td>
+                         </tr>
+                         `);
                 i++;
               } else {
                 if (records[i].action === 'arrival') {
                   document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
-                  <tr>
-                    <td>${records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i].type}</td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  `);
-                } else if (records[i].action ==='departure') {
+                           <tr>
+                             ${`${lateFlag == true ? '<td class="donut">' : '<td>'}` + `${records[i].from == 'PC' ? '(PC) ' : ''}` + records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2, '0') + `${records[i].type.length != 0 ? (' - ' + records[i].type) : ''}`}</td>
+                             <td class="donut"></td>
+                             <td></td>
+                           </tr>
+                           `);
+                } else if (records[i].action === 'departure') {
                   document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
-                  <tr>
-                    <td></td>
-                    <td>${records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2,'0') + ' - ' + records[i].type}</td>
-                    <td></td>
-                  </tr>
-                  `);
+                           <tr>
+                             <td class="donut"></td>
+                             <td>${`${records[i].from == 'PC' ? '(PC) ' : ''}` + records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2, '0') + `${records[i].type.length != 0 ? (' - ' + records[i].type) : ''}`}</td>
+                             <td></td>
+                           </tr>
+                           `);
                 }
               }
             }
+            document.getElementById('userInfoBackToCalendar').style.opacity = '1';
+            document.getElementById('userInfoBackToCalendar').style.cursor = 'pointer';
             document.getElementById('userInfoCalendar').style.display = 'none';
             document.getElementById('downloadCSV').style.display = 'none';
-
             document.getElementById('userInfoCalPrev').style.display = 'none';
             document.getElementById('userInfoCalNext').style.display = 'none';
-
             document.getElementById('userInfoDateBack').style.display = 'flex';
-
             document.getElementById('userInfoDayPrev').style.display = 'flex';
             document.getElementById('userInfoDayNext').style.display = 'flex';
-
-            document.getElementById('userInfoAttDetail').style.display = 'flex';
-            document.getElementById('userInfoCalDay').innerHTML = eventN + '.&nbsp';
-        };
+            document.getElementById('userInfoAttGroup').style.display = 'flex';
+            document.getElementById('userInfoCalDay').innerHTML = userInfoAttendance[slctLi][0].overlap + '.&nbsp';
+          };
+        }
       }
-      dayDate++;
     }
     callback();
   });
 }
 
 document.getElementById('userInfoBackToCalendar').onclick = function () {
-  document.getElementById('userInfoAttDetail').style.display = 'none';
+  document.getElementById('userInfoBackToCalendar').style.opacity = '0.5';
+  document.getElementById('userInfoBackToCalendar').style.cursor = 'default';
+  document.getElementById('userInfoAttGroup').style.display = 'none';
   document.getElementById('userInfoDateBack').style.display = 'none';
-
   document.getElementById('userInfoDayPrev').style.display = 'none';
   document.getElementById('userInfoDayNext').style.display = 'none';
-
   document.getElementById('downloadCSV').style.display = 'flex';
-
   document.getElementById('userInfoCalPrev').style.display = 'flex';
   document.getElementById('userInfoCalNext').style.display = 'flex';
-
   document.getElementById('userInfoCalendar').style.display = 'flex';
   document.getElementById('userInfoCalDay').innerHTML = '';
 }
 
 document.getElementById('userInfoDayPrev').onclick = function () {
-  var monthDays = document.getElementById('userInfoCalMonth').children;
-  if(slctLiToInnerText(slctMonth, slctLi) > 1){
-    monthDays[slctLi - 1].click();
+  if(slctLi != 0 && userInfoAttendance[slctLi - 1][0].overlap !== false){
+    document.getElementById('userInfoCalMonth').children[slctLi - 1].click();
   } else {
     slctMonth--;
     userInfoCreateCalendar(slctMonth, () => {
-      monthDays = document.getElementById('userInfoCalMonth').children;
       let i = 26;
       while(i < 42){
-        if(slctLiToInnerText(slctMonth, i) === "OVERFLOW"){
-          monthDays[i - 1].click();
+        if(userInfoAttendance[i][0].overlap === false){
+          document.getElementById('userInfoCalMonth').children[i - 1].click();
           break;
         }
         i++;
@@ -262,30 +256,24 @@ document.getElementById('userInfoDayPrev').onclick = function () {
 }
 
 document.getElementById('userInfoDayNext').onclick = function () {
-  var monthDays = document.getElementById('userInfoCalMonth').children;
-  if(slctLiToInnerText(slctMonth, slctLi + 1) !== "OVERFLOW"){
-    monthDays[slctLi + 1].click();
+  if(userInfoAttendance[slctLi + 1][0].overlap !== false){
+    document.getElementById('userInfoCalMonth').children[slctLi + 1].click();
   } else if (slctMonth < 0){
     slctMonth++;
     userInfoCreateCalendar(slctMonth, () => {
-      monthDays = document.getElementById('userInfoCalMonth').children;
       let i = 8;
       while(i >= 0){
-        if(slctLiToInnerText(slctMonth, i) === 1){
-          monthDays[i].click();
+        if(userInfoAttendance[i][0].overlap === false){
+          document.getElementById('userInfoCalMonth').children[i + 1].click();
           break;
         }
         i--;
       }
+      document.getElementById('userInfoCalMonth').children[0].click();
     });
   }
 }
 
-function monthShiftToSeason(mountShft, actualSeason) {
-  let splited = actualSeason.split('-');
-  return (((((Number(splited[0]) - 1 + mountShft) % 12) + 12) % 12) + 1) + '-' + (
-  Number(splited[1]) + Math.floor((Number(splited[0]) - 1 + mountShft) / 12));
-}
 
 function fillUserInfo(userObj, fillSeason) {
   document.getElementById('userInfoFirstName').value = userObj.firstName;
@@ -327,6 +315,40 @@ document.getElementById('userInfoCalNext').onclick = function() {
 document.getElementById('userInfoCalSetting').onclick = function() {
   showShadow();
   document.getElementsByClassName('beforeShadow')[1].style.display = 'flex';
+}
+
+document.getElementById('userInfoLateArrivalTrue').onclick = function() {
+  this.style.display = 'none';
+  document.getElementById('userInfoLateArrivalFalse').style.display = 'flex'
+}
+
+document.getElementById('userInfoLateArrivalFalse').onclick = function() {
+  this.style.display = 'none';
+  document.getElementById('userInfoLateArrivalTrue').style.display = 'flex'
+}
+
+document.getElementById('userInfoMWTTrue').onclick = function() {
+  this.style.display = 'none';
+  document.getElementById('userInfoMVTFalse').style.display = 'flex'
+}
+
+document.getElementById('userInfoMVTFalse').onclick = function() {
+  this.style.display = 'none';
+  document.getElementById('userInfoMWTTrue').style.display = 'flex'
+}
+
+document.getElementById('userInfoRecordMissingTrue').onclick = function() {
+  this.style.display = 'none';
+  document.getElementById('userInfoRecordMissingFalse').style.display = 'flex'
+}
+
+document.getElementById('userInfoRecordMissingFalse').onclick = function() {
+  this.style.display = 'none';
+  document.getElementById('userInfoRecordMissingTrue').style.display = 'flex'
+}
+
+document.getElementById('userInfoCancelSettings').onclick = function() {
+  document.getElementById('contentShadow').click();
 }
 
 document.getElementById('backToEmployees').onclick = function() {
@@ -417,7 +439,7 @@ if(getComputedStyle(document.getElementById('content')).getPropertyValue('--cssA
   "from" : "PC",
   "date": (new Date(monthShiftToSeason(slctMonth,season).split('-')[1],
                    Number(monthShiftToSeason(slctMonth,season).split('-')[0]) - 1,
-                   slctLiToInnerText(slctMonth,slctLi),
+                   //slctLiToInnerText(slctMonth,slctLi),                                  OPRAVIT!!!!!
                    document.getElementById('userInfoDateBackHours').value,
                    document.getElementById('userInfoDateBackMinutes').value,
                    0,
@@ -550,5 +572,13 @@ document.getElementById('userInfoEdit').onclick = function() {
 }
 
 updateSelectedUserObject();
-userInfoCreateCalendar(slctMonth, () => {});
+userInfoCreateCalendar(slctMonth, () => {
+  let LIDay = (new Date()).getDate();
+  for(let y = 0; y < 42; y++){
+    if(userInfoAttendance[y][0].overlap === LIDay){
+      document.getElementById('userInfoCalMonth').children[y].click();
+      break;
+    }
+  }
+});
 fillUserInfo(setUserObj, season);

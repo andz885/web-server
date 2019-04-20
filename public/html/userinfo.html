@@ -4,11 +4,7 @@
 #backToEmployees {
   cursor: pointer;
   -webkit-user-drag: none;
-  display: flex;
-  position: absolute;
-  left: 70px;
-  top: 76px;
-  height: 45px;
+  height: 35px;
 }
 
 #userInfoRightSide {
@@ -102,9 +98,9 @@ padding: 0;
 #userInfoImg {
 display: flex;
 height: 100px;
-justify-content: center;
-margin-top: 20px;
-margin-bottom: 10px;
+justify-content: space-evenly;
+align-items: flex-end;
+margin-top: 30px;
 }
 
 #userInfoCalDateParent {
@@ -249,41 +245,68 @@ input:checked + .slider:before {
 }
 
 #userInfoAttDetail {
-  display:flex;
-  flex-direction:column;
-  align-items: center;
-font-family: Roboto;
 position:relative;
+flex-direction:column;
+align-items: center;
+font-family: Roboto;
 float: left;
-display: none;
 flex-wrap: wrap;
-width: 670px;
-top:24px;
+border: 1px solid #d5d5d5;
+display: flex;
+border-radius: 2px;
+background: white;
+height: 222px;
+overflow-y: auto;
+width:664px;
 }
 
+#userInfoAttGroup{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 545px;
+  align-items: stretch;
+}
+
+#userInfoAttStats{
+height: 222px;
+border: 1px solid #d5d5d5;
+border-radius: 2px;
+background: white;
+}
+
+#userInfoTable{
+  margin-top:2px;
+}
 
   #userInfoTable th, td{
-    width:200px;
+    width:216px;
     font-weight:300;
     text-align: center;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
+    padding-top:5px;
+    font-size:15px;
   }
 
-  #userInfoTable th{
-    padding-bottom: 30px;
-  }
+#userInfoAttTitle {
+ font-weight:300;
+ display:flex;
+ justify-content: space-around;
+}
+
+#userInfoAttTitle span{
+display: flex;
+width: 150px;
+justify-content: center;
+}
 
 #userInfoCalendar {
-  display:flex;
+  display:none;
   flex-wrap:wrap;
 }
 
 #userInfoBackToCalendar{
   -webkit-user-drag: none;
-  position: absolute;
-  left: 640px;
-  width: 30px;
-  border-radius: 15px;
   cursor: pointer;
 }
 
@@ -294,11 +317,12 @@ justify-content: space-between;
 }
 
 #userInfoNoRecords{
+position:absolute;
 display: flex;
 font-size: 20px;
 font-weight: 300;
 position: absolute;
-top: 160px;
+top: 110px;
 }
 
 #userInfoDayPrev, #userInfoDayNext {
@@ -417,8 +441,8 @@ input[type=number]::-webkit-outer-spin-button {
 .calendarSettings{
   z-index:5;
   border-radius:2px;
-  width: 450px;
-  height: 400px;
+  width: 490px;
+  height: 200px;
   left:50%;
   top:40%;
   transform: translate(-50%, -50%);
@@ -436,21 +460,14 @@ input[type=number]::-webkit-outer-spin-button {
 
 .userInfoImgFlag {
   height:20px;
-}
-
-.userInfoSpanFlag {
-  height: 20px;
-  width: 20px;
-  display: flex;
-  background: #25AE88;
-  border-radius: 20px;
-  border: 2px solid grey;
+  margin-left: 15px;
 }
 
 .userInfoRowFlag{
   display:flex;
   justify-content: space-between;
   align-items: center;
+  height:36px;
 }
 
 .userInfoColorSlider {
@@ -462,12 +479,28 @@ background: linear-gradient(to right, rgb(242, 36, 36) 0%, rgb(242, 242, 36) 16.
 display: inline-block;
 }
 
+.donut {
+  background: #e19898;
+  border-radius: 2px;
+}
+
+.userInfoSettingsRadio{
+display: flex;
+justify-content: space-around;
+}
+
+.circleToCenter{
+display: flex;
+align-items: center;
+}
+
 </style>
 
 <div id="userInfoRightSide">
   <div id="userInfoImg">
     <img id="backToEmployees" src="back-arrow.svg" title="Back">
-  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg">
+  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg" style="height:100px">
+  <img id="userInfoBackToCalendar" src="calendar.svg" style="height:50px">
   </div>
   <input class="textInputClass" id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
   <input class="textInputClass" id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
@@ -498,21 +531,29 @@ display: inline-block;
   <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
 </div>
 </div>
+
+<div id="userInfoAttGroup">
+  <div id="userInfoAttStats">
+    statistic
+  </div>
+  <div>
+  <div id="userInfoAttTitle">
+    <span>Arrival</span>
+    <span>Departure</span>
+    <span>Working Time</span>
+  </div>
 <div id="userInfoAttDetail">
-  <div id="userInfoNoRecords">No Records Here</div>
+  <div id="userInfoNoRecords">
+    No Records Here
+  </div>
     <table id="userInfoTable">
-      <thead>
-      <tr>
-        <th>Arrival</th>
-        <th>Departure</th>
-        <th>Working Time</th>
-      </tr>
-      </thead>
       <tbody id="userInfoTableBody">
       </tbody>
     </table>
-    <img id="userInfoBackToCalendar" src="red-cross.svg">
 </div>
+</div>
+</div>
+
 <div id="userInfoCalFooter">
   <img id="userInfoCalPrev" src="mbri-arrow-prev.svg" title="Previous">
   <img id="userInfoDayPrev" src="mbri-arrow-prev.svg" title="Previous">
@@ -529,6 +570,7 @@ display: inline-block;
   </div>
 </div>
 </div>
+
 <div class="beforeShadow dateBackWindow">
 <div style="display:flex; justify-content:space-around;">
   <input class="textInputClass inputTime" id="userInfoDateBackHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
@@ -542,51 +584,67 @@ display: inline-block;
   <div id="userInfoDateBackDeparture" class="departureTransition arrivalDeparture">Departure</div>
 </div>
 <div class="userInfoDateBackRadio">
-  <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelDateBack">Cancel</button>
   <button class="buttonClass" id="userInfoInsertDateBack">Insert</button>
+  <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelDateBack">Cancel</button>
 </div>
 </div>
+
 <div class="beforeShadow calendarSettings">
-  <div class="userInfoRowFlag">inserted from pc<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
-
-    <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
-
-  <div class="userInfoRowFlag">arrival limit<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
   <div class="userInfoRowFlag">
-
-        <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
-
-
-      <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
-      :
-      <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
-
+    <span>
+      arrival limit
+    </span>
+    <span class="circleToCenter">
+      <span>
+        from&nbsp
+      </span>
+      <span>
+        <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        :
+        <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+      </span>
+      <span>
+        &nbsp&nbspto&nbsp
+      </span>
+      <span>
+        <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        :
+        <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+      </span>
+      <span class="circleToCenter">
+        <img src="success.svg" class="userInfoImgFlag" id="userInfoLateArrivalTrue" title="hide late arrivals">
+        <img src="red-cross.svg" class="userInfoImgFlag" style="display:none" id="userInfoLateArrivalFalse" title="show late arrivals">
+      </span>
+    </span>
   </div>
-  <div class="userInfoRowFlag">departure limit<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
   <div class="userInfoRowFlag">
-
-        <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
-
-
-      <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
-      :
-      <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
-
+    <span>
+      minimum working time
+    </span>
+    <span class="circleToCenter">
+      <span>
+        <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        hours&nbsp&nbsp
+        <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        minutes
+      </span>
+      <span class="circleToCenter">
+        <img src="success.svg" class="userInfoImgFlag" id="userInfoMWTTrue" title="hide insufficient work time">
+        <img src="red-cross.svg" class="userInfoImgFlag" style="display:none" id="userInfoMVTFalse" title="show insufficient work time">
+      </span>
+    </span>
   </div>
-  <div class="userInfoRowFlag">working time limit<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
   <div class="userInfoRowFlag">
-
-        <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
-
-
-      <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
-      :
-      <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
-
+    <span>
+      record(s) missing
+    </span>
+    <span class="circleToCenter">
+      <img src="success.svg" class="userInfoImgFlag" id="userInfoRecordMissingTrue" title="hide missing records">
+      <img src="red-cross.svg" class="userInfoImgFlag" style="display:none" id="userInfoRecordMissingFalse" title="show missing records">
+    </span>
   </div>
-  <div class="userInfoRowFlag">record missing<span class="userInfoSpanFlag"><img src="success.svg" class="userInfoImgFlag"></span></div>
-
-    <input type="range" min="0" max="1000" value="50" class="userInfoColorSlider" id="myRange">
-
-</div>
+  <div class="userInfoSettingsRadio">
+    <button class="buttonClass" id="userInfoSaveSettings">Save</button>
+    <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelSettings">Cancel</button>
+  </div>
 </div>

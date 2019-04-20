@@ -40,7 +40,8 @@ var accountSchema = new mongoose.Schema({
   email: String,
   password: String,
   role: String,
-  cardUID: String
+  cardUID: String,
+  settings: Object
 }, {
   versionKey: false,
   collection: 'accounts'
@@ -175,7 +176,7 @@ app.post('/loginverify', (req, res) => {
     email: req.body.email,
     password: SHA256(req.body.pass).toString() //security fail
   };
-  if (loginData.email + ' ' + loginData.password === ADMIN_LOGIN) {
+  if (req.email + ' ' + loginData.password === ADMIN_LOGIN) {
     res.cookie('token', tokenGenerate('admin', '', '', 'true'));
     res.setHeader('x-status', 'ok');
     res.send();
@@ -214,7 +215,16 @@ if (verifyJWT(req.cookies.token).role === 'true') {
           email: req.body.email,
           cardUID: req.body.cardUID,
           password: 'undefined',
-          role: req.body.role
+          role: req.body.role,
+          settings: {
+          arrivalSwitch: true,
+          arrivalFrom: 7,
+          arrivalTo: 9,
+          MWTSwitch: true,
+          minWorkTime: 8,
+          missingAttSwitch: true,
+          img: 'default.svg'
+          }
         });
         acc.save().then(() => {
           res.setHeader('x-status', 'ok');
