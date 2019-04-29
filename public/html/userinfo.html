@@ -1,27 +1,27 @@
-
 <style>
 
 #backToEmployees {
   cursor: pointer;
   -webkit-user-drag: none;
-  height: 35px;
+  height: 30px;
 }
 
 #userInfoRightSide {
   display: flex;
+  justify-content: space-around;
+  align-items: center;
   flex-direction: column;
-  float:left;
-  width: 450px;
+  float: left;
+  max-height: 600px;
 }
 
 
 #userInfoLeftSide {
-font-family: Roboto;
-position:relative;
-float: left;
-display: flex;
-flex-wrap: wrap;
-width: 670px;
+  font-family: Roboto;
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  max-width: 770px;
 }
 
 
@@ -30,11 +30,6 @@ width: 670px;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  width: 667px;
-  position: fixed;
-  left: 647px;
-  bottom: 26px;
-  font-size: 17px;
 }
 
 #userInfoCalFooter img {
@@ -44,7 +39,7 @@ width: 670px;
 #userInfoLeftSide li {
   margin-left: 3px;
   font-size: 18px;
-  width: 92px;
+  width: calc((100% - 22px) / 7);
   font-weight: 300;
   padding-top: 26px;
   padding-bottom: 23px;
@@ -96,11 +91,11 @@ padding: 0;
 }
 
 #userInfoImg {
-display: flex;
-height: 100px;
-justify-content: space-evenly;
-align-items: flex-end;
-margin-top: 30px;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  margin-top: 5px;
 }
 
 #userInfoCalDateParent {
@@ -132,7 +127,7 @@ justify-content: flex-end;
 .editButtons {
   display: flex;
   flex-wrap: wrap;
-  margin: 20px auto;
+  margin: 10px 0;
   width: 316px;
   justify-content: space-around;
 }
@@ -171,12 +166,10 @@ justify-content: flex-end;
 
 .switch {
   position: relative;
-  top: 6px;
-  left:100px;
-  display: inline-block;
   width: 60px;
   height: 34px;
 }
+
 .switch input {
   display:none;
 }
@@ -226,16 +219,18 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-.toggle{
-  text-align: left;
-  display: block;
-  height: 44px;
+.toggle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
   width: 316px;
-  margin: 12px auto;
+  margin: 10px 0;
   font-size: 18px;
   font-family: Quicksand;
   font-weight: 100;
 }
+
 .toggle li{
   display: inline-block;
   position: relative;
@@ -245,19 +240,14 @@ input:checked + .slider:before {
 }
 
 #userInfoAttDetail {
-position:relative;
-flex-direction:column;
-align-items: center;
-font-family: Roboto;
-float: left;
-flex-wrap: wrap;
-border: 1px solid #d5d5d5;
-display: flex;
-border-radius: 2px;
-background: white;
-height: 222px;
-overflow-y: auto;
-width:664px;
+  border: 1px solid #d5d5d5;
+  border-radius: 2px;
+  background: white;
+  height: 222px;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 #userInfoAttGroup{
@@ -266,6 +256,7 @@ width:664px;
   justify-content: space-evenly;
   height: 545px;
   align-items: stretch;
+  width:100%;
 }
 
 #userInfoAttStats{
@@ -277,16 +268,23 @@ background: white;
 
 #userInfoTable{
   margin-top:2px;
+  width: 100%;
 }
 
   #userInfoTable th, td{
-    width:216px;
+    width: 105px;
     font-weight:300;
     text-align: center;
     padding-bottom: 5px;
     padding-top:5px;
     font-size:15px;
   }
+
+tbody tr {
+display: flex;
+flex-direction: row;
+justify-content: space-around;
+}
 
 #userInfoAttTitle {
  font-weight:300;
@@ -296,7 +294,7 @@ background: white;
 
 #userInfoAttTitle span{
 display: flex;
-width: 150px;
+width: 105px;
 justify-content: center;
 }
 
@@ -310,19 +308,26 @@ justify-content: center;
   cursor: pointer;
 }
 
-#footerForCal{
-display: flex;
-width: 100px;
-justify-content: space-between;
+#userInfoCalEdge{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 27px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+#userInfoCalEdge img{
+  margin-bottom: 30px;
+  cursor: pointer;
 }
 
 #userInfoNoRecords{
-position:absolute;
-display: flex;
-font-size: 20px;
-font-weight: 300;
-position: absolute;
-top: 110px;
+  position: absolute;
+  display: flex;
+  font-size: 20px;
+  font-weight: 300;
+  top: 110px;
 }
 
 #userInfoDayPrev, #userInfoDayNext {
@@ -362,9 +367,8 @@ top: 110px;
 .textInputClass{
   background: #fff;
   height: 44px;
-  width: 300px;
-  margin: 20px auto;
-  margin-bottom: 17px;
+  min-height:44px;
+  width: 250px;
   font-size: 16px;
   font-family: Quicksand;
   font-weight: 100;
@@ -442,7 +446,7 @@ input[type=number]::-webkit-outer-spin-button {
   z-index:5;
   border-radius:2px;
   width: 490px;
-  height: 200px;
+  height: 170px;
   left:50%;
   top:40%;
   transform: translate(-50%, -50%);
@@ -459,6 +463,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .userInfoImgFlag {
+  display:none;
   height:20px;
   margin-left: 15px;
 }
@@ -499,8 +504,8 @@ align-items: center;
 <div id="userInfoRightSide">
   <div id="userInfoImg">
     <img id="backToEmployees" src="back-arrow.svg" title="Back">
-  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg" style="height:100px">
-  <img id="userInfoBackToCalendar" src="calendar.svg" style="height:50px">
+  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg" style="height:70px">
+  <img id="userInfoBackToCalendar" src="calendar.svg" style="height:30px; visibility:hidden">
   </div>
   <input class="textInputClass" id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
   <input class="textInputClass" id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
@@ -520,7 +525,9 @@ align-items: center;
 </div>
 
 <div id="userInfoLeftSide">
-  <div id="userInfoCalendar">
+
+<div style="width:100%">
+<div id="userInfoCalendar">
   <li>Mon</li> <li>Tue</li> <li>Wed</li> <li>Thu</li> <li>Fri</li> <li>Sat</li> <li>Sun</li>
 <div id="userInfoCalMonth">
   <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
@@ -531,29 +538,27 @@ align-items: center;
   <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
 </div>
 </div>
-
 <div id="userInfoAttGroup">
   <div id="userInfoAttStats">
     statistic
   </div>
   <div>
-  <div id="userInfoAttTitle">
-    <span>Arrival</span>
-    <span>Departure</span>
-    <span>Working Time</span>
+    <div id="userInfoAttTitle">
+      <span>Arrival</span>
+      <span>Departure</span>
+      <span>Working Time</span>
+    </div>
+    <div id="userInfoAttDetail">
+      <div id="userInfoNoRecords">
+        No Records Here
+      </div>
+      <table id="userInfoTable">
+        <tbody id="userInfoTableBody">
+        </tbody>
+      </table>
+    </div>
   </div>
-<div id="userInfoAttDetail">
-  <div id="userInfoNoRecords">
-    No Records Here
-  </div>
-    <table id="userInfoTable">
-      <tbody id="userInfoTableBody">
-      </tbody>
-    </table>
 </div>
-</div>
-</div>
-
 <div id="userInfoCalFooter">
   <img id="userInfoCalPrev" src="mbri-arrow-prev.svg" title="Previous">
   <img id="userInfoDayPrev" src="mbri-arrow-prev.svg" title="Previous">
@@ -563,13 +568,15 @@ align-items: center;
   </div>
   <img id="userInfoDayNext" src="mbri-arrow-next.svg" title="Next">
   <img id="userInfoCalNext" src="mbri-arrow-next.svg" title="Next">
-  <div id="footerForCal">
-  <img id="userInfoCalSetting" src="mbri-setting2.svg" title="Settings">
-  <img id="downloadCSV" src="mbri-save.svg" title="Download">
-  <img id="userInfoDateBack" src="mbri-share.svg" title="Insert Record" style="display:none;">
-  </div>
 </div>
 </div>
+<div id="userInfoCalEdge">
+<img id="userInfoCalSetting" src="mbri-setting2.svg" title="Settings">
+<img id="downloadCSV" src="mbri-save.svg" title="Download" style="display:none;">
+<img id="userInfoDateBack" src="mbri-share.svg" title="Insert Record">
+</div>
+</div>
+
 
 <div class="beforeShadow dateBackWindow">
 <div style="display:flex; justify-content:space-around;">
@@ -599,21 +606,21 @@ align-items: center;
         from&nbsp
       </span>
       <span>
-        <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalFromHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
         :
-        <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalFromMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
       </span>
       <span>
         &nbsp&nbspto&nbsp
       </span>
       <span>
-        <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalToHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
         :
-        <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalToMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
       </span>
       <span class="circleToCenter">
         <img src="success.svg" class="userInfoImgFlag" id="userInfoLateArrivalTrue" title="hide late arrivals">
-        <img src="red-cross.svg" class="userInfoImgFlag" style="display:none" id="userInfoLateArrivalFalse" title="show late arrivals">
+        <img src="red-cross.svg" class="userInfoImgFlag" id="userInfoLateArrivalFalse" title="show late arrivals">
       </span>
     </span>
   </div>
@@ -623,28 +630,19 @@ align-items: center;
     </span>
     <span class="circleToCenter">
       <span>
-        <input class="textInputClass inputTime" id="userInfoArrivalLimitHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsMWTHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
         hours&nbsp&nbsp
-        <input class="textInputClass inputTime" id="userInfoArrivalLimitMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsMWTMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
         minutes
       </span>
       <span class="circleToCenter">
         <img src="success.svg" class="userInfoImgFlag" id="userInfoMWTTrue" title="hide insufficient work time">
-        <img src="red-cross.svg" class="userInfoImgFlag" style="display:none" id="userInfoMVTFalse" title="show insufficient work time">
+        <img src="red-cross.svg" class="userInfoImgFlag" id="userInfoMWTFalse" title="show insufficient work time">
       </span>
     </span>
   </div>
-  <div class="userInfoRowFlag">
-    <span>
-      record(s) missing
-    </span>
-    <span class="circleToCenter">
-      <img src="success.svg" class="userInfoImgFlag" id="userInfoRecordMissingTrue" title="hide missing records">
-      <img src="red-cross.svg" class="userInfoImgFlag" style="display:none" id="userInfoRecordMissingFalse" title="show missing records">
-    </span>
-  </div>
   <div class="userInfoSettingsRadio">
-    <button class="buttonClass" id="userInfoSaveSettings">Save</button>
+    <button class="buttonClass" id="userInfoSettingsSave">Save</button>
     <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelSettings">Cancel</button>
   </div>
 </div>

@@ -1,21 +1,6 @@
 var URLarr = window.location.href.split("/");
 var postURL = URLarr[0] + '//' + URLarr[2];
-
-//login intro
-if (localStorage.getItem("login_intro") === 'true') {
-  localStorage.removeItem('login_intro');
-  setTimeout(() => {
-    document.getElementById("delete").classList.remove("content-hidden");
-    setTimeout(() => {
-      document.onclick = () => {
-        document.getElementById("delete").remove();
-        document.onclick = () => {};
-      }
-    }, 2500)
-  }, 350);
-} else {
-  document.getElementById("delete").remove();
-}
+var loggedUserObject;
 
 //function to get cookie value
 function getCookie(cookieName)
@@ -35,9 +20,8 @@ function getCookie(cookieName)
 }
 
 //update name from token
-function updateUserName() {
+function updateUserPref() {
   var token = getCookie("token");
-  if (token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     var payload = decodeURIComponent(Array.prototype.map.call(atob(base64), function(c) {
@@ -45,7 +29,25 @@ function updateUserName() {
     }).join(''));
     var decodedPayload = JSON.parse(payload);
     document.getElementsByClassName("name")[0].innerHTML = decodedPayload.firstName + ' ' + decodedPayload.lastName;
-  }
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function() {
+      if (this.readyState === 4) {
+        var status = xhr.getResponseHeader('x-status');
+        if (status === 'ok') {
+          loggedUserObject = JSON.parse(xhr.response);
+        } else {
+          console.log(status);
+        }
+      }
+    });
+
+    xhr.open("GET", postURL + "/getuserobject");
+    xhr.setRequestHeader("_id", decodedPayload._id);
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.send();
 }
 
 
@@ -98,7 +100,7 @@ function askForContent(tabName) {
   xhr.send();
 }
 
-//first letter from string tu upper case
+//first letter from string to upper case
 function firstLetterToUpperCase(string) {
   if (string) return string[0].toUpperCase() + string.substring(1);
 }
@@ -150,8 +152,16 @@ for (let x = 0; x < document.getElementsByClassName('beforeShadow').length; x++)
 }
 
 //refresh page by clicking on TOMKO
-document.getElementsByClassName('logo')[0].onclick = () => {
+document.getElementById('logo').onclick = () => {
   window.location = postURL;
+}
+
+document.getElementById('burger-menu').onclick = () => {
+  if(parseInt(document.getElementById('left-menu').style.height) > 0){
+    document.getElementById('left-menu').style.height = '0px';
+  } else {
+    document.getElementById('left-menu').style.height = '440px';
+  }
 }
 
 //Log Out button function
@@ -162,11 +172,13 @@ document.getElementsByClassName('stripRight')[0].onclick = () => {
 
 document.getElementById('employees').onclick = () => {
   askForContent('employees');
+  document.getElementById('left-menu').style.height = '0px';
 }
 
 //Add User tab button
 document.getElementById('addUser').onclick = () => {
   askForContent('adduser');
+  document.getElementById('left-menu').style.height = '0px';
 }
 
-updateUserName();
+updateUserPref();

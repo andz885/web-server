@@ -1,63 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Tomko</title>
+  <title>attendance system</title>
   <link rel="stylesheet" href="/homepage.css">
   <!-- <script src="https://code.jquery.com/jquery-3.2.1.js"></script> -->
 </head>
+
 <body>
   <div class="strip">
-    <div class="logo">
-      <label>T<o>O</o>MKO</label>
+    <div class="strip-left">
+      <img id="burger-menu" class="burger-menu" src="burger-menu.svg">
+      <label id="logo">A<o>T</o>SY</label>
     </div>
     <div class="stripRight">
       <img src="mbri-logout.svg">
       <label class="logOut">Log Out<label>
     </div>
   </div>
-  <div class="page">
-    <div class="user">
-      <img class="avatar" src="https://image.flaticon.com/icons/svg/145/145843.svg">
-      <div class="name">User Name</div>
-      <div class="border"></div>
-    </div>
-    <label class="sidebarProperties">
-      <img src="mbri-browse.svg">
-      <div class="sidebarText">Overview</div>
-    </label>
-    <label class="sidebarProperties" id="employees">
-      <img src="mbri-user.svg">
-      <div class="sidebarText">Employees</div>
-    </label>
-    <label class="sidebarProperties">
-      <img src="mbri-calendar.svg">
-      <div class="sidebarText">Days</div>
-    </label>
-    <label class="sidebarProperties" id="addUser">
-      <img src="mbri-plus.svg">
-      <div class="sidebarText">Add User</div>
-    </label>
-    <label class="sidebarProperties">
-      <img src="mbri-setting3.svg">
-      <div class="sidebarText">Settings</div>
-    </label>
-  </div>
-  <div id="content">
-  </div>
-  <div id="delete" class="welcome-section content-hidden">
-    <div class="content-wrap">
-      <ur class="fly-in-text">
-        <li class="white">T</li>
-        <li class="blue">O</li>
-        <li class="white">M</li>
-        <li class="white">K</li>
-        <li class="white">O</li>
-      </ur>
-      <!-- <a href="#" class="enter-button">ENTER</a> -->
-    </div>
+  <div class='page'>
+    <span class="left-menu" id="left-menu">
+      <div class="user">
+        <img class="avatar" src="https://image.flaticon.com/icons/svg/145/145843.svg">
+        <div class="name">User Name</div>
+        <div class="border"></div>
+      </div>
+      <label class="sidebarProperties">
+        <img src="mbri-browse.svg">
+        <div class="sidebarText">Overview</div>
+      </label>
+      <label class="sidebarProperties" id="employees">
+        <img src="mbri-user.svg">
+        <div class="sidebarText">Employees</div>
+      </label>
+      <label class="sidebarProperties">
+        <img src="mbri-calendar.svg">
+        <div class="sidebarText">Days</div>
+      </label>
+      <label class="sidebarProperties" id="addUser">
+        <img src="mbri-plus.svg">
+        <div class="sidebarText">Add User</div>
+      </label>
+      <label class="sidebarProperties">
+        <img src="mbri-setting3.svg">
+        <div class="sidebarText">Settings</div>
+      </label>
+    </span>
+    <span id="content">
+    </span>
   </div>
   <script src='/homepage.js'></script>
 </body>

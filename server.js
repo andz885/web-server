@@ -13,6 +13,7 @@ const https_port = process.env.HTTPS_PORT;
 const SECRET = process.env.SECRET;
 const MCU_KEY = process.env.MCU_KEY;
 const ADMIN_LOGIN = process.env.ADMIN_LOGIN;
+const ADMIN_ID = process.env.ADMIN_DB_ID;
 
 var stringify = require('json-stringify-safe');
 var cookieParser = require('cookie-parser');
@@ -91,7 +92,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(function(req, res, next) {
   var token = verifyJWT(req.cookies.token);
   if (token) {
-    res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role));
+    res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role, token._id));
     next();
   } else if (verifyJWT(req.query.token) || req.url === '/loginverify' || req.url === '/addpassword') {
     next();
@@ -121,12 +122,13 @@ function sendEmail(senderName, reciverEmail, subject, html) {
   });
 }
 
-function tokenGenerate(firstName, lastName, email, role) {
+function tokenGenerate(firstName, lastName, email, role, _id) {
   return jwt.sign({
     firstName,
     lastName,
     email,
-    role
+    role,
+    _id
   }, SECRET).toString()
 }
 
@@ -171,16 +173,39 @@ res.setHeader('x-status', 'ok');
 res.render('userinfo.html');
 });
 
+
 app.post('/loginverify', (req, res) => {
   var loginData = {
     email: req.body.email,
-    password: SHA256(req.body.pass).toString() //security fail
+    password: SHA256(req.body.pass).toString()
   };
-  if (req.email + ' ' + loginData.password === ADMIN_LOGIN) {
-    res.cookie('token', tokenGenerate('admin', '', '', 'true'));
+  if (req.body.email + ' ' + loginData.password === ADMIN_LOGIN) {
+    accounts.findByIdAndUpdate(ADMIN_ID, {
+      $setOnInsert: {
+        firstName: 'admin',
+        role: true,
+        settings: {
+          arrivalSwitch: true,
+          arrivalFromHours: 7,
+          arrivalFromMinutes: 0,
+          arrivalToHours: 10,
+          arrivalToMinutes: 0,
+          MWTSwitch: true,
+          MWTHours: 8,
+          MWTMinutes: 0,
+          img: 'default.svg'
+        }
+      }
+    }, {
+      new: true, // return new doc if one is upserted
+      upsert: true // insert the document if it does not exist
+    }).then(() => {}, (e) => {
+      console.log(e);
+    });
+    res.cookie('token', tokenGenerate('admin', '', '', 'true', ADMIN_ID));
     res.setHeader('x-status', 'ok');
     res.send();
-    return
+    return;
   }
   accounts.findOne(loginData).then((doc) => {
     if (!doc) {
@@ -188,7 +213,7 @@ app.post('/loginverify', (req, res) => {
       res.send();
       return
     }
-    res.cookie('token', tokenGenerate(doc.firstName, doc.lastName, doc.email, doc.role));
+    res.cookie('token', tokenGenerate(doc.firstName, doc.lastName, doc.email, doc.role, doc._id));
     res.setHeader('x-status', 'ok');
     res.send();
   }, (e) => {
@@ -218,18 +243,21 @@ if (verifyJWT(req.cookies.token).role === 'true') {
           role: req.body.role,
           settings: {
           arrivalSwitch: true,
-          arrivalFrom: 7,
-          arrivalTo: 9,
+          arrivalFromHours: 7,
+          arrivalFromMinutes: 0,
+          arrivalToHours: 10,
+          arrivalToMinutes: 0,
           MWTSwitch: true,
-          minWorkTime: 8,
-          missingAttSwitch: true,
+          MWTHours: 8,
+          MWTMinutes: 0,
           img: 'default.svg'
           }
         });
-        acc.save().then(() => {
+        acc.save().then((savedDoc) => {
+          console.log(savedDoc);
           res.setHeader('x-status', 'ok');
           res.send();
-          let html = htmlEmailGenerate("https://" + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role));
+          let html = htmlEmailGenerate("https://" + req.headers.host + '/newpassowrd?token=' + tokenGenerate(req.body.firstName, req.body.lastName, req.body.email, req.body.role, savedDoc._id));
           sendEmail('TOMKO', req.body.email, `Welcome on board ${req.body.firstName}!`, html);
         }, (e) => {
           res.setHeader('x-status', 'database problem, cannot add new user');
@@ -286,10 +314,10 @@ app.post('/addpassword', (req, res) => {
     });
 });
 
-var lastRequest;
-app.get('/lastRequest', (req, res) => {
-  res.send(lastRequest);
-});
+var lastRequest;                                        //------------------------------------------------------
+app.get('/lastRequest', (req, res) => {                 //------------------------------------------------------
+  res.send(lastRequest);                                //------------------------------------------------------
+});                                                     //------------------------------------------------------
 
 
 
@@ -302,7 +330,7 @@ app.post('/cardattached', (req, res) => {
         return;
       }
         attendance.findOne({user_id: doc._id}).sort({date:-1}).then((doc2) => {
-          lastRequest = doc2;
+          lastRequest = doc2;         //-------------------------------------------------------------------------------------------
           if(doc2 != null && doc2.action === req.body.action && req.body.from === 'user' && req.body.force == false){
             res.setHeader('x-status', 'repeated record');
             res.send();
@@ -343,13 +371,42 @@ app.post('/cardattached', (req, res) => {
 });
 
 
+app.post('/calendarsettings', (req, res) => {
+  accounts.findOneAndUpdate({
+    _id: req.body._id
+  }, {
+    $set: {
+      'settings.arrivalSwitch': req.body.arrivalSwitch,
+      'settings.arrivalFromHours': req.body.arrivalFromHours,
+      'settings.arrivalFromMinutes': req.body.arrivalFromMinutes,
+      'settings.arrivalToHours': req.body.arrivalToHours,
+      'settings.arrivalToMinutes': req.body.arrivalToMinutes,
+      'settings.MWTSwitch': req.body.MWTSwitch,
+      'settings.MWTHours': req.body.MWTHours,
+      'settings.MWTMinutes': req.body.MWTMinutes
+    }
+  }).then((doc) => {
+    if (!doc) {
+      res.setHeader('x-status', 'your account was not found in dabatase');
+      res.status(200).send();
+    } else {
+      res.setHeader('x-status', 'ok');
+      res.status(200).send();
+    }
+  }, (e) => {
+    res.setHeader('x-status', 'cannot browse accounts database');
+    res.status(503).send();
+  });
+});
+
+
 app.get('/getunixtime', (req, res) => {
   res.send('unixTime: ' + (Math.round(((new Date()).getTime()) / 1000)).toString());
 });
 
 
 app.get('/getattendance', (req, res) => {  // pridať http status kódy
-  var season = req.headers.season.split('-');
+  let season = req.headers.season.split('-');
   let startDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
   let endDate = new Date(season[0] + "/1/" + season[1] + " GMT-000");
   endDate.setMonth(endDate.getMonth() + 1);
@@ -381,8 +438,10 @@ app.get('/getattendance', (req, res) => {  // pridať http status kódy
 
 
 app.get('/getaccounts', (req, res) => {
-  accounts.find({},{
-    password: false
+  accounts.find({
+    _id: { $ne: ADMIN_ID }},{
+    password: false,
+    settings: false
   }).then((doc) => {
     res.setHeader('x-status', 'ok');
     res.send(doc);
@@ -392,6 +451,18 @@ app.get('/getaccounts', (req, res) => {
   });
 });
 
+
+  app.get('/getuserobject', (req, res) => {
+    accounts.findById(req.headers._id,{
+      password: false
+    }).then((doc) => {
+      res.setHeader('x-status', 'ok');
+      res.send(doc);
+    }, (e) => {
+      res.setHeader('x-status', 'cannot browse accounts database');
+      res.send();
+    });
+  });
 
 app.post('/edituser', (req, res) => {
   accounts.findOneAndUpdate({
@@ -405,8 +476,13 @@ app.post('/edituser', (req, res) => {
       cardUID: req.body.cardUID
     }
   }).then((doc) => {
-    res.setHeader('x-status', 'ok');
-    res.status(200).send();
+    if (!doc) {
+      res.setHeader('x-status', 'user not found in database');
+      res.status(200).send();
+    } else {
+      res.setHeader('x-status', 'ok');
+      res.status(200).send();
+    }
   }, (e) => {
     res.setHeader('x-status', 'cannot browse accounts database');
     res.status(503).send();

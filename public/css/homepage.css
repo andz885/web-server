@@ -12,6 +12,8 @@ html, body {
   margin: 0px;
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .strip {
@@ -21,7 +23,7 @@ html, body {
   margin: 0;
 }
 
-.logo {
+.strip-left {
   margin: 0;
   float: left;
   margin-left: 10px;
@@ -29,13 +31,23 @@ html, body {
   font-weight: 100;
   color: white;
   font-size: 35px;
+  display: flex;
+  align-items: center;
 }
 
-.logo o {
+.burger-menu{
+  display: none;
+  height: 33px;
+  margin-right: 10px;
+  cursor: pointer;
+  filter: invert(100%);
+}
+
+#logo o {
   color: #104b9cd9;
 }
 
-.logo label {
+#logo {
   cursor: pointer;
 }
 
@@ -64,16 +76,52 @@ html, body {
   margin-right: 7px;
 }
 
-.page {
-  float: left;
+.left-menu {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   width: 200px;
-  height: calc(100% - 45px);
+  min-width: 200px;
   background-color: #374c57;
+}
+
+@media screen and (max-width:1014px) {
+  .left-menu {
+    height: 0;
+    position: absolute;
+    z-index: 100;
+    overflow: hidden;
+    transition-property: height;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+    transition-delay: 0s;
+    border-bottom-left-radius:2px;
+    border-bottom-right-radius: 2px;
+  }
+  .burger-menu{
+    display: inline-flex;
+  }
+  .contentShadow {
+    width: 100% !important;
+  }
+}
+
+@media screen and (min-width:1015px) {
+  .left-menu{
+    height: unset !important;
+  }
+}
+
+.page{
+display: flex;
+flex-direction: row;
+height: calc(100% - 45px);
 }
 
 .user {
   position: relative;
   height: 155px;
+  min-height: 155px;
   width: 100%;
   margin: 0;
 }
@@ -142,99 +190,11 @@ html, body {
 
 #content {
   background-color: #F5F5F5;
-  float: left;
-  height: calc(100% - 45px);
-  width: calc(100% - 200px);
-  position: relative;
-}
-
-
-/* .wrapper{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-weight: lighter;
-  font-size: 40px;
-} */
-.welcome-section {
-  font-family: Quicksand;
-  font-weight: 700;
-  position: absolute;
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: linear-gradient(150deg, #2a6163, #7b4752);
-  overflow: hidden;
+  justify-content: space-evenly;
 }
-
-.content-wrap {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.fly-in-text {
-  list-style: none;
-}
-
-.fly-in-text li {
-  display: inline-block;
-  margin-right: 20px;
-  font-size: 5em;
-  opacity: 1;
-  transition: all 3s ease;
-}
-
-.white {
-  color: #ffffffbd;
-}
-
-.blue {
-  color: #0b2a54d9;
-}
-
-.fly-in-text li:nth-child(5) {
-  margin-right: 0;
-}
-
-/* .enter-button {
-  display: block;
-  text-align: center;
-  font-size: 1em;
-  text-decoration: none;
-  color: #adff2f;
-  opacity: 1;
-  margin-top: 30px;
-  transition: all 1s ease 2500ms;
-} */
-.content-hidden .fly-in-text li {
-  opacity: 0;
-}
-
-.content-hidden .fly-in-text li:nth-child(1) {
-  transform: translate3d(-60px, 0, 0);
-}
-
-.content-hidden .fly-in-text li:nth-child(2) {
-  transform: translate3d(-30px, 0, 0);
-}
-
-.content-hidden .fly-in-text li:nth-child(3) {
-  transform: translate3d(0px, 0, 0);
-}
-
-.content-hidden .fly-in-text li:nth-child(4) {
-  transform: translate3d(30px, 0, 0);
-}
-
-.content-hidden .fly-in-text li:nth-child(5) {
-  transform: translate3d(60px, 0, 0);
-}
-
-/* .content-hidden .enter-button { opacity: 0; transform: translate3d( 0, -30px, 0);} */
 
 .contentShadow {
   background-color: #0000005c;

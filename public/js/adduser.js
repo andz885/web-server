@@ -25,7 +25,7 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
 
   var okStatus = true;
 
-  if (!(isValidName(objToSend.firstName))) { //= 'invalid first name';
+  if (!(isValidName(objToSend.firstName)) || objToSend.firstName === 'Admin') { //= 'invalid first name';
     document.getElementById("firstName").style.background = "#ff000036";
     okStatus = false;
   } else document.getElementById("firstName").style.background = "white";
@@ -53,7 +53,7 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
         var status = xhr.getResponseHeader('x-status');
         if (status === 'ok') {
           document.getElementById('deleteAfterSuccess').classList = 'successStyle';
-          document.getElementById('deleteAfterSuccess').innerHTML = `${objToSend.role ? 'administrator' : 'user'}
+          document.getElementById('content').innerHTML = `${objToSend.role ? 'administrator' : 'user'}
           <h1>${objToSend.firstName} ${objToSend.lastName}</h1>
           was successfully added <p> link for creating password was sent to: ${objToSend.email}<p>`;
         } else {

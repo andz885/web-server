@@ -14,7 +14,9 @@ document.getElementById("emailEnter").addEventListener("keyup", function(event) 
 });
 //po kliknutí na login
 document.getElementById('login').onclick = function() {
+  document.getElementById("err-span").style.transition = 'opacity 0s';
   document.getElementById("err_message").innerHTML = ''; //vymazanie Invalid Username or Password
+  document.getElementById("err-span").style.opacity = '0';
   var userString = JSON.stringify({
     email: document.getElementsByName('user')[0].value,
     pass: document.getElementsByName('pass')[0].value
@@ -27,11 +29,11 @@ document.getElementById('login').onclick = function() {
     if (this.readyState === 4) {
       var status = xhr.getResponseHeader('x-status');
       if (status === 'ok') {
-        localStorage.setItem('login_intro', 'true');
         window.location = postURL;
       } else {
-        document.getElementById("err_message").classList.toggle("classTwo");
+        document.getElementById("err-span").style.transition = 'opacity 0.6s';
         document.getElementById("err_message").innerHTML = status;
+        document.getElementById("err-span").style.opacity = '1';
       }
     }
   });

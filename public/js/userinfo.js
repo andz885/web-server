@@ -4,6 +4,32 @@ var season = (1 + (new Date()).getMonth()) + '-' + (new Date()).getFullYear();
 var slctMonth = 0;
 var slctLi;
 
+function fillUserInfoSettings() {
+  if(loggedUserObject.settings.arrivalSwitch){
+    document.getElementById('userInfoLateArrivalTrue').style.display = 'flex';
+  } else {
+    document.getElementById('userInfoLateArrivalFalse').style.display = 'flex';
+  }
+  document.getElementById('userInfoSettingsArrivalFromHours').value = loggedUserObject.settings.arrivalFromHours;
+  if(loggedUserObject.settings.arrivalFromMinutes < 10){
+    document.getElementById('userInfoSettingsArrivalFromMinutes').value = '0' + loggedUserObject.settings.arrivalFromMinutes;
+  } else {
+    document.getElementById('userInfoSettingsArrivalFromMinutes').value = loggedUserObject.settings.arrivalFromMinutes;
+  }
+  document.getElementById('userInfoSettingsArrivalToHours').value = loggedUserObject.settings.arrivalToHours;
+  if(loggedUserObject.settings.arrivalToMinutes < 10){
+    document.getElementById('userInfoSettingsArrivalToMinutes').value = '0' + loggedUserObject.settings.arrivalToMinutes;
+  } else {
+    document.getElementById('userInfoSettingsArrivalToMinutes').value = loggedUserObject.settings.arrivalToMinutes;
+  }
+  if(loggedUserObject.settings.MWTSwitch){
+    document.getElementById('userInfoMWTTrue').style.display = 'flex';
+  } else {
+    document.getElementById('userInfoMWTFalse').style.display = 'flex';
+  }
+  document.getElementById('userInfoSettingsMWTHours').value = loggedUserObject.settings.MWTHours;
+  document.getElementById('userInfoSettingsMWTMinutes').value = loggedUserObject.settings.MWTMinutes;
+}
 
 function updateSelectedUserObject() {
   setUserObj = accounts.find(function(obj) {
@@ -138,6 +164,7 @@ function userInfoCreateCalendar(monthShift, callback) {
     userInfoAttendance.forEach((rec) => {
       rec.unshift({overlap: false});
     });
+    let exit = false;
     for (let liNumb = 0; liNumb < 42; liNumb++) {
       if (liNumb >= from && liNumb < to) {
         userInfoAttendance[liNumb][0].overlap = liNumb - from + 1;
@@ -148,19 +175,42 @@ function userInfoCreateCalendar(monthShift, callback) {
           monthChildrens[liNumb].classList.add('no-hover');
           monthChildrens[liNumb].classList.add('unselectable');
         } else {
-
-          if (userInfoAttendance[liNumb].length - 1 !== 0) {
+          if (userInfoAttendance[liNumb].length - 1 !== 0 ) { //ak je v ten den dochádzka
             monthChildrens[liNumb].getElementsByTagName('div')[0].setAttribute("class", "triangle");
-            for (let i = 1; i < userInfoAttendance[liNumb].length; i += 2) { // neuplna dochadzka
-              let recordOne = userInfoAttendance[liNumb][i];
-              let recordTwo = userInfoAttendance[liNumb][i + 1];
-              if (recordOne == undefined || recordTwo == undefined || recordOne.action !== 'arrival' || recordTwo.action !== 'departure') {
-                monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
-                break;
-              }
-            }
-          }
+             // neuplna dochadzka
+              for (let i = 1; i < userInfoAttendance[liNumb].length; i += 2) {
+                let recordOne = userInfoAttendance[liNumb][i];
+                let recordTwo = userInfoAttendance[liNumb][i + 1];
+                if (recordOne == undefined || recordTwo == undefined || recordOne.action !== 'arrival' || recordTwo.action !== 'departure') {
+                  monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
+                  exit = true;
+                  break;
+                 }
+               }
 
+              if(loggedUserObject.settings.arrivalSwitch && !exit){ // neskorý príchod
+                let minimum = loggedUserObject.settings.arrivalFromHours + loggedUserObject.settings.arrivalFromMinutes / 100;
+                let maximum = loggedUserObject.settings.arrivalToHours + loggedUserObject.settings.arrivalToMinutes / 100;
+                for (let i = 1; i < userInfoAttendance[liNumb].length; i += 2) {
+                  let arrivalTime = userInfoAttendance[liNumb][i].date.getHours() + userInfoAttendance[liNumb][i].date.getMinutes() / 100;
+                  if (arrivalTime > minimum && arrivalTime < maximum) {
+                    monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
+                    exit = true;
+                    break;
+                  }
+                }
+              }
+              if(loggedUserObject.settings.MWTSwitch && !exit){ // málo odpracovaných hodín
+                 let minuteDif = 0;
+                 for (let i = 1; i < userInfoAttendance[liNumb].length; i += 2) {
+                    minuteDif += Math.trunc(userInfoAttendance[liNumb][i + 1].date.getTime() / 60000) - Math.trunc(userInfoAttendance[liNumb][i].date.getTime() / 60000);
+                  }
+                  if (minuteDif < (loggedUserObject.settings.MWTHours * 60 + loggedUserObject.settings.MWTMinutes)){
+                    monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
+                    exit = true;
+                  }
+                }
+              }
           monthChildrens[liNumb].onclick = function() {
             slctLi = Array.from(this.parentNode.children).indexOf(this);
             document.getElementById('userInfoTableBody').innerHTML = '';
@@ -170,17 +220,28 @@ function userInfoCreateCalendar(monthShift, callback) {
             } else {
               document.getElementById('userInfoNoRecords').style.display = 'none';
             }
+              let workingTime = {
+                minutes : 0,
+                hours : 0
+              }
             for (let i = 1; i < numbOfRecords; i++) {
-              let lateFlag = true;
-              let workTime = 8000;
+              let lateFlag = false;
               let records = userInfoAttendance[slctLi];
+              let minimumArrival = loggedUserObject.settings.arrivalFromHours + loggedUserObject.settings.arrivalFromMinutes / 100;
+              let maximumArrival = loggedUserObject.settings.arrivalToHours + loggedUserObject.settings.arrivalToMinutes / 100;
+              let arrivalTime = records[i].date.getHours() + records[i].date.getMinutes() / 100;
+              if(records[i].action === 'arrival' && arrivalTime > minimumArrival && arrivalTime < maximumArrival && loggedUserObject.settings.arrivalSwitch){
+                lateFlag = true;
+              }
               if (records[i + 1] !== undefined && records[i].action === 'arrival' && records[i + 1].action === 'departure') {
                 let minuteDif = (Math.trunc(records[i + 1].date.getTime() / 60000) - Math.trunc(records[i].date.getTime() / 60000));
+                workingTime.minutes += minuteDif;
+                workingTime.hours += Math.trunc(minuteDif / 60);
                 document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
                          <tr>
                            ${`${lateFlag == true ? '<td class="donut">' : '<td>'}` + `${records[i].from == 'PC' ? '(PC) ' : ''}` + records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2, '0') + `${records[i].type.length != 0 ? (' - ' + records[i].type) : ''}`}</td>
                            <td>${`${records[i + 1].from == 'PC' ? '(PC) ' : ''}` + records[i + 1].date.getHours() + ':' + `${records[i + 1].date.getMinutes()}`.padStart(2, '0') + `${records[i + 1].type.length != 0 ? (' - ' + records[i + 1].type) : ''}`}</td>
-                           ${`${minuteDif < workTime ? '<td class="donut">' : '<td>'}` + `${Math.trunc(minuteDif / 60) != 0 ? (Math.trunc(minuteDif / 60) + 'h') : ''}` + (minuteDif % 60) + 'm'}</td>
+                           <td>${`${Math.trunc(minuteDif / 60) != 0 ? (Math.trunc(minuteDif / 60) + 'h ') : ''}` + (minuteDif % 60) + 'm'}</td>
                          </tr>
                          `);
                 i++;
@@ -204,6 +265,21 @@ function userInfoCreateCalendar(monthShift, callback) {
                 }
               }
             }
+
+            if(numbOfRecords > 1){
+              let workingTimeRed = '<td>';
+              if(loggedUserObject.settings.MWTHours * 60 + loggedUserObject.settings.MWTMinutes > workingTime.minutes && loggedUserObject.settings.MWTSwitch){
+                workingTimeRed = '<td class="donut">'
+              }
+              document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
+                       <tr>
+                         <td></td>
+                         <td></td>
+                         ${workingTimeRed}Total : ${(workingTime.hours != 0 ? workingTime.hours + 'h ' : '') + workingTime.minutes % 60 + 'm'}</td>
+                       </tr>
+                       `);
+            }
+
             document.getElementById('userInfoBackToCalendar').style.opacity = '1';
             document.getElementById('userInfoBackToCalendar').style.cursor = 'pointer';
             document.getElementById('userInfoCalendar').style.display = 'none';
@@ -219,8 +295,57 @@ function userInfoCreateCalendar(monthShift, callback) {
         }
       }
     }
+    if(exit === false){
+        document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar.svg";
+        document.getElementById('userInfoBackToCalendar').style.visibility = 'visible';
+    } else {
+        document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar-triangle.svg";
+        document.getElementById('userInfoBackToCalendar').style.visibility = 'visible';
+    }
     callback();
   });
+}
+
+function setNumberInputWatchdog(mainElement, focusElement, typeOfElement) {
+  let compareNumber = 0;
+  if(typeOfElement === 'hours'){
+    compareNumber = 23;
+  } else if (typeOfElement === 'minutes') {
+    compareNumber = 59;
+  } else {
+    return console.log('wrong typeOfElement input');
+  }
+  document.getElementById(mainElement).oninput  = function() {
+  setTimeout(() => {
+    let value = document.getElementById(mainElement).value;
+      let i = -1;
+      while(Number(value) > compareNumber || Number(value) == NaN || value.length > 2){
+        value = value.slice(0, i);
+        i--;
+      }
+      document.getElementById(mainElement).value = value;
+      if(value.length === 2 && focusElement != undefined) {
+        document.getElementById(focusElement).focus();
+      }
+  },100);
+  }
+}
+
+function applyNumberInputWatchdog(){
+  const numberInputElements = [
+    ['userInfoDateBackHours', 'userInfoDateBackMinutes', 'hours'],
+    ['userInfoDateBackMinutes', 'userInfoDateBackType', 'minutes'],
+    ['userInfoSettingsArrivalFromHours', 'userInfoSettingsArrivalFromMinutes', 'hours'],
+    ['userInfoSettingsArrivalFromMinutes', 'userInfoSettingsArrivalToHours', 'minutes'],
+    ['userInfoSettingsArrivalToHours', 'userInfoSettingsArrivalToMinutes', 'hours'],
+    ['userInfoSettingsArrivalToMinutes', 'userInfoSettingsMWTHours', 'minutes' ],
+    ['userInfoSettingsMWTHours', 'userInfoSettingsMWTMinutes', 'hours'],
+    ['userInfoSettingsMWTMinutes', undefined, 'minutes']
+  ]
+
+ numberInputElements.forEach((constInpElm) => {
+  setNumberInputWatchdog(constInpElm[0], constInpElm[1], constInpElm[2]);
+ });
 }
 
 document.getElementById('userInfoBackToCalendar').onclick = function () {
@@ -306,46 +431,151 @@ document.getElementById('userInfoCalNext').onclick = function() {
   userInfoCreateCalendar(slctMonth, () => {});
 }
 
-//neskorý príchod
-//skorý odchod
-//neuplna dochadzka
-//málo odrobeného času
-//vložený záznam z PC
-
 document.getElementById('userInfoCalSetting').onclick = function() {
   showShadow();
   document.getElementsByClassName('beforeShadow')[1].style.display = 'flex';
+  document.getElementById('userInfoSettingsArrivalFromHours').focus();
 }
+
 
 document.getElementById('userInfoLateArrivalTrue').onclick = function() {
   this.style.display = 'none';
   document.getElementById('userInfoLateArrivalFalse').style.display = 'flex'
-}
+  document.getElementById('userInfoSettingsArrivalFromHours').setAttribute('disabled', "");
+  document.getElementById('userInfoSettingsArrivalFromMinutes').setAttribute('disabled', "");
+  document.getElementById('userInfoSettingsArrivalToHours').setAttribute('disabled', "");
+  document.getElementById('userInfoSettingsArrivalToMinutes').setAttribute('disabled', "");
 
+}
 document.getElementById('userInfoLateArrivalFalse').onclick = function() {
   this.style.display = 'none';
-  document.getElementById('userInfoLateArrivalTrue').style.display = 'flex'
+  document.getElementById('userInfoLateArrivalTrue').style.display = 'flex';
+  document.getElementById('userInfoSettingsArrivalFromHours').removeAttribute('disabled');
+  document.getElementById('userInfoSettingsArrivalFromMinutes').removeAttribute('disabled');
+  document.getElementById('userInfoSettingsArrivalToHours').removeAttribute('disabled');
+  document.getElementById('userInfoSettingsArrivalToMinutes').removeAttribute('disabled');
+
 }
+
 
 document.getElementById('userInfoMWTTrue').onclick = function() {
   this.style.display = 'none';
-  document.getElementById('userInfoMVTFalse').style.display = 'flex'
+  document.getElementById('userInfoMWTFalse').style.display = 'flex';
+  document.getElementById('userInfoSettingsMWTHours').setAttribute('disabled', "");
+  document.getElementById('userInfoSettingsMWTMinutes').setAttribute('disabled', "");
 }
-
-document.getElementById('userInfoMVTFalse').onclick = function() {
+document.getElementById('userInfoMWTFalse').onclick = function() {
   this.style.display = 'none';
   document.getElementById('userInfoMWTTrue').style.display = 'flex'
+  document.getElementById('userInfoSettingsMWTHours').removeAttribute('disabled');
+  document.getElementById('userInfoSettingsMWTMinutes').removeAttribute('disabled');
 }
 
-document.getElementById('userInfoRecordMissingTrue').onclick = function() {
-  this.style.display = 'none';
-  document.getElementById('userInfoRecordMissingFalse').style.display = 'flex'
+
+document.getElementById('userInfoSettingsSave').onclick = function() {
+  let objToSend = {
+    _id: loggedUserObject._id,
+    arrivalSwitch: document.getElementById('userInfoLateArrivalFalse').style.display === 'none'
+      ? true
+      : false,
+    arrivalFromHours: document.getElementById('userInfoSettingsArrivalFromHours').value,
+    arrivalFromMinutes: document.getElementById('userInfoSettingsArrivalFromMinutes').value,
+    arrivalToHours: document.getElementById('userInfoSettingsArrivalToHours').value,
+    arrivalToMinutes: document.getElementById('userInfoSettingsArrivalToMinutes').value,
+    MWTSwitch: document.getElementById('userInfoMWTFalse').style.display === 'none'
+      ? true
+      : false,
+    MWTHours: document.getElementById('userInfoSettingsMWTHours').value,
+    MWTMinutes: document.getElementById('userInfoSettingsMWTMinutes').value,
+  }
+  console.log(objToSend);
+  let check = true;
+
+  if (objToSend.arrivalFromHours) {
+    document.getElementById('userInfoSettingsArrivalFromHours').style.background = 'white';
+  } else {
+    document.getElementById('userInfoSettingsArrivalFromHours').style.background = '#f8d2d2';
+    check = false;
+  }
+
+  if (objToSend.arrivalFromMinutes) {
+    document.getElementById('userInfoSettingsArrivalFromMinutes').style.background = 'white';
+  } else {
+    document.getElementById('userInfoSettingsArrivalFromMinutes').style.background = '#f8d2d2';
+    check = false;
+  }
+
+  if (objToSend.arrivalToHours) {
+    document.getElementById('userInfoSettingsArrivalToHours').style.background = 'white';
+  } else {
+    document.getElementById('userInfoSettingsArrivalToHours').style.background = '#f8d2d2';
+    check = false;
+  }
+
+  if (objToSend.arrivalToMinutes) {
+    document.getElementById('userInfoSettingsArrivalToMinutes').style.background = 'white';
+  } else {
+    document.getElementById('userInfoSettingsArrivalToMinutes').style.background = '#f8d2d2';
+    check = false;
+  }
+
+  if (objToSend.MWTHours) {
+    document.getElementById('userInfoSettingsMWTHours').style.background = 'white';
+  } else {
+    document.getElementById('userInfoSettingsMWTHours').style.background = '#f8d2d2';
+    check = false;
+  }
+
+  if (objToSend.MWTMinutes) {
+    document.getElementById('userInfoSettingsMWTMinutes').style.background = 'white';
+  } else {
+    document.getElementById('userInfoSettingsMWTMinutes').style.background = '#f8d2d2';
+    check = false;
+  }
+
+  objToSend.arrivalFromHours = Number(objToSend.arrivalFromHours);
+  objToSend.arrivalFromMinutes = Number(objToSend.arrivalFromMinutes);
+  objToSend.arrivalToHours = Number(objToSend.arrivalToHours);
+  objToSend.arrivalToMinutes = Number(objToSend.arrivalToMinutes);
+  objToSend.MWTHours = Number(objToSend.MWTHours);
+  objToSend.MWTMinutes = Number(objToSend.MWTMinutes);
+  if (check === false) {
+    return;
+  } else {
+
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function() {
+      if (this.readyState === 4) {
+        let status = xhr.getResponseHeader('x-status');
+        if (status === "ok") {
+          loggedUserObject.settings.arrivalSwitch = objToSend.arrivalSwitch;
+          loggedUserObject.settings.arrivalFromHours = objToSend.arrivalFromHours;
+          loggedUserObject.settings.arrivalFromMinutes = objToSend.arrivalFromMinutes;
+          loggedUserObject.settings.arrivalToHours = objToSend.arrivalToHours;
+          loggedUserObject.settings.arrivalToMinutes = objToSend.arrivalToMinutes;
+          loggedUserObject.settings.MWTSwitch = objToSend.MWTSwitch;
+          loggedUserObject.settings.MWTHours = objToSend.MWTHours;
+          loggedUserObject.settings.MWTMinutes = objToSend.MWTMinutes;
+          userInfoCreateCalendar(slctMonth, () => {
+            document.getElementById('contentShadow').click();
+            if(document.getElementById('userInfoCalendar').style.display === 'none'){
+              document.getElementById('userInfoCalMonth').children[slctLi].click();
+            }
+          });
+        } else {
+          alert(status);
+        }
+      }
+    });
+
+    xhr.open("POST", postURL + '/calendarsettings');
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.send(JSON.stringify(objToSend));
+  }
 }
 
-document.getElementById('userInfoRecordMissingFalse').onclick = function() {
-  this.style.display = 'none';
-  document.getElementById('userInfoRecordMissingTrue').style.display = 'flex'
-}
 
 document.getElementById('userInfoCancelSettings').onclick = function() {
   document.getElementById('contentShadow').click();
@@ -384,36 +614,6 @@ document.getElementById('userInfoCancelDateBack').onclick = function() {
   document.getElementById('contentShadow').click();
 }
 
-document.getElementById('userInfoDateBackHours').oninput  = function() {
-setTimeout(() => {
-  let value = document.getElementById('userInfoDateBackHours').value;
-    let i = -1;
-    while(Number(value) > 23 || Number(value) == NaN || value.length > 2){
-      value = value.slice(0, i);
-      i--;
-    }
-    document.getElementById('userInfoDateBackHours').value = value;
-    if(value.length === 2) {
-      document.getElementById('userInfoDateBackMinutes').focus();
-    }
-},100);
-}
-
-document.getElementById('userInfoDateBackMinutes').oninput  = function() {
-setTimeout(() => {
-  let value = document.getElementById('userInfoDateBackMinutes').value;
-    let i = -1;
-    while(Number(value) > 59 || Number(value) == NaN || value.length > 2){
-      value = value.slice(0, i);
-      i--;
-    }
-    document.getElementById('userInfoDateBackMinutes').value = value;
-    if(value.length === 2) {
-      document.getElementById('userInfoDateBackType').focus();
-    }
-},100);
-}
-
 
 document.getElementById('userInfoInsertDateBack').onclick = function() {
 
@@ -422,6 +622,26 @@ if(type.length > 12) {
   alert('Maximum note length is 12 characters');
   return;
 }
+
+let check = false;
+if (document.getElementById('userInfoDateBackHours').value) {
+  document.getElementById('userInfoDateBackHours').style.background = 'white';
+} else {
+  document.getElementById('userInfoDateBackHours').style.background = '#f8d2d2';
+  check = true;
+}
+
+if (document.getElementById('userInfoDateBackMinutes').value) {
+  document.getElementById('userInfoDateBackMinutes').style.background = 'white';
+} else {
+  document.getElementById('userInfoDateBackMinutes').style.background = '#f8d2d2';
+  check = true;
+}
+
+if(check){
+  return;
+}
+
 
 let action;
 if(getComputedStyle(document.getElementById('content')).getPropertyValue('--cssArDpSizeVar') === '10px'){
@@ -439,9 +659,9 @@ if(getComputedStyle(document.getElementById('content')).getPropertyValue('--cssA
   "from" : "PC",
   "date": (new Date(monthShiftToSeason(slctMonth,season).split('-')[1],
                    Number(monthShiftToSeason(slctMonth,season).split('-')[0]) - 1,
-                   //slctLiToInnerText(slctMonth,slctLi),                                  OPRAVIT!!!!!
-                   document.getElementById('userInfoDateBackHours').value,
-                   document.getElementById('userInfoDateBackMinutes').value,
+                   userInfoAttendance[slctLi][0].overlap,
+                   Number(document.getElementById('userInfoDateBackHours').value),
+                   Number(document.getElementById('userInfoDateBackMinutes').value),
                    0,
                    0)).getTime() / 1000
 });
@@ -571,6 +791,7 @@ document.getElementById('userInfoEdit').onclick = function() {
   }
 }
 
+applyNumberInputWatchdog();
 updateSelectedUserObject();
 userInfoCreateCalendar(slctMonth, () => {
   let LIDay = (new Date()).getDate();
@@ -582,3 +803,4 @@ userInfoCreateCalendar(slctMonth, () => {
   }
 });
 fillUserInfo(setUserObj, season);
+fillUserInfoSettings();

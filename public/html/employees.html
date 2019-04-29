@@ -1,15 +1,18 @@
 <style>
   #accTable {
-    overflow-y:auto;
-    position: absolute;
-    left: 25px;
-    top: 25px;
-    right: 25px;
-    bottom: 25px;
+    margin:25px;
     background: white;
     border: 1px solid #d0d0d0;
     border-radius: 3px;
     visibility: hidden;
+    overflow-y:auto;
+    width: 100%;
+  }
+
+thead th {
+  position: sticky;
+   top: 0;
+  background: #5a6370;
   }
 
   .primarytable {
@@ -20,10 +23,8 @@
   }
 
   .infoslide {
-    background: #5a6370;
     color: white;
     position: relative;
-
   }
 
   .infoslide th {
@@ -57,19 +58,15 @@
   }
 
  th img {
-   display: flex;
-   position: absolute;
-   right: 6px;
    filter: invert(100%);
-   top: 4px;
-   width:1.5%;
+   width:17px;
    cursor: pointer;
+   display: flex;
  }
 
 th abc {
   cursor: pointer;
 }
-
 
 </style>
 
@@ -78,12 +75,13 @@ th abc {
   <table class="primarytable">
     <thead>
     <tr class="infoslide">
-      <th><abc id="tableFirstName">&nbspFirst Name</abc></th>
+      <th style="min-width: 105px;"><abc id="tableFirstName">&nbspFirst Name</abc></th>
       <th><abc id="tableLastName">Last Name</abc></th>
       <th><abc id="tableEmail">Email</abc></th>
-      <th><abc id="tableCardUID">Card UID</abc><img id="filterIcon" src="filter.svg"></th>
-      <th><abc id="tableCreatedAt">Created at</abc></th>
+      <th><abc id="tableCardUID">Card UID</abc></th>
+      <th style="min-width: 150px;"><abc id="tableCreatedAt">Created at</abc></th>
       <th><abc id="tableAdmin">Admin</abc></th>
+      <th><img id="filterIcon" src="filter.svg"></th>
     </tr>
     </thead>
     <tbody id="table">

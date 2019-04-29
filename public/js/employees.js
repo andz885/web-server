@@ -36,6 +36,7 @@ function fillTable(records){
       <td>${records[i].cardUID}</td>
       <td>${records[i].createdAt}</td>
       <td>${records[i].role}</td>
+      <td></td>
     </tr>
       `);
       document.getElementById(`${records[i]._id}`).onclick = function() {

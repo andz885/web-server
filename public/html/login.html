@@ -3,19 +3,19 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Log-in</title>
   <link type="text/css" rel="stylesheet" href="login.css" media="screen" />
 </head>
 
 <body>
   <div class="login-card">
-    <h1>Log-in</h1><br>
-    <form>
+    <h1>Log-in</h1>
       <input id="emailEnter" type="text" name="user" placeholder="Email" spellcheck="false">
       <input id="passwordEnter" type="password" name="pass" placeholder="Password">
-    </form>
     <button type="button" id="login" class="login-submit">Login</button>
-    <p id="err_message" class="classOne"></p>
+    <span id="err-span"><div id="err_message"></div></span>
   </div>
   <script src='login.js'></script>
 </body>
