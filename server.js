@@ -14,6 +14,7 @@ const SECRET = process.env.SECRET;
 const MCU_KEY = process.env.MCU_KEY;
 const ADMIN_LOGIN = process.env.ADMIN_LOGIN;
 const ADMIN_ID = process.env.ADMIN_DB_ID;
+console.log(ADMIN_ID);
 
 var stringify = require('json-stringify-safe');
 var cookieParser = require('cookie-parser');

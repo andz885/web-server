@@ -280,8 +280,6 @@ function userInfoCreateCalendar(monthShift, callback) {
                        `);
             }
 
-            document.getElementById('userInfoBackToCalendar').style.opacity = '1';
-            document.getElementById('userInfoBackToCalendar').style.cursor = 'pointer';
             document.getElementById('userInfoCalendar').style.display = 'none';
             document.getElementById('downloadCSV').style.display = 'none';
             document.getElementById('userInfoCalPrev').style.display = 'none';
@@ -297,10 +295,8 @@ function userInfoCreateCalendar(monthShift, callback) {
     }
     if(exit === false){
         document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar.svg";
-        document.getElementById('userInfoBackToCalendar').style.visibility = 'visible';
     } else {
         document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar-triangle.svg";
-        document.getElementById('userInfoBackToCalendar').style.visibility = 'visible';
     }
     callback();
   });
@@ -349,8 +345,6 @@ function applyNumberInputWatchdog(){
 }
 
 document.getElementById('userInfoBackToCalendar').onclick = function () {
-  document.getElementById('userInfoBackToCalendar').style.opacity = '0.5';
-  document.getElementById('userInfoBackToCalendar').style.cursor = 'default';
   document.getElementById('userInfoAttGroup').style.display = 'none';
   document.getElementById('userInfoDateBack').style.display = 'none';
   document.getElementById('userInfoDayPrev').style.display = 'none';

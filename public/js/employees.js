@@ -25,7 +25,7 @@ function fillTable(records){
   document.getElementById('table').innerHTML = ''; //prevencia načítania tabuľky 2x po sebe
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
-    for (let i = 0; i < records.length; i++) {
+    for (let i = 1; i < records.length; i++) {
       var createdAt = new Date(1000 * parseInt(Number("0x" + records[i]._id.slice(0,8)), 10));
       records[i].createdAt = createdAt.getDate() + '. ' + monthNames[createdAt.getMonth()] + ' ' + createdAt.getFullYear();
       document.getElementById('table').insertAdjacentHTML('beforeend', `
