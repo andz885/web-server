@@ -189,11 +189,13 @@ height: calc(100% - 45px);
 }
 
 #content {
+  padding: 0 10px;
   background-color: #F5F5F5;
   display: flex;
   flex-direction: row;
   width: 100%;
   justify-content: space-evenly;
+  overflow: auto;
 }
 
 .contentShadow {

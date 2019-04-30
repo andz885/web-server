@@ -274,8 +274,8 @@ function userInfoCreateCalendar(monthShift, callback) {
               document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
                        <tr>
                          <td></td>
-                         <td></td>
-                         ${workingTimeRed}Total : ${(workingTime.hours != 0 ? workingTime.hours + 'h ' : '') + workingTime.minutes % 60 + 'm'}</td>
+                         <td>Total :</td>
+                         ${workingTimeRed} ${(workingTime.hours != 0 ? workingTime.hours + 'h ' : '') + workingTime.minutes % 60 + 'm'}</td>
                        </tr>
                        `);
             }
@@ -710,17 +710,6 @@ document.getElementById('userInfoEdit').onclick = function() {
       role: document.getElementById('userInfoRole').checked.toString()
     }
 
-    if (JSON.stringify(objToSend) === JSON.stringify(setUserObj)) {
-      document.getElementById('userInfoFirstName').setAttribute('disabled', "");
-      document.getElementById('userInfoLastName').setAttribute('disabled', "");
-      document.getElementById('userInfoEmail').setAttribute('disabled', "");
-      document.getElementById('userInfoCardUID').setAttribute('disabled', "");
-      document.getElementById('userInfoRole').setAttribute('disabled', "");
-      document.getElementsByClassName('slider')[0].style.cursor = 'default';
-      document.getElementById('userInfoEdit').innerHTML = 'Edit';
-      return;
-    }
-
     let okStatus = true;
 
     if (!(isValidName(objToSend.firstName))) { //= 'invalid first name';
@@ -746,6 +735,17 @@ document.getElementById('userInfoEdit').onclick = function() {
       okStatus = false;
     } else
       document.getElementById("userInfoCardUID").style.background = "white";
+
+      if (JSON.stringify(objToSend) === JSON.stringify(setUserObj)) {
+        document.getElementById('userInfoFirstName').setAttribute('disabled', "");
+        document.getElementById('userInfoLastName').setAttribute('disabled', "");
+        document.getElementById('userInfoEmail').setAttribute('disabled', "");
+        document.getElementById('userInfoCardUID').setAttribute('disabled', "");
+        document.getElementById('userInfoRole').setAttribute('disabled', "");
+        document.getElementsByClassName('slider')[0].style.cursor = 'default';
+        document.getElementById('userInfoEdit').innerHTML = 'Edit';
+        return;
+      }
 
     if (okStatus === true) {
       var xhr = new XMLHttpRequest();

@@ -7,21 +7,49 @@
 }
 
 #userInfoRightSide {
+  margin: 16px 10px 0 10px;
+  height: 540px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-direction: column;
   float: left;
-  max-height: 600px;
 }
 
+@media screen and (max-width:768px) {
+  #content{
+    flex-wrap: wrap;
+  }
+  .textInputClass{
+    margin-bottom:0 !important;
+  }
+  #userInfoRightSide {
+    margin: 5px 10px 0 10px !important;
+    height: 465px !important;
+  }
+  .editButtons{
+    margin: 10px 0 !important;
+  }
+  #userInfoLeftSide li {
+    font-size: 16px !important;
+    padding-top: 0 !important;
+  }
+  #userInfoCalMonth li {
+    font-size: 18px !important;
+  }
+  .triangle{
+    height: 4px !important;
+    width: 25px !important;
+  }
+}
 
 #userInfoLeftSide {
+  margin: 0 10px;
   font-family: Roboto;
   display: flex;
   flex-direction: row;
   width:100%;
-  max-width: 770px;
+  max-width: 670px;
 }
 
 
@@ -30,6 +58,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  margin: 30px 30px 37px 30px;
 }
 
 #userInfoCalFooter img {
@@ -70,7 +99,6 @@
   background: cadetblue;
   border-radius: 4px;
   position: absolute;
-  left: 31px;
   bottom: 16px;
 }
 
@@ -80,8 +108,7 @@ background: #B86480;
 }
 
 #userInfoCalMonth li:empty {
-width: 92px;
-height: 0;
+opacity: 0;
 padding: 0;
 }
 
@@ -104,7 +131,6 @@ padding: 0;
 }
 
 #userInfoCalDate {
-  width: 150px;
   display: flex;
   justify-content: flex-start;
 }
@@ -127,9 +153,8 @@ justify-content: flex-end;
 .editButtons {
   display: flex;
   flex-wrap: wrap;
-  margin: 10px 0;
-  width: 316px;
-  justify-content: space-around;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .editButtons * {
@@ -219,12 +244,13 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
 .toggle {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  width: 316px;
+  width: 100%;
   margin: 10px 0;
   font-size: 18px;
   font-family: Quicksand;
@@ -243,7 +269,7 @@ input:checked + .slider:before {
   border: 1px solid #d5d5d5;
   border-radius: 2px;
   background: white;
-  height: 222px;
+  height: 170px;
   overflow-y: auto;
   position: relative;
   display: flex;
@@ -253,14 +279,13 @@ input:checked + .slider:before {
 #userInfoAttGroup{
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  height: 545px;
+  height: 500px;
   align-items: stretch;
   width:100%;
 }
 
 #userInfoAttStats{
-height: 222px;
+height: 170px;
 border: 1px solid #d5d5d5;
 border-radius: 2px;
 background: white;
@@ -272,7 +297,7 @@ background: white;
 }
 
   #userInfoTable th, td{
-    width: 105px;
+    width: 100%;
     font-weight:300;
     text-align: center;
     padding-bottom: 5px;
@@ -281,6 +306,9 @@ background: white;
   }
 
 tbody tr {
+margin-bottom:2px;
+margin-left:2px;
+margin-right:2px;
 display: flex;
 flex-direction: row;
 justify-content: space-around;
@@ -310,16 +338,18 @@ justify-content: center;
 
 #userInfoCalEdge{
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-direction: row;
+  justify-content: space-between;
   margin-top: 27px;
   margin-left: 20px;
   margin-right: 20px;
+  margin-bottom: 30px;
 }
 
 #userInfoCalEdge img{
-  margin-bottom: 30px;
+  height: 30px;
   cursor: pointer;
+  margin: 0 10px;
 }
 
 #userInfoNoRecords{
@@ -327,7 +357,7 @@ justify-content: center;
   display: flex;
   font-size: 20px;
   font-weight: 300;
-  top: 110px;
+  top: 70px;
 }
 
 #userInfoDayPrev, #userInfoDayNext {
@@ -365,6 +395,7 @@ justify-content: center;
 }
 
 .textInputClass{
+  margin-bottom:22px;
   background: #fff;
   height: 44px;
   min-height:44px;
@@ -504,8 +535,8 @@ align-items: center;
 <div id="userInfoRightSide">
   <div id="userInfoImg">
     <img id="backToEmployees" src="back-arrow.svg" title="Back">
-  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg" style="height:70px">
-  <img id="userInfoBackToCalendar" src="calendar.svg" style="height:30px; visibility:hidden">
+  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg" style="height:75px">
+  <div style="width: 30px;"></div>
   </div>
   <input class="textInputClass" id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
   <input class="textInputClass" id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
@@ -527,6 +558,16 @@ align-items: center;
 <div id="userInfoLeftSide">
 
 <div style="width:100%">
+  <div id="userInfoCalFooter">
+    <img id="userInfoCalPrev" src="mbri-arrow-prev.svg" title="Previous">
+    <img id="userInfoDayPrev" src="mbri-arrow-prev.svg" title="Previous">
+    <div id="userInfoCalDateParent">
+    <div id="userInfoCalDay"></div>
+    <div id="userInfoCalDate"></div>
+    </div>
+    <img id="userInfoDayNext" src="mbri-arrow-next.svg" title="Next">
+    <img id="userInfoCalNext" src="mbri-arrow-next.svg" title="Next">
+  </div>
 <div id="userInfoCalendar">
   <li>Mon</li> <li>Tue</li> <li>Wed</li> <li>Thu</li> <li>Fri</li> <li>Sat</li> <li>Sun</li>
 <div id="userInfoCalMonth">
@@ -538,15 +579,13 @@ align-items: center;
   <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
 </div>
 </div>
+
 <div id="userInfoAttGroup">
-  <div id="userInfoAttStats">
-    statistic
-  </div>
   <div>
     <div id="userInfoAttTitle">
       <span>Arrival</span>
       <span>Departure</span>
-      <span>Working Time</span>
+      <span>Time</span>
     </div>
     <div id="userInfoAttDetail">
       <div id="userInfoNoRecords">
@@ -558,22 +597,19 @@ align-items: center;
       </table>
     </div>
   </div>
-</div>
-<div id="userInfoCalFooter">
-  <img id="userInfoCalPrev" src="mbri-arrow-prev.svg" title="Previous">
-  <img id="userInfoDayPrev" src="mbri-arrow-prev.svg" title="Previous">
-  <div id="userInfoCalDateParent">
-  <div id="userInfoCalDay"></div>
-  <div id="userInfoCalDate"></div>
+  <div id="userInfoCalEdge">
+  <img id="userInfoBackToCalendar" src="calendar.svg" style="height:30px; visibility:hidden">
+  <span style="display:flex">
+  <img id="userInfoCalSetting" src="mbri-setting2.svg" title="Settings">
+  <img id="downloadCSV" src="mbri-save.svg" title="Download" style="display:none;">
+  <img id="userInfoDateBack" src="mbri-share.svg" title="Insert Record">
+  </span>
   </div>
-  <img id="userInfoDayNext" src="mbri-arrow-next.svg" title="Next">
-  <img id="userInfoCalNext" src="mbri-arrow-next.svg" title="Next">
+  <div id="userInfoAttStats">
+    statistic
+  </div>
 </div>
-</div>
-<div id="userInfoCalEdge">
-<img id="userInfoCalSetting" src="mbri-setting2.svg" title="Settings">
-<img id="downloadCSV" src="mbri-save.svg" title="Download" style="display:none;">
-<img id="userInfoDateBack" src="mbri-share.svg" title="Insert Record">
+
 </div>
 </div>
 
