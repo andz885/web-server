@@ -2,13 +2,18 @@
 
 .addUserSubContend {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
   max-height: 570px;
 }
 
+@media screen and (max-width:768px) {
+  .addUserSubContend {
+    height: 450px !important;
+  }
+}
 
  input {
   display: block;
@@ -128,39 +133,30 @@ input:checked + .slider:before {
   background-color: #5F7885;
 }
 
-.addButton:active{
-  margin-top:21px;
-  height: 33px;
-  width: 98px;
-}
-
-.successStyle {
-  font-family: Roboto;
-  font-weight: 100;
-  font-size: 30px;
-  margin: 60px auto;
-}
-
-.successStyle p{
-  font-family: Roboto;
-  font-weight: 100;
-  font-size: 18px;
-  margin: 10px auto;
-}
-
 .statusDiv {
   font-family: Quicksand;
   color: #aa0404;
   font-size: 15px;
-  margin-top: 30px;
   opacity: 0;
   visibility: hidden;
+  height:20px;
 }
 
 .fadeClass{
   opacity: 1;
   visibility: visible;
   transition: all 600ms;
+}
+
+.successClass {
+ display: flex;
+ font-family: roboto;
+ font-weight: 300;
+ width: 300px;
+ margin-top: 120px;
+ font-size: 16px;
+ line-height: 1.5;
+ text-align: justify;
 }
 
 ::-webkit-input-placeholder { /* WebKit browsers */
@@ -179,15 +175,9 @@ input:checked + .slider:before {
     text-transform: none;
 }
 
-h1 {
-font-size: 45px;
-font-weight: 300;
-margin: 10px auto;
-}
 
 </style>
-<div class="addUserSubContend">
-  <div style="height:30px"></div>
+<div class="addUserSubContend" id="deleteAfterSuccess">
     <input id="firstName" type="text" placeholder="First Name" autocomplete="off" spellcheck="false">
     <input id="lastName" type="text" placeholder="Last Name" autocomplete="off" spellcheck="false">
     <input id="email" type="text" placeholder="Email" autocomplete="off" spellcheck="false">
@@ -201,4 +191,6 @@ margin: 10px auto;
     </div>
     <div type="button" class="addButton"><span>Submit</span></div>
     <div id="statusDiv" class="statusDiv"></div>
+</div>
+<div id="susuccessDiv">
 </div>

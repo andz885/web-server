@@ -1,0 +1,57 @@
+<style>
+
+.overviewInWork {
+  overflow-y: auto;
+  width: 230px;
+  height: 260px;
+  background: white;
+  border-radius: 3px;
+  border: 1px solid #d0d0d0;
+  font-family: Roboto;
+  font-weight: 300;
+  margin-top: 20px;
+}
+  thead {
+    text-align: center;
+    color: white;
+    font-weight: 400;
+    font-size: 20px;
+  }
+
+  thead td {
+    padding: 5px;
+    position: sticky;
+    top: 0;
+    background: #55828b;
+  }
+
+ thead tr {
+   position: relative;
+ }
+
+  tbody  {
+    display: block;
+    margin-top: 10px;
+  }
+
+.inWorkTable{
+  border-collapse: collapse;
+  width: 100% !important;
+}
+
+
+</style>
+
+<div class="overviewInWork">
+  <table id="overviewInWorkTable" class="inWorkTable">
+    <thead>
+      <tr>
+      <td>
+        &nbsp&nbspEmployees at work&nbsp&nbsp
+      </td>
+      </tr>
+    </thead>
+    <tbody id="overviewInWorkTableBody">
+    </tbody>
+  </table>
+</div>

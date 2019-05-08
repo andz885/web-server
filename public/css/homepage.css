@@ -21,6 +21,7 @@ html, body {
   width: 100%;
   background: linear-gradient(150deg, #78666c, #5F7885);
   margin: 0;
+  z-index: 100;
 }
 
 .strip-left {
@@ -104,6 +105,14 @@ html, body {
   .contentShadow {
     width: 100% !important;
   }
+  #closeLeftMenu{
+    display: none;
+    height: calc(100% - 45px);
+    width: calc(100% - 200px);
+    position: absolute;
+    left: 200px;
+    z-index: 100;
+  }
 }
 
 @media screen and (min-width:1015px) {
@@ -127,6 +136,7 @@ height: calc(100% - 45px);
 }
 
 .avatar {
+  display: none;
   width: 50px;
   position: absolute;
   left: 50%;
@@ -196,6 +206,7 @@ height: calc(100% - 45px);
   width: 100%;
   justify-content: space-evenly;
   overflow: auto;
+  min-height: 400px;
 }
 
 .contentShadow {

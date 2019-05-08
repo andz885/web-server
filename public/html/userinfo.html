@@ -39,7 +39,6 @@
   }
   #userInfoLeftSide li {
     font-size: 16px !important;
-    padding-top: 0 !important;
   }
   #userInfoCalMonth li {
     font-size: 18px !important;
@@ -48,6 +47,50 @@
     height: 4px !important;
     width: 25px !important;
   }
+  #userInfoAttDetail{
+    height: 153px !important;
+  }
+}
+
+@media screen and (max-width:620px){
+  .calendarSettings {
+    width: 220px !important;
+    font-size: 14px !important;
+  }
+  .textInputClass{
+  font-size: 14px !important;
+  min-height: 38px !important;
+  }
+  .inputTime{
+    width: 18px !important;
+  }
+  #arrLimID{
+    margin-right: 28px !important;
+  }
+  #toMarginID{
+    margin-left:63px !important;
+  }
+  #inputMarginID{
+    margin-left:4px !important;
+  }
+  #marginStickerID{
+    margin-left: -7px !important;
+  }
+  #userInfoRowFlagMarginID{
+    margin: 10px 0 !important;
+  }
+  #MWTmarginID{
+    margin-right:unset !important;
+  }
+  .deleteUser {
+    width: 200px !important;
+    height: 200px !important;
+    font-size: 15px !important;
+  }
+}
+
+#MWTmarginID{
+  margin-right:43px;
 }
 
 #userInfoLeftSide {
@@ -77,7 +120,7 @@
   font-size: 18px;
   width: calc((100% - 22px) / 7);
   font-weight: 300;
-  padding-top: 26px;
+  padding-top: 0px;
   padding-bottom: 23px;
   display: flex;
   justify-content: center;
@@ -115,6 +158,7 @@ background: #B86480;
 }
 
 #userInfoCalMonth li:empty {
+cursor: context-menu !important;
 opacity: 0;
 padding: 0;
 }
@@ -292,6 +336,7 @@ input:checked + .slider:before {
 }
 
 #userInfoAttStats{
+position: relative;
 height: 170px;
 border: 1px solid #d5d5d5;
 border-radius: 2px;
@@ -310,6 +355,7 @@ background: white;
     padding-bottom: 5px;
     padding-top:5px;
     font-size:15px;
+    margin: 0 2px;
   }
 
 tbody tr {
@@ -361,7 +407,7 @@ justify-content: center;
 
 #userInfoNoRecords{
   position: absolute;
-  display: flex;
+  display: none;
   font-size: 20px;
   font-weight: 300;
   top: 70px;
@@ -377,7 +423,7 @@ justify-content: center;
   width: 225px;
   height: 250px;
   left:50%;
-  top:40%;
+  top:50%;
   transform: translate(-50%, -50%);
   position: absolute;
   display: none;
@@ -389,6 +435,30 @@ justify-content: center;
   font-family: Roboto;
   font-weight:300;
   font-size:20px;
+}
+
+.deleteUser {
+  z-index:5;
+  border-radius:2px;
+  width: 400px;
+  height: 150px;
+  left:50%;
+  top:50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  display: none;
+  background:white;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border: 25px solid white;
+  font-family: Roboto;
+  font-weight:300;
+  font-size:17px;
+}
+
+#removeDecisionContent{
+  text-align: justify;
 }
 
 .userInfoDateBackRadio{
@@ -484,9 +554,8 @@ input[type=number]::-webkit-outer-spin-button {
   z-index:5;
   border-radius:2px;
   width: 490px;
-  height: 170px;
   left:50%;
-  top:40%;
+  top:50%;
   transform: translate(-50%, -50%);
   position: absolute;
   display: none;
@@ -500,6 +569,10 @@ input[type=number]::-webkit-outer-spin-button {
   font-size:18px;
 }
 
+#arrLimID{
+  margin-right: 75px;
+}
+
 .userInfoImgFlag {
   display:none;
   height:20px;
@@ -507,10 +580,9 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .userInfoRowFlag{
-  display:flex;
+  display:block;
   justify-content: space-between;
   align-items: center;
-  height:36px;
 }
 
 .userInfoColorSlider {
@@ -527,14 +599,65 @@ display: inline-block;
   border-radius: 2px;
 }
 
+.green {
+  background: #7ed06f;
+  border-radius: 2px;
+}
+
 .userInfoSettingsRadio{
 display: flex;
 justify-content: space-around;
+margin-top:10px;
 }
 
 .circleToCenter{
-display: flex;
+display: inline-block;
 align-items: center;
+margin-bottom: 10px;
+}
+
+.endSticker {
+  display: inline-block;
+}
+
+#userInfoProfilePicture {
+  height:75px;
+  display: none;
+}
+
+.removeDecision  {
+  display: flex;
+  flex-direction: column;
+  height: 65px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.employeeNote {
+  border: none;
+  width: 100%;
+  resize: none;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 10px;
+  margin: 0;
+}
+
+.employeeNote::-webkit-scrollbar{
+    width: 0;
+}
+
+.employeeNote:focus {
+    outline:none;
+}
+
+#userInfoSaveNote{
+  height: 25px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 </style>
@@ -542,7 +665,7 @@ align-items: center;
 <div id="userInfoRightSide">
   <div id="userInfoImg">
     <img id="backToEmployees" src="back-arrow.svg" title="Back">
-  <img id="userInfoProfilePicture" src="https://image.flaticon.com/icons/svg/145/145843.svg" style="height:75px">
+  <img id="userInfoProfilePicture">
   <div style="width: 30px;"></div>
   </div>
   <input class="textInputClass" id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
@@ -605,7 +728,7 @@ align-items: center;
     </div>
   </div>
   <div id="userInfoCalEdge">
-  <img id="userInfoBackToCalendar" src="calendar.svg" style="height:30px;">
+  <img id="userInfoBackToCalendar" style="height:30px;">
   <span style="display:flex">
   <img id="userInfoCalSetting" src="mbri-setting2.svg" title="Settings">
   <img id="downloadCSV" src="mbri-save.svg" title="Download" style="display:none;">
@@ -613,7 +736,8 @@ align-items: center;
   </span>
   </div>
   <div id="userInfoAttStats">
-    statistic
+    <textarea class="textInputClass employeeNote" id="userInfoEmployeeNote" type="text"  autocomplete="off" spellcheck="false"></textarea>
+    <img id="userInfoSaveNote" src="save.svg">
   </div>
 </div>
 
@@ -641,10 +765,10 @@ align-items: center;
 
 <div class="beforeShadow calendarSettings">
   <div class="userInfoRowFlag">
-    <span>
+    <div class="circleToCenter" id="arrLimID">
       arrival limit
-    </span>
-    <span class="circleToCenter">
+    </div>
+      <div class="circleToCenter">
       <span>
         from&nbsp
       </span>
@@ -653,7 +777,9 @@ align-items: center;
         :
         <input class="textInputClass inputTime" id="userInfoSettingsArrivalFromMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
       </span>
-      <span>
+      </div>
+      <div class="circleToCenter">
+      <span id="toMarginID">
         &nbsp&nbspto&nbsp
       </span>
       <span>
@@ -661,31 +787,40 @@ align-items: center;
         :
         <input class="textInputClass inputTime" id="userInfoSettingsArrivalToMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
       </span>
-      <span class="circleToCenter">
+      <span class="endSticker">
         <img src="success.svg" class="userInfoImgFlag" id="userInfoLateArrivalTrue" title="hide late arrivals">
         <img src="red-cross.svg" class="userInfoImgFlag" id="userInfoLateArrivalFalse" title="show late arrivals">
       </span>
-    </span>
+      </div>
   </div>
-  <div class="userInfoRowFlag">
-    <span>
+
+  <div class="userInfoRowFlag" id="userInfoRowFlagMarginID">
+    <div class="circleToCenter" id="MWTmarginID">
       minimum working time
-    </span>
-    <span class="circleToCenter">
-      <span>
+    </div>
+    <div class="circleToCenter">
+      <span id="inputMarginID">
         <input class="textInputClass inputTime" id="userInfoSettingsMWTHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
         hours&nbsp&nbsp
         <input class="textInputClass inputTime" id="userInfoSettingsMWTMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
         minutes
       </span>
-      <span class="circleToCenter">
+      <span class="endSticker" id="marginStickerID">
         <img src="success.svg" class="userInfoImgFlag" id="userInfoMWTTrue" title="hide insufficient work time">
         <img src="red-cross.svg" class="userInfoImgFlag" id="userInfoMWTFalse" title="show insufficient work time">
       </span>
-    </span>
+    </div>
   </div>
   <div class="userInfoSettingsRadio">
     <button class="buttonClass" id="userInfoSettingsSave">Save</button>
     <button class="buttonClass" style="background:#ae3d3d;" id="userInfoCancelSettings">Cancel</button>
+  </div>
+</div>
+
+<div class="beforeShadow deleteUser">
+  <div id="removeDecisionContent"></div>
+  <div class="removeDecision">
+   <button class="buttonClass" style="background:#ae3d3d;" id="userInfoRemoveUser">Remove</button>
+   <span id="userInfoCancelRemoveUser" style="cursor: pointer;">Cancel</span>
   </div>
 </div>

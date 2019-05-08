@@ -164,8 +164,13 @@ function userInfoCreateCalendar(monthShift, callback) {
     userInfoAttendance.forEach((rec) => {
       rec.unshift({overlap: false});
     });
-    let exit = false;
+    let exit;
+    let badCalendar = false;
     for (let liNumb = 0; liNumb < 42; liNumb++) {
+      if(exit){
+        badCalendar = true;
+      }
+      exit = false;
       if (liNumb >= from && liNumb < to) {
         userInfoAttendance[liNumb][0].overlap = liNumb - from + 1;
         let dayDate = liNumb + 1 - from;
@@ -182,12 +187,17 @@ function userInfoCreateCalendar(monthShift, callback) {
                 let recordOne = userInfoAttendance[liNumb][i];
                 let recordTwo = userInfoAttendance[liNumb][i + 1];
                 if (recordOne == undefined || recordTwo == undefined || recordOne.action !== 'arrival' || recordTwo.action !== 'departure') {
-                  monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
-                  exit = true;
+                  let date3 = new Date();
+                  let date4 = recordOne.date;
+
+                  if(recordOne.action == 'arrival' && recordTwo == undefined && (i + 1) == userInfoAttendance[liNumb].length && date3.getFullYear() === date4.getFullYear() && date3.getMonth() === date4.getMonth() && date3.getDate() === date4.getDate()){
+                  } else {
+                    monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
+                    exit = true;
+                  }
                   break;
                  }
                }
-
               if(loggedUserObject.settings.arrivalSwitch && !exit){ // neskorý príchod
                 let minimum = loggedUserObject.settings.arrivalFromHours + loggedUserObject.settings.arrivalFromMinutes / 100;
                 let maximum = loggedUserObject.settings.arrivalToHours + loggedUserObject.settings.arrivalToMinutes / 100;
@@ -247,10 +257,16 @@ function userInfoCreateCalendar(monthShift, callback) {
                 i++;
               } else {
                 if (records[i].action === 'arrival') {
+                  let inWorkFlag = false;
+                  let date3 = new Date();
+                  let date4 = records[i].date;
+                  if((i + 1) === numbOfRecords && date3.getFullYear() === date4.getFullYear() && date3.getMonth()	 === date4.getMonth() && date3.getDate() === date4.getDate()){
+                    inWorkFlag = true;
+                  }
                   document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
                            <tr>
                              ${`${lateFlag == true ? '<td class="donut">' : '<td>'}` + `${records[i].from == 'PC' ? '(PC) ' : ''}` + records[i].date.getHours() + ':' + `${records[i].date.getMinutes()}`.padStart(2, '0') + `${records[i].type.length != 0 ? (' - ' + records[i].type) : ''}`}</td>
-                             <td class="donut"></td>
+                             ${inWorkFlag == true ? '<td class="green">in work' : '<td class="donut">'}</td>
                              <td></td>
                            </tr>
                            `);
@@ -267,9 +283,13 @@ function userInfoCreateCalendar(monthShift, callback) {
             }
 
             if(numbOfRecords > 1){
+              let date3 = new Date();
+              let date4 = userInfoAttendance[slctLi][1].date;
               let workingTimeRed = '<td>';
               if(loggedUserObject.settings.MWTHours * 60 + loggedUserObject.settings.MWTMinutes > workingTime.minutes && loggedUserObject.settings.MWTSwitch){
-                workingTimeRed = '<td class="donut">'
+                if(!(date3.getFullYear() === date4.getFullYear() && date3.getMonth()	 === date4.getMonth() && date3.getDate() === date4.getDate())){
+                   workingTimeRed = '<td class="donut">'
+                }
               }
               document.getElementById('userInfoTableBody').insertAdjacentHTML('beforeend', `
                        <tr>
@@ -293,10 +313,10 @@ function userInfoCreateCalendar(monthShift, callback) {
         }
       }
     }
-    if(exit === false){
-        document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar.svg";
+    if(badCalendar){
+      document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar-triangle.svg";
     } else {
-        document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar-triangle.svg";
+      document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar.svg";
     }
     callback();
   });
@@ -394,12 +414,19 @@ document.getElementById('userInfoDayNext').onclick = function () {
 }
 
 
-function fillUserInfo(userObj, fillSeason) {
+function fillUserInfo(userObj) {
+  document.getElementById('userInfoProfilePicture').src = userObj.img;
+  document.getElementById('userInfoProfilePicture').style.display = 'inline-block';
   document.getElementById('userInfoFirstName').value = userObj.firstName;
   document.getElementById('userInfoLastName').value = userObj.lastName;
   document.getElementById('userInfoEmail').value = userObj.email;
   document.getElementById('userInfoCardUID').value = userObj.cardUID;
-  if (userObj.role === 'true') {
+  if(userObj.note == ""){
+    document.getElementById('userInfoEmployeeNote').placeholder = 'Notes for employee';
+  } else {
+    document.getElementById('userInfoEmployeeNote').value = userObj.note;
+  }
+  if (userObj.role) {
     document.getElementById('userInfoRole').checked = true;
   }
 }
@@ -482,7 +509,6 @@ document.getElementById('userInfoSettingsSave').onclick = function() {
     MWTHours: document.getElementById('userInfoSettingsMWTHours').value,
     MWTMinutes: document.getElementById('userInfoSettingsMWTMinutes').value,
   }
-  console.log(objToSend);
   let check = true;
 
   if (objToSend.arrivalFromHours) {
@@ -683,6 +709,36 @@ xhr.setRequestHeader("cache-control", "no-cache");
 xhr.send(data);
 }
 
+document.getElementById('userInfoDeleteUser').onclick = function() {
+  showShadow();
+  document.getElementById('removeDecisionContent').innerHTML = `Are you sure you want to delete ${setUserObj.firstName
+  + ' ' + setUserObj.lastName} with all attendance from your database? You cannot undo this action.`;
+  document.getElementsByClassName('beforeShadow')[2].style.display = 'flex';
+}
+
+document.getElementById('userInfoCancelRemoveUser').onclick = function() {
+  document.getElementById('contentShadow').click();
+}
+
+document.getElementById('userInfoRemoveUser').onclick = function() {
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+  xhr.addEventListener("readystatechange", function() {
+    if (this.readyState === 4) {
+      let status = xhr.getResponseHeader('x-status');
+      if (status === 'ok') {
+        document.getElementById('employees').click();
+      } else {
+        alert(status);
+      }
+    }
+  });
+  xhr.open("POST", postURL + "/deleteuser");
+  xhr.setRequestHeader("content-type", "application/json");
+  xhr.setRequestHeader("cache-control", "no-cache");
+  xhr.send(JSON.stringify({_id: setUserObj._id}));
+}
+
 document.getElementById('userInfoEdit').onclick = function() {
   var state = document.getElementById('userInfoEdit').innerHTML;
   if (state === 'Edit') {
@@ -701,7 +757,7 @@ document.getElementById('userInfoEdit').onclick = function() {
       lastName: firstLetterToUpperCase(document.getElementById('userInfoLastName').value.trim()),
       email: document.getElementById('userInfoEmail').value,
       cardUID: document.getElementById('userInfoCardUID').value.toUpperCase(),
-      role: document.getElementById('userInfoRole').checked.toString()
+      role: document.getElementById('userInfoRole').checked
     }
 
     let okStatus = true;
@@ -730,7 +786,10 @@ document.getElementById('userInfoEdit').onclick = function() {
     } else
       document.getElementById("userInfoCardUID").style.background = "white";
 
-      if (JSON.stringify(objToSend) === JSON.stringify(setUserObj)) {
+      let tempUserObj = setUserObj;
+      delete tempUserObj.img;
+      console.log(objToSend,tempUserObj);
+      if (JSON.stringify(objToSend) === JSON.stringify(tempUserObj)) {
         document.getElementById('userInfoFirstName').setAttribute('disabled', "");
         document.getElementById('userInfoLastName').setAttribute('disabled', "");
         document.getElementById('userInfoEmail').setAttribute('disabled', "");
@@ -785,6 +844,43 @@ document.getElementById('userInfoEdit').onclick = function() {
   }
 }
 
+document.getElementById('userInfoEmployeeNote').oninput = function(){
+  if(document.getElementById('userInfoEmployeeNote').value != setUserObj.note){
+    document.getElementById('userInfoSaveNote').style.opacity = '1';
+  } else {
+    document.getElementById('userInfoSaveNote').style.opacity = '0.5';
+  }
+}
+
+document.getElementById('userInfoSaveNote').onclick = function() {
+  let textareaVal = document.getElementById('userInfoEmployeeNote').value;
+  if (textareaVal === ""){
+    document.getElementById('userInfoEmployeeNote').placeholder = 'Notes for employee';
+  }
+  if(textareaVal !== setUserObj.note){
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function() {
+      if (this.readyState === 4) {
+        let status = xhr.getResponseHeader('x-status');
+        if (status === 'ok') {
+          setUserObj.note = textareaVal;
+          document.getElementById('userInfoSaveNote').style.opacity = '0.5';
+        } else {
+          alert(status);
+        }
+      }
+    });
+    xhr.open("POST", postURL + "/editnote");
+    xhr.setRequestHeader("content-type", "application/json");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.send(JSON.stringify({
+      _id: setUserObj._id,
+      note: textareaVal
+    }));
+  }
+}
+
 applyNumberInputWatchdog();
 updateSelectedUserObject();
 userInfoCreateCalendar(slctMonth, () => {
@@ -796,5 +892,5 @@ userInfoCreateCalendar(slctMonth, () => {
     }
   }
 });
-fillUserInfo(setUserObj, season);
+fillUserInfo(setUserObj);
 fillUserInfoSettings();

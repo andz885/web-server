@@ -25,18 +25,17 @@ function fillTable(records){
   document.getElementById('table').innerHTML = ''; //prevencia načítania tabuľky 2x po sebe
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
-    for (let i = 1; i < records.length; i++) {
+    for (let i = 0; i < records.length; i++) {
       var createdAt = new Date(1000 * parseInt(Number("0x" + records[i]._id.slice(0,8)), 10));
       records[i].createdAt = createdAt.getDate() + '. ' + monthNames[createdAt.getMonth()] + ' ' + createdAt.getFullYear();
       document.getElementById('table').insertAdjacentHTML('beforeend', `
     <tr id='${records[i]._id}'>
-      <td>&nbsp${records[i].firstName}</td>
-      <td>${records[i].lastName}</td>
-      <td>${records[i].email}</td>
-      <td>${records[i].cardUID}</td>
-      <td>${records[i].createdAt}</td>
-      <td>${records[i].role}</td>
-      <td></td>
+      <td>&nbsp&nbsp${records[i].firstName}</td>
+      <td>&nbsp&nbsp${records[i].lastName}</td>
+      <td>&nbsp&nbsp${records[i].email}</td>
+      <td>&nbsp&nbsp${records[i].cardUID}</td>
+      <td>&nbsp&nbsp${records[i].createdAt}</td>
+      <td>&nbsp&nbsp${records[i].role}</td>
     </tr>
       `);
       document.getElementById(`${records[i]._id}`).onclick = function() {
@@ -79,8 +78,8 @@ function sortByName(records, property){
 }
 
 function Numb(arg) {
- if(arg === 'true') { return 1;}
- if(arg === 'false') { return 0; }
+ if(arg === true) { return 1;}
+ if(arg === false) { return 0; }
  return arg;
 }
 
@@ -138,9 +137,9 @@ function sortByDate(records, property) {
   }
 }
 
-document.getElementById('filterIcon').onclick = function() {
-  showShadow();
-}
+// document.getElementById('filterIcon').onclick = function() {
+//   showShadow();
+// }
 
 
 document.getElementById('tableFirstName').onclick = function() {

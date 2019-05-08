@@ -10,6 +10,7 @@
     });
   }
 }
+
 //funkcia ktorá sa vykoná po stlačení tlačida sumbit
 document.getElementsByClassName('addButton')[0].onclick = function() {
   document.getElementById('statusDiv').innerHTML = '';
@@ -20,7 +21,7 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
     lastName: firstLetterToUpperCase(document.getElementById('lastName').value.trim()),
     email: document.getElementById('email').value,
     cardUID: document.getElementById('cardUID').value.toUpperCase(),
-    role: document.getElementById('role').checked.toString()
+    role: document.getElementById('role').checked
   }
 
   var okStatus = true;
@@ -52,10 +53,10 @@ document.getElementsByClassName('addButton')[0].onclick = function() {
       if (this.readyState === 4) {
         var status = xhr.getResponseHeader('x-status');
         if (status === 'ok') {
-          document.getElementById('deleteAfterSuccess').classList = 'successStyle';
-          document.getElementById('content').innerHTML = `${objToSend.role ? 'administrator' : 'user'}
-          <h1>${objToSend.firstName} ${objToSend.lastName}</h1>
-          was successfully added <p> link for creating password was sent to: ${objToSend.email}<p>`;
+          document.getElementById('deleteAfterSuccess').style.display = 'none';
+          document.getElementById('susuccessDiv').innerHTML = `<div class="successClass">${objToSend.role ? 'administrator' : 'user'}
+          ${objToSend.firstName} ${objToSend.lastName}
+          was successfully added, link for creating password was sent to: ${objToSend.email}</div>`;
         } else {
           document.getElementById('statusDiv').innerHTML = status;
           document.getElementById("statusDiv").classList.add("fadeClass");

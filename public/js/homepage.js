@@ -19,8 +19,9 @@ function getCookie(cookieName)
      }
 }
 
-//update name from token
-function updateUserPref() {
+
+//update name img and loggedUserObject
+function updateUserPref(callback) {
   var token = getCookie("token");
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -37,6 +38,9 @@ function updateUserPref() {
         var status = xhr.getResponseHeader('x-status');
         if (status === 'ok') {
           loggedUserObject = JSON.parse(xhr.response);
+          document.getElementById('avatar').src = loggedUserObject.img;
+          document.getElementById('avatar').style.display = 'block';
+          callback();
         } else {
           console.log(status);
         }
@@ -157,11 +161,18 @@ document.getElementById('logo').onclick = () => {
 }
 
 document.getElementById('burger-menu').onclick = () => {
-  if(parseInt(document.getElementById('left-menu').style.height) > 0){
-    document.getElementById('left-menu').style.height = '0px';
+  if (parseInt(document.getElementById('left-menu').style.height) === 0) {
+    document.getElementById('left-menu').style.height = 'calc(100% - 45px)';
+    document.getElementById('closeLeftMenu').style.display = 'unset';
   } else {
-    document.getElementById('left-menu').style.height = '440px';
+    document.getElementById('left-menu').style.height = '0px';
+    document.getElementById('closeLeftMenu').style.display = 'none';
   }
+}
+
+function hideBurgerMenu() {
+  document.getElementById('left-menu').style.height = '0px';
+  document.getElementById('closeLeftMenu').style.display = 'none';
 }
 
 //Log Out button function
@@ -170,15 +181,35 @@ document.getElementsByClassName('stripRight')[0].onclick = () => {
   window.location = postURL;
 }
 
+//Overview tab button
+document.getElementById('overview').onclick = () => {
+  askForContent('overview');
+  hideBurgerMenu();
+}
+
+//Show employees table tab button
 document.getElementById('employees').onclick = () => {
   askForContent('employees');
-  document.getElementById('left-menu').style.height = '0px';
+  hideBurgerMenu();
 }
 
 //Add User tab button
 document.getElementById('addUser').onclick = () => {
   askForContent('adduser');
-  document.getElementById('left-menu').style.height = '0px';
+  hideBurgerMenu();
 }
 
-updateUserPref();
+//Settings tab button
+document.getElementById('settings').onclick = () => {
+  askForContent('settings');
+  hideBurgerMenu();
+}
+
+//hide left-menu (burger menu) when by clicking away
+document.getElementById('closeLeftMenu').onclick = () => {
+  hideBurgerMenu();
+}
+
+updateUserPref(() => {
+  document.getElementById('overview').click();
+});

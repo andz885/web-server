@@ -1,0 +1,63 @@
+<style>
+  .changeAvatar {
+    font-family: Roboto;
+    font-size: 20px;
+    font-weight: 300;
+    margin-top: 30px;
+    width: 250px;
+    height: 250px;
+    background: white;
+    border-radius: 2px;
+    border: 1px solid #d0d0d0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  .changeAvatar div:first-child {
+    text-align: center;
+    margin-top: -12px;
+  }
+
+  .arrowAndAvatar {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    align-items: center;
+  }
+
+  .arrowAndAvatar img:nth-child(2) {
+    height: 120px;
+  }
+
+  .arrowAndAvatar img:nth-child(odd) {
+    cursor: pointer;
+    height: min-content;
+  }
+
+  .buttonClass {
+    border-radius: 2px;
+    cursor: pointer;
+    height: 35px;
+    width: 100px;
+    background-color: #3C5D6E;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 100;
+    color: white;
+    border: 0;
+  }
+</style>
+
+<div class="changeAvatar">
+  <div>
+    Change your avatar
+  </div>
+  <div class="arrowAndAvatar">
+    <img src="mbri-arrow-prev.svg" id="changeAvatarPrev">
+    <img id="changingAvatar">
+    <img src="mbri-arrow-next.svg" id="changeAvatarNext">
+  </div>
+  <button class="buttonClass" id="changeAvatarButton">Change</button>
+</div>
