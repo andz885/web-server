@@ -314,9 +314,9 @@ function userInfoCreateCalendar(monthShift, callback) {
       }
     }
     if(badCalendar){
-      document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar-triangle.svg";
+      document.getElementById('userInfoBackToCalendar').src = "calendar-triangle.svg";
     } else {
-      document.getElementById('userInfoBackToCalendar').src = "https://localhost:3000/calendar.svg";
+      document.getElementById('userInfoBackToCalendar').src = "calendar.svg";
     }
     callback();
   });

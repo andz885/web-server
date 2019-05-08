@@ -94,9 +94,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(function(req, res, next) {
   var token = verifyJWT(req.cookies.token);
   if (token) {
-    console.log(token);
     res.cookie('token', tokenGenerate(token.firstName, token.lastName, token.email, token.role, token._id));
-    if(token.role === true){
+    if(token.role){
       next();
     } else {
       res.send('You are not an administrator.');
