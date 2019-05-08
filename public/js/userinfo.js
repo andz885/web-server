@@ -167,9 +167,6 @@ function userInfoCreateCalendar(monthShift, callback) {
     let exit;
     let badCalendar = false;
     for (let liNumb = 0; liNumb < 42; liNumb++) {
-      if(exit){
-        badCalendar = true;
-      }
       exit = false;
       if (liNumb >= from && liNumb < to) {
         userInfoAttendance[liNumb][0].overlap = liNumb - from + 1;
@@ -193,8 +190,9 @@ function userInfoCreateCalendar(monthShift, callback) {
                   if(recordOne.action == 'arrival' && recordTwo == undefined && (i + 1) == userInfoAttendance[liNumb].length && date3.getFullYear() === date4.getFullYear() && date3.getMonth() === date4.getMonth() && date3.getDate() === date4.getDate()){
                   } else {
                     monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
-                    exit = true;
+                  badCalendar = true;
                   }
+                  exit = true;
                   break;
                  }
                }
@@ -206,6 +204,7 @@ function userInfoCreateCalendar(monthShift, callback) {
                   if (arrivalTime > minimum && arrivalTime < maximum) {
                     monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
                     exit = true;
+                    badCalendar = true;
                     break;
                   }
                 }
@@ -218,6 +217,7 @@ function userInfoCreateCalendar(monthShift, callback) {
                   if (minuteDif < (loggedUserObject.settings.MWTHours * 60 + loggedUserObject.settings.MWTMinutes)){
                     monthChildrens[liNumb].getElementsByTagName('div')[0].style.background = '#ca4646';
                     exit = true;
+                    badCalendar = true;
                   }
                 }
               }
