@@ -3,7 +3,10 @@ var avatarsArray = [
   "default.svg",
   "ripe-man.svg",
   "common-girl.svg",
-  "beard-less-man.svg"
+  "beard-less-man.svg",
+  "yellow-man.svg",
+  "preatty-man.svg",
+  "fb-man.svg"
 ]
 
 document.getElementById('changingAvatar').src = document.getElementById('avatar').src;

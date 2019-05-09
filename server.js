@@ -486,17 +486,16 @@ app.get('/getaccounts', (req, res) => {
 });
 
 
-  app.get('/getuserobject', (req, res) => {
-    accounts.findById(req.headers._id,{
-      password: false
-    }).then((doc) => {
-      res.setHeader('x-status', 'ok');
-      res.send(doc);
-    }, (e) => {
-      res.setHeader('x-status', 'cannot browse accounts database');
-      res.send();
-    });
+app.get('/getuserobject', (req, res) => {
+  accounts.findById(req.headers._id, {password: false}).then((doc) => {
+    res.setHeader('x-status', 'ok');
+    res.send(doc);
+  }, (e) => {
+    res.setHeader('x-status', 'cannot browse accounts database');
+    res.send();
   });
+});
+
 
 app.post('/edituser', (req, res) => {
   accounts.findOneAndUpdate({
