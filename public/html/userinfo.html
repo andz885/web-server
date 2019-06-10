@@ -668,10 +668,10 @@ margin-bottom: 10px;
   <img id="userInfoProfilePicture">
   <div style="width: 30px;"></div>
   </div>
-  <input class="textInputClass" id="userInfoFirstName" type="text" disabled autocomplete="off" spellcheck="false">
-  <input class="textInputClass" id="userInfoLastName" type="text" disabled autocomplete="off" spellcheck="false">
-  <input class="textInputClass" id="userInfoEmail" type="text" disabled autocomplete="off" spellcheck="false">
-  <input class="textInputClass" id="userInfoCardUID" type="text" disabled autocomplete="off" spellcheck="false">
+  <input class="textInputClass" id="userInfoFirstName" type="text" disabled autocomplete="randomString" spellcheck="false">
+  <input class="textInputClass" id="userInfoLastName" type="text" disabled autocomplete="randomString" spellcheck="false">
+  <input class="textInputClass" id="userInfoEmail" type="text" disabled autocomplete="randomString" spellcheck="false">
+  <input class="textInputClass" id="userInfoCardUID" type="text" disabled autocomplete="randomString" spellcheck="false">
   <div class="toggle">
     <li>Administrator:</li>
     <label class="switch">
@@ -731,12 +731,12 @@ margin-bottom: 10px;
   <img id="userInfoBackToCalendar" style="height:30px;">
   <span style="display:flex">
   <img id="userInfoCalSetting" src="mbri-setting2.svg" title="Settings">
-  <img id="downloadCSV" src="mbri-save.svg" title="Download" style="display:none;">
   <img id="userInfoDateBack" src="mbri-share.svg" title="Insert Record">
+  <img id="downloadCSV" src="mbri-save.svg" title="Download">
   </span>
   </div>
   <div id="userInfoAttStats">
-    <textarea class="textInputClass employeeNote" id="userInfoEmployeeNote" type="text"  autocomplete="off" spellcheck="false"></textarea>
+    <textarea class="textInputClass employeeNote" id="userInfoEmployeeNote" type="text"  autocomplete="randomString" spellcheck="false"></textarea>
     <img id="userInfoSaveNote" src="save.svg">
   </div>
 </div>
@@ -747,12 +747,12 @@ margin-bottom: 10px;
 
 <div class="beforeShadow dateBackWindow">
 <div style="display:flex; justify-content:space-around;">
-  <input class="textInputClass inputTime" id="userInfoDateBackHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+  <input class="textInputClass inputTime" id="userInfoDateBackHours" type="number" min="0" max="23" autocomplete="randomString" spellcheck="false">
   <span class="doubleDot">:</span>
-  <input class="textInputClass inputTime" id="userInfoDateBackMinutes" type="number" min="0" max="59" autocomplete="off" spellcheck="false">
+  <input class="textInputClass inputTime" id="userInfoDateBackMinutes" type="number" min="0" max="59" autocomplete="randomString" spellcheck="false">
   <button class="buttonClass" style="width:50px;" id="userInfoDateBackNow">Now</button>
 </div>
-<input style="width: 180px; margin-top:0; margin-bottom:0;" class="textInputClass" id="userInfoDateBackType" type="text"  autocomplete="off" spellcheck="false" placeholder="Note">
+<input style="width: 180px; margin-top:0; margin-bottom:0;" class="textInputClass" id="userInfoDateBackType" type="text"  autocomplete="randomString" spellcheck="false" placeholder="Note">
 <div class="userInfoDateBackRadio" style="text-align: center;">
   <div id="userInfoDateBackArrival" class="arrivalTransition arrivalDeparture">Arrival</div>
   <div id="userInfoDateBackDeparture" class="departureTransition arrivalDeparture">Departure</div>
@@ -773,9 +773,9 @@ margin-bottom: 10px;
         from&nbsp
       </span>
       <span>
-        <input class="textInputClass inputTime" id="userInfoSettingsArrivalFromHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalFromHours" type="number" min="0" max="23" autocomplete="randomString" spellcheck="false">
         :
-        <input class="textInputClass inputTime" id="userInfoSettingsArrivalFromMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalFromMinutes" type="number" min="0" max="23" autocomplete="randomString" spellcheck="false">
       </span>
       </div>
       <div class="circleToCenter">
@@ -783,9 +783,9 @@ margin-bottom: 10px;
         &nbsp&nbspto&nbsp
       </span>
       <span>
-        <input class="textInputClass inputTime" id="userInfoSettingsArrivalToHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalToHours" type="number" min="0" max="23" autocomplete="randomString" spellcheck="false">
         :
-        <input class="textInputClass inputTime" id="userInfoSettingsArrivalToMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsArrivalToMinutes" type="number" min="0" max="23" autocomplete="randomString" spellcheck="false">
       </span>
       <span class="endSticker">
         <img src="success.svg" class="userInfoImgFlag" id="userInfoLateArrivalTrue" title="hide late arrivals">
@@ -800,9 +800,9 @@ margin-bottom: 10px;
     </div>
     <div class="circleToCenter">
       <span id="inputMarginID">
-        <input class="textInputClass inputTime" id="userInfoSettingsMWTHours" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsMWTHours" type="number" min="0" max="23" autocomplete="randomString" spellcheck="false">
         hours&nbsp&nbsp
-        <input class="textInputClass inputTime" id="userInfoSettingsMWTMinutes" type="number" min="0" max="23" autocomplete="off" spellcheck="false">
+        <input class="textInputClass inputTime" id="userInfoSettingsMWTMinutes" type="number" min="0" max="23" autocomplete="randomString" spellcheck="false">
         minutes
       </span>
       <span class="endSticker" id="marginStickerID">

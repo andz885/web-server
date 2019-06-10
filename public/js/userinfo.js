@@ -301,7 +301,7 @@ function userInfoCreateCalendar(monthShift, callback) {
             }
 
             document.getElementById('userInfoCalendar').style.display = 'none';
-            document.getElementById('downloadCSV').style.display = 'none';
+            document.getElementById('downloadCSV').style.display = 'flex';
             document.getElementById('userInfoCalPrev').style.display = 'none';
             document.getElementById('userInfoCalNext').style.display = 'none';
             document.getElementById('userInfoDateBack').style.display = 'flex';
@@ -369,7 +369,7 @@ document.getElementById('userInfoBackToCalendar').onclick = function () {
   document.getElementById('userInfoDateBack').style.display = 'none';
   document.getElementById('userInfoDayPrev').style.display = 'none';
   document.getElementById('userInfoDayNext').style.display = 'none';
-  document.getElementById('downloadCSV').style.display = 'flex';
+  document.getElementById('downloadCSV').style.display = 'none';
   document.getElementById('userInfoCalPrev').style.display = 'flex';
   document.getElementById('userInfoCalNext').style.display = 'flex';
   document.getElementById('userInfoCalendar').style.display = 'flex';
@@ -493,7 +493,9 @@ document.getElementById('userInfoMWTFalse').onclick = function() {
 }
 
 
-document.getElementById('userInfoSettingsSave').onclick = function() {
+document.getElementById('userInfoSettingsSave').onclick = function() {preventDoubleClick1();}
+
+function preventDoubleClick1() {
   let objToSend = {
     _id: loggedUserObject._id,
     arrivalSwitch: document.getElementById('userInfoLateArrivalFalse').style.display === 'none'
@@ -562,10 +564,11 @@ document.getElementById('userInfoSettingsSave').onclick = function() {
   if (check === false) {
     return;
   } else {
-
+    document.getElementById('userInfoSettingsSave').onclick = function() {};
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.addEventListener("readystatechange", function() {
+      document.getElementById('userInfoSettingsSave').onclick = function() {preventDoubleClick1();}
       if (this.readyState === 4) {
         let status = xhr.getResponseHeader('x-status');
         if (status === "ok") {
@@ -635,8 +638,9 @@ document.getElementById('userInfoCancelDateBack').onclick = function() {
 }
 
 
-document.getElementById('userInfoInsertDateBack').onclick = function() {
+document.getElementById('userInfoInsertDateBack').onclick = function() {preventDoubleClick2();}
 
+function preventDoubleClick2() {
 let type = document.getElementById('userInfoDateBackType').value;
 if(type.length > 12) {
   alert('Maximum note length is 12 characters');
@@ -686,10 +690,12 @@ if(getComputedStyle(document.getElementById('content')).getPropertyValue('--cssA
                    0)).getTime() / 1000
 });
 
+document.getElementById('userInfoInsertDateBack').onclick = function() {};
 var xhr = new XMLHttpRequest();
 xhr.withCredentials = true;
 
 xhr.addEventListener("readystatechange", function() {
+  document.getElementById('userInfoInsertDateBack').onclick = function() {preventDoubleClick2();}
   if (this.readyState === 4) {
     let status = xhr.getResponseHeader('x-status');
     if (status === "ok") {
@@ -720,10 +726,14 @@ document.getElementById('userInfoCancelRemoveUser').onclick = function() {
   document.getElementById('contentShadow').click();
 }
 
-document.getElementById('userInfoRemoveUser').onclick = function() {
+document.getElementById('userInfoRemoveUser').onclick = function() {preventDoubleClick3();}
+
+function preventDoubleClick3() {
+  document.getElementById('userInfoRemoveUser').onclick = function() {};
   var xhr = new XMLHttpRequest();
   xhr.withCredentials = true;
   xhr.addEventListener("readystatechange", function() {
+    document.getElementById('userInfoRemoveUser').onclick = function() {preventDoubleClick3();}
     if (this.readyState === 4) {
       let status = xhr.getResponseHeader('x-status');
       if (status === 'ok') {
@@ -739,7 +749,9 @@ document.getElementById('userInfoRemoveUser').onclick = function() {
   xhr.send(JSON.stringify({_id: setUserObj._id}));
 }
 
-document.getElementById('userInfoEdit').onclick = function() {
+document.getElementById('userInfoEdit').onclick = function() {preventDoubleClick4();}
+
+function preventDoubleClick4() {
   var state = document.getElementById('userInfoEdit').innerHTML;
   if (state === 'Edit') {
     document.getElementById('userInfoFirstName').removeAttribute('disabled');
@@ -801,9 +813,11 @@ document.getElementById('userInfoEdit').onclick = function() {
       }
 
     if (okStatus === true) {
+      document.getElementById('userInfoEdit').onclick = function() {};
       var xhr = new XMLHttpRequest();
       xhr.withCredentials = true;
       xhr.addEventListener("readystatechange", function() {
+        document.getElementById('userInfoEdit').onclick = function() {preventDoubleClick4();}
         if (this.readyState === 4) {
           var status = xhr.getResponseHeader('x-status');
           if (status === 'ok') {
@@ -852,15 +866,19 @@ document.getElementById('userInfoEmployeeNote').oninput = function(){
   }
 }
 
-document.getElementById('userInfoSaveNote').onclick = function() {
+document.getElementById('userInfoSaveNote').onclick = function() {preventDoubleClick5();}
+
+function preventDoubleClick5() {
   let textareaVal = document.getElementById('userInfoEmployeeNote').value;
   if (textareaVal === ""){
     document.getElementById('userInfoEmployeeNote').placeholder = 'Notes for employee';
   }
   if(textareaVal !== setUserObj.note){
+    document.getElementById('userInfoSaveNote').onclick = function() {};
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
     xhr.addEventListener("readystatechange", function() {
+      document.getElementById('userInfoSaveNote').onclick = function() {preventDoubleClick5();}
       if (this.readyState === 4) {
         let status = xhr.getResponseHeader('x-status');
         if (status === 'ok') {
